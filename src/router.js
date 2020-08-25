@@ -8,7 +8,15 @@ export const routes = [
   },
   {
     path: '/win',
-    component: () => import('./components/WebGL/AppUIs/EditorWin/EditorWin.vue')
+    component: () => import('./components/WebGL/AppUIs/EditorUnit/EditorUnit.vue')
+  },
+  {
+    path: '/space',
+    component: () => import('./components/WebGL/AppUIs/EditorSpace/EditorSpace.vue')
+  },
+  {
+    path: '/age',
+    component: () => import('./components/age-0/pages/AgeEditor.vue')
   },
   {
     path: '/docs',

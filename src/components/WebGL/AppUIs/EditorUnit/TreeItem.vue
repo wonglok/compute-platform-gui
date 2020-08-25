@@ -1,14 +1,15 @@
 <template>
-  <li class="text-white text-sm">
+  <li class="text-white text-sm list-none">
     <div
-      :class="{bold: isFolder}"
+      :class="{bold: item.isFolder}"
+      class="file-list-item hover:bg-gray-700"
     >
-      <span class="fiv-viv mr-1" :class="{ [`fiv-icon-${ext}`]: true }"></span>
-      <span @click="$emit('click-item', { item })">{{ title }}</span>
-      <span class="p-1" v-if="isFolder" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span>
+      <span class="mr-3 fiv-viv" :class="{ [`fiv-icon-${ext}`]: true }"></span>
+      <span @click="onClickItem(item)">{{ title }}</span>
+      <!-- <span class="p-1" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span> -->
+      <span class="add p-2 addicon" v-if="item.isFolder" @click="$emit('add-item', { folder: item })">+</span>
     </div>
-    <ul class="pl-5" v-show="isOpen" v-if="isFolder">
-      <li class="add" @click="$emit('add-item', { item, parent })">+</li>
+    <ul class="pl-5 mb-1" v-show="isOpen" v-if="item.isFolder">
       <TreeItem
         class="item"
         v-for="(child, index) in item.children"
@@ -45,6 +46,12 @@ export default {
       if (ex === 'glsl') {
         ex = 'txt'
       }
+      if (ex === 'vert') {
+        ex = 'txt'
+      }
+      if (ex === 'frag') {
+        ex = 'txt'
+      }
       return ex
     },
     isFolder () {
@@ -59,6 +66,11 @@ export default {
     }
   },
   methods: {
+    onClickItem (item) {
+      if (!item.isFolder) {
+        this.$emit('click-item', { item })
+      }
+    },
     toggle () {
       if (this.isFolder) {
         this.isOpen = !this.isOpen;
@@ -69,5 +81,13 @@ export default {
 </script>
 
 <style>
-
+.file-list-item{
+  cursor: pointer;
+}
+.addicon{
+  opacity: 0;
+}
+.file-list-item:hover .addicon{
+  opacity: 1;
+}
 </style>

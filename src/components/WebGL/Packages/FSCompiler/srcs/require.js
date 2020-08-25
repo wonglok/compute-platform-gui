@@ -8,7 +8,7 @@
 /*jslint regexp: true, nomen: true, sloppy: true */
 /*global window, navigator, document, importScripts, setTimeout, opera */
 
-var requireJSRequire, require, define;
+var BasicImport, require, define;
 (function (global, setTimeout) {
     var req, s, head, baseElement, dataMain, src,
         interactiveScript, currentlyAddingScript, mainScript, subPath,
@@ -1819,8 +1819,11 @@ var requireJSRequire, require, define;
     /**
      * Export require as a global, but only if it does not already exist.
      */
-    if (!requireJSRequire) {
-        requireJSRequire = req;
+    if (!window.BasicImport) {
+        window.BasicImport = req;
+    }
+    if (!BasicImport) {
+        BasicImport = req;
     }
 
     req.version = version;

@@ -1,8 +1,8 @@
 <template>
-  <div :style="{height: height ? px(height) : '100%',width: width ? px(width) : '100%'}">
+  <div class="" :style="{height: height ? px(height) : '100%',width: width ? px(width) : '100%'}">
     <div ref="mounter" class="full">
     </div>
-    <div class=" absolute" :style="{ zIndex: 30, left: widget.pageX + 'px', top: widget.pageY + 25 + 'px' }" ref="widget" v-show="widget.display">
+    <div class=" absolute" :style="{ zIndex: 300, left: widget.pageX + 'px', top: widget.pageY + 25 + 'px' }" ref="widget" v-show="widget.display">
       <Chrome v-if="widget.type === 'color'" v-model="current.color" @input="onChangeColor($event)"></Chrome>
       <input v-if="widget.type === 'number'" v-model="current.number" style="width: 350px" min="-100" max="100" step="0.001" @input="onChangeNumber($event.target.value)" type="range" />
     </div>
@@ -172,8 +172,11 @@ export default {
 
         let coord = editor.renderer.textToScreenCoordinates(range.start.row, range.start.column)
         let { pageX, pageY } = coord
-        this.widget.pageX = pageX
-        this.widget.pageY = pageY
+
+        let rect = this.$el.getBoundingClientRect()
+
+        this.widget.pageX = pageX - rect.left + 200
+        this.widget.pageY = pageY - rect.top + 50
         if (text.indexOf('#') === 0 && text.length === 7) {
           console.log('isHexColorString', range)
           this.widget.display = true

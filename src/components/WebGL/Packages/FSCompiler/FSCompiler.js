@@ -1,6 +1,6 @@
 import * as Babel from '@babel/standalone/babel.js'
 // import * as VueCompo from './vue.processor.js'
-let requireLib = require('!raw-loader!./require.js').default
+let requireLib = require('!raw-loader!./srcs/require.js').default
 
 function getTagContent (str, start, end) {
   if (str.indexOf(start) === -1) {
@@ -21,21 +21,32 @@ const getCompoInfo = (compoStr) => {
   return output
 }
 
+// var dynamicSpread = require('babel-plugin-transform-object-rest-spread')
+// Babel.registerPlugin('transform-object-rest-spread', dynamicSpread)
 
-var dynamicSpread = require('babel-plugin-transform-object-rest-spread')
-Babel.registerPlugin('transform-object-rest-spread', dynamicSpread)
+Babel['umd'] = false
+if (!Babel['umd']) {
+  Babel['umd'] = true
+  var umd = require('babel-plugin-transform-es2015-modules-umd')
+  Babel.registerPlugin('transform-es2015-modules-umd', umd)
+}
 
-var umd = require('babel-plugin-transform-es2015-modules-umd')
-Babel.registerPlugin('transform-es2015-modules-umd', umd)
+// var commonjs = require('babel-plugin-transform-es2015-modules-commonjs')
+// Babel.registerPlugin('transform-es2015-modules-commonjs', commonjs)
 
 var es6 = [
-  [ 'transform-object-rest-spread', { 'useBuiltIns': true } ],
+  // [ 'transform-object-rest-spread', { 'useBuiltIns': true } ],
   [
     'transform-es2015-modules-umd',
     {
       exactGlobals: true
     }
   ]
+  // [
+  //   "transform-modules-commonjs", {
+  //     "allowTopLevelThis": true
+  //   }
+  // ]
 ]
 
 var compileEach = ({ path, src }) => {
@@ -183,21 +194,36 @@ var DefaultFilesList = [
   {
     path: './main.js',
     type: 'file',
-    isFile: true,
+    isFolder: false,
     src: `
-import { gets } from './src/app.js'
+import { gets } from './share.js'
 import fun from './src/fun.js'
 
-console.log('console.log from main.js')
-console.log(gets())
-console.log(fun())
-console.log(location.origin)
+let i = 0;
+setInterval(() => {
+  document.body.style.backgroundColor = 'hsla('+ Math.floor(i % 360) +', 50%, 50%, 1.0)';
+  i++
+}, 10)
+
+let omg = async () => {
+  let t = await gets()
+  console.log(t)
+}
+omg()
+`
+  },
+  {
+    path: './share.js',
+    type: 'file',
+    isFolder: false,
+    src: `
+export { gets } from './src/app.js'
 `
   },
   {
     path: './src/fun.js',
     type: 'file',
-    isFile: true,
+    isFolder: false,
     src: `
 const fun = () => "Hello Fun fun World";
 export default fun;
@@ -206,18 +232,20 @@ export default fun;
   {
     path: './src/app.js',
     type: 'file',
-    isFile: true,
+    isFolder: false,
     src: `
-import box from './shader/box.glsl'
-console.log(box);
-export const gets = () => "Cannot read asdsadasd. lol";
+import boxV from './shader/box.vert'
+import boxF from './shader/box.frag'
+console.log(boxV);
+console.log(boxF);
+export const gets = async () => "Cannot read asdsadasd. lol";
 export default gets;
 `
   },
   {
-    path: './src/shader/box.glsl',
+    path: './src/shader/box.vert',
     type: 'file',
-    isFile: true,
+    isFolder: false,
     src: `
 // GLSL VERTEX SHADER
 uniform vec2 resolution;
@@ -226,9 +254,9 @@ main () {
 `
   },
   {
-    path: './src/shader/box.glsl',
+    path: './src/shader/box.frag',
     type: 'file',
-    isFile: true,
+    isFolder: false,
     src: `
 // GLSL FRAGMENT SHADER
 uniform vec2 resolution;
@@ -244,7 +272,7 @@ DefaultFilesList.forEach(f => {
   if (!DefaultFilesList.map(e => e.path).includes(dir) && dir !== '.') {
     DefaultFilesList.push({
       path: dir,
-      isFile: false,
+      isFolder: true,
       isExpanded: true,
       type: 'folder'
     })
@@ -259,7 +287,7 @@ export function flatToTree (files) {
     if (!cloned.map(e => e.path).includes(dir) && dir !== '.') {
       cloned.push({
         path: dir,
-        isFile: false,
+        isFolder: true,
         isExpanded: true,
         type: 'folder'
       })
@@ -299,6 +327,7 @@ export function flatToTree (files) {
   return {
     path: './',
     type: 'folder',
+    isFolder: true,
     children
   }
 }
@@ -369,6 +398,22 @@ export const compilTree = async ({ tree = DefaultFilesTree }) => {
   return compileList({ files: treeToFlat(tree) })
 }
 
+export const getNewItem = ({ path }) => {
+  return {
+    children: [],
+    name: 'new item.txt',
+    isFile: true,
+    type: 'file',
+    path:  path + '/new item.txt',
+    src: `${path}\nsome new code`
+  }
+}
+
+export const addFolder = ({ folder }) => {
+  let item = getNewItem({ path: folder.path })
+  folder.children.push(item)
+}
+
 export const compileList = ({ files = DefaultFilesList }) => {
   return Promise.all(files.map((file) => {
     return compileEach(file)
@@ -378,23 +423,43 @@ export const compileList = ({ files = DefaultFilesList }) => {
     }, '')
     var rand = (Math.random() * 100000000000000).toFixed(0)
     var result = `
+
 ${requireLib}
+
 (function(){
   function OMG_${rand} () {
     var self = this;
 
     ${entry}
 
-    requireJSRequire(['./main.js'], function () {
-      setTimeout(() => {
-        (window.opener || window.top).postMessage({ type: 'requirejs-ready' }, window.location.origin);
-      }, 10);
+    BasicImport(['./main.js'], function (item) {
+    });
+
+    BasicImport(['./share.js'], function (item) {
+      window.dispatchEvent(new CustomEvent('module-ready', { detail: { item } }))
     });
   }
+
   new OMG_${rand}();
 }());
-
 `
     return result
   })
+}
+
+let html = require('!raw-loader!./srcs/index.html').default
+
+export const makeURLByTree = async ({ tree }) => {
+  let jscode = await compilTree({ tree })
+  let scriptBlob = new Blob([jscode], { type: 'text/javascript' })
+  let scriptUrl = URL.createObjectURL(scriptBlob)
+
+  let scriptTag = `<script src="${scriptUrl}"></script>`
+  let HTML = html + ''
+  let app = `<div id="app"></div>`
+  HTML = HTML.replace(`${app}`,`${app}${scriptTag}`)
+
+  let blob = new Blob([HTML], { type: 'text/html' })
+  let htmlURL = URL.createObjectURL(blob)
+  return htmlURL
 }

@@ -14,6 +14,7 @@
     "deploy": "git add .; git commit -am \"git backup\"; git push -u origin master"
   },
   "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
     "@babel/standalone": "^7.11.4",
     "@tweenjs/tween.js": "^18.6.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
