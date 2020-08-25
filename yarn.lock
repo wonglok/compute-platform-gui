@@ -5640,11 +5640,6 @@ mkdirp@^0.5.1, mkdirp@^0.5.3, mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.5"
 
-monaco-editor@^0.20.0:
-  version "0.20.0"
-  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.20.0.tgz#5d5009343a550124426cb4d965a4d27a348b4dea"
-  integrity sha512-hkvf4EtPJRMQlPC3UbMoRs0vTAFAYdzFQ+gpMb8A+9znae1c43q8Mab9iVsgTcg/4PNiLGGn3SlDIa8uvK1FIQ==
-
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -7539,11 +7534,6 @@ simple-swizzle@^0.2.2:
   integrity sha1-pNprY1/8zMoz9w0Xy5JZLeleVXo=
   dependencies:
     is-arrayish "^0.3.1"
-
-sl-vue-tree@^1.8.4:
-  version "1.8.4"
-  resolved "https://registry.yarnpkg.com/sl-vue-tree/-/sl-vue-tree-1.8.4.tgz#51e875929041480022b21f241096819c4f436794"
-  integrity sha512-Pq3NvhtAUDdZu+4yFpg1XpHsn9R6Uh/+gy9Dzn3b4kEWsijyyzAKu6+CchEAGmbXFvteYfWjGCQDnIylW8MwSg==
 
 slash@^1.0.0:
   version "1.0.0"

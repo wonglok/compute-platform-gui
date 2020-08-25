@@ -46,6 +46,10 @@ export default {
       type: String,
       default: 'html'
     },
+    path: {
+      type: String,
+      default: 'html'
+    },
     theme: String,
     height: {
       default: true
@@ -112,6 +116,9 @@ export default {
           ans = 'glsl'
         }
         if (ext === 'frag') {
+          ans = 'glsl'
+        }
+        if (ext === 'glsl') {
           ans = 'glsl'
         }
       } catch (e) {
@@ -268,7 +275,11 @@ export default {
 
       editor.$blockScrolling = Infinity
       // editor.setOption('enableEmmet', true)
-      editor.getSession().setMode('ace/mode/' + this.mode)
+      if (this.path) {
+        editor.getSession().setMode('ace/mode/' + this.getLangFromPath(this.path))
+      } else {
+        editor.getSession().setMode('ace/mode/' + this.mode)
+      }
       editor.setTheme('ace/theme/' + theme)
       editor.session.setValue(this.value, 1)
       editor.session.setOptions({ tabSize: 2, useSoftTabs: true })
@@ -288,8 +299,13 @@ export default {
         this.editor.setValue(val, 1)
       }
     },
-    filepath () {
-      this.editor.getSession().setMode('ace/mode/' + this.mode)
+    path () {
+      if (this.path) {
+        this.editor.getSession().setMode('ace/mode/' + this.getLangFromPath(this.path))
+      } else {
+        this.editor.getSession().setMode('ace/mode/' + this.mode)
+      }
+      // this.editor.getSession().setMode('ace/mode/' + this.mode)
     }
   },
   mounted () {

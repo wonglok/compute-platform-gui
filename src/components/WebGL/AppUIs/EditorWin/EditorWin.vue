@@ -1,20 +1,31 @@
 <template>
   <div class="flex h-full">
     <div style="width: 270px; background-color: #09161e;" class="h-full p-4">
-      <FolderTree class="full" :allowMultiselect="false" @nodeclick="onClick" v-model="tree.children"></FolderTree>
+      <TreeItem @add-item="addItem" @click-item="clickItem" :item="tree"></TreeItem>
+      <!-- <FolderTree class="full" :allowMultiselect="false" @nodeclick="onClick" v-model="tree.children"></FolderTree> -->
     </div>
     <div style="width: calc(100% - 270px);" class="h-full">
+      <ACE
+        v-if="current"
+        @save="() => {}"
+        :path="current.path"
+        v-model="current.src"
+        @input="() => { isDirty = true; }"
+        theme="chrome"
+        width="100%"
+        :height="'100%'"
+      >
+      </ACE>
       <!-- <button @click="compile()">Waaa</button> -->
-      <Monaco v-if="current" :key="current.path" :src="current.src" :path="current.path" class="full"></Monaco>
     </div>
   </div>
 </template>
 
 <script>
 import { compilTree, getDefaultTree } from '../../Packages/FSCompiler/FSCompiler.js'
-import FolderTree from 'sl-vue-tree'
-import 'sl-vue-tree/dist/sl-vue-tree-dark.css'
 import { O3DVue } from '../../Core/O3DVue.js'
+import TreeItem from './TreeItem'
+// import path from 'path'
 
 //theme: "vs-dark",
 
@@ -23,7 +34,7 @@ export default {
     O3DVue
   ],
   components: {
-    FolderTree
+    TreeItem
   },
   data () {
     return {
@@ -35,9 +46,21 @@ export default {
     this.compile()
   },
   methods: {
+    clickItem ({ item }) {
+      console.log(item)
+      this.current = item
+    },
+    addItem ({ item, parent }) {
+      console.log(item, parent)
+      item.children.push({
+        name: 'new stuff',
+        isFile: true,
+        path:  item.path + '/new item.txt',
+        src: `code`
+      })
+    },
     onClick (item) {
       console.log(item)
-      console.log(this.tree)
       this.current = item
     },
     async compile () {

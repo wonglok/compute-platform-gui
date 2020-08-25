@@ -183,58 +183,58 @@ var DefaultFilesList = [
   {
     path: './main.js',
     type: 'file',
-    isLeaf: true,
+    isFile: true,
     src: `
-      import { gets } from './src/app.js'
-      import fun from './src/fun.js'
+import { gets } from './src/app.js'
+import fun from './src/fun.js'
 
-      console.log('console.log from main.js')
-      console.log(gets())
-      console.log(fun())
-      console.log(location.origin)
-    `
+console.log('console.log from main.js')
+console.log(gets())
+console.log(fun())
+console.log(location.origin)
+`
   },
   {
     path: './src/fun.js',
     type: 'file',
-    isLeaf: true,
+    isFile: true,
     src: `
-      const fun = () => "Hello Fun fun World";
-      export default fun;
-    `
+const fun = () => "Hello Fun fun World";
+export default fun;
+`
   },
   {
     path: './src/app.js',
     type: 'file',
-    isLeaf: true,
+    isFile: true,
     src: `
-      import box from './shader/box.vert'
-      console.log(box);
-      export const gets = () => "Cannot read asdsadasd. lol";
-      export default gets;
-    `
+import box from './shader/box.glsl'
+console.log(box);
+export const gets = () => "Cannot read asdsadasd. lol";
+export default gets;
+`
   },
   {
-    path: './src/shader/box.vert',
+    path: './src/shader/box.glsl',
     type: 'file',
-    isLeaf: true,
+    isFile: true,
     src: `
-      // GLSL SHADER
-      uniform vec2 resolution;
-      main () {
-      }
-    `
+// GLSL VERTEX SHADER
+uniform vec2 resolution;
+main () {
+}
+`
   },
   {
-    path: './src/shader/box.frag',
+    path: './src/shader/box.glsl',
     type: 'file',
-    isLeaf: true,
+    isFile: true,
     src: `
-      // GLSL SHADER
-      uniform vec2 resolution;
-      main () {
-      }
-    `
+// GLSL FRAGMENT SHADER
+uniform vec2 resolution;
+main () {
+}
+`
   }
 ]
 
@@ -244,15 +244,11 @@ DefaultFilesList.forEach(f => {
   if (!DefaultFilesList.map(e => e.path).includes(dir) && dir !== '.') {
     DefaultFilesList.push({
       path: dir,
-      isLeaf: false,
+      isFile: false,
       isExpanded: true,
       type: 'folder'
     })
   }
-})
-DefaultFilesList = DefaultFilesList.map(e => {
-  e.title = path.basename(e.path)
-  return e
 })
 
 export function flatToTree (files) {
@@ -263,7 +259,7 @@ export function flatToTree (files) {
     if (!cloned.map(e => e.path).includes(dir) && dir !== '.') {
       cloned.push({
         path: dir,
-        isLeaf: false,
+        isFile: false,
         isExpanded: true,
         type: 'folder'
       })
@@ -353,7 +349,7 @@ export function treeToFlat (tree) {
       path: e.path,
       src: e.src,
       type: e.type,
-      isLeaf: e.type === 'file'
+      isFile: e.type === 'file'
     }
   })
   return result
