@@ -418,29 +418,22 @@ export const compileList = ({ files = DefaultFilesList }) => {
   return Promise.all(files.map((file) => {
     return compileEach(file)
   })).then((all) => {
-    var entry = all.reduce((accu, val) => {
+    var modulesCodes = all.reduce((accu, val) => {
       return accu + '\n\n' + val.output
     }, '')
-    var rand = (Math.random() * 100000000000000).toFixed(0)
+    // var rand = (Math.random() * 100000000000000).toFixed(0)
     var result = `
-
 ${requireLib}
 
 (function(){
-  function OMG_${rand} () {
-    var self = this;
+  ${modulesCodes}
 
-    ${entry}
+  BasicImport(['./main.js'], function (item) {
+  });
+  BasicImport(['./share.js'], function (item) {
+    console.log(item)
+  });
 
-    BasicImport(['./main.js'], function (item) {
-    });
-
-    BasicImport(['./share.js'], function (item) {
-      window.dispatchEvent(new CustomEvent('module-ready', { detail: { item } }))
-    });
-  }
-
-  new OMG_${rand}();
 }());
 `
     return result
@@ -450,14 +443,14 @@ ${requireLib}
 let html = require('!raw-loader!./srcs/index.html').default
 
 export const makeURLByTree = async ({ tree }) => {
-  let jscode = await compilTree({ tree })
-  let scriptBlob = new Blob([jscode], { type: 'text/javascript' })
-  let scriptUrl = URL.createObjectURL(scriptBlob)
+  let appJsCode = await compilTree({ tree })
+  let appScriptBlob = new Blob([appJsCode], { type: 'text/javascript' })
+  let appScriptURL = URL.createObjectURL(appScriptBlob)
+  let appScriptTag = `<script src="${appScriptURL}"></script>`
 
-  let scriptTag = `<script src="${scriptUrl}"></script>`
   let HTML = html + ''
-  let app = `<div id="app"></div>`
-  HTML = HTML.replace(`${app}`,`${app}${scriptTag}`)
+  let appTag = `<div id="app"></div>`
+  HTML = HTML.replace(`${appTag}`,`${appTag}${appScriptTag}`)
 
   let blob = new Blob([HTML], { type: 'text/html' })
   let htmlURL = URL.createObjectURL(blob)

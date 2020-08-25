@@ -1,13 +1,13 @@
 <template>
   <li class="text-white text-sm list-none">
     <div
-      :class="{bold: item.isFolder}"
+      :class="{'is-folder': item.isFolder}"
       class="file-list-item hover:bg-gray-700"
     >
-      <span class="mr-3 fiv-viv" :class="{ [`fiv-icon-${ext}`]: true }"></span>
-      <span @click="onClickItem(item)">{{ title }}</span>
+      <span class="mr-3 fiv-viv cursor-pointer" :class="{ [`fiv-icon-${ext}`]: true }"></span>
+      <span :class="{ 'cursor-pointer': !item.isFolder }" @click="onClickItem(item, parent)">{{ title }}</span>
       <!-- <span class="p-1" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span> -->
-      <span class="add p-2 addicon" v-if="item.isFolder" @click="$emit('add-item', { folder: item })">+</span>
+      <span class="add p-2 addicon cursor-pointer" v-if="item.isFolder" @click="$emit('add-item', { folder: item })">+</span>
     </div>
     <ul class="pl-5 mb-1" v-show="isOpen" v-if="item.isFolder">
       <TreeItem
@@ -33,6 +33,9 @@ export default {
     parent: Array
   },
   created () {
+    this.$on('refresh', () => {
+      this.$forceUpdate()
+    })
     this.$options.components.TreeItem = require('./TreeItem.vue').default
   },
   data () {
@@ -66,10 +69,10 @@ export default {
     }
   },
   methods: {
-    onClickItem (item) {
-      if (!item.isFolder) {
-        this.$emit('click-item', { item })
-      }
+    onClickItem (item, parent) {
+      // if (!item.isFolder) {
+      this.$emit('click-item', { item, parent })
+      // }
     },
     toggle () {
       if (this.isFolder) {
@@ -81,9 +84,6 @@ export default {
 </script>
 
 <style>
-.file-list-item{
-  cursor: pointer;
-}
 .addicon{
   opacity: 0;
 }

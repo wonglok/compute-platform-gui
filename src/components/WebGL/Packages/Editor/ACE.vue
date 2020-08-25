@@ -273,7 +273,7 @@ export default {
       require('brace/mode/glsl')
       // require('brace/mode/sass')
       require('brace/theme/chrome')
-      // require('brace/theme/monokai')
+      require('brace/theme/monokai')
       require('brace/ext/searchbox')
 
       editor.$blockScrolling = Infinity
