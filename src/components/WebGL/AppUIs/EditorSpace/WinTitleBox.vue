@@ -5,7 +5,7 @@
         <div>
           {{ win.title || 'New Box' }}
         </div>
-        <div class="center">
+        <div class="center" v-if="win.appName !== 'project'">
           <img class="age-gear click" src="./icon/gear.svg" @click="$emit('gear', { win, wins })" alt="">
         </div>
       </div>
@@ -26,6 +26,9 @@ export default {
   created () {
     this.$on('delta-height', (deltaHeight) => {
       this.win.pos.h += deltaHeight
+    })
+    this.$on('gear', ({ win, wins }) => {
+      this.$store.getState().minWin(win)
     })
   },
   methods: {

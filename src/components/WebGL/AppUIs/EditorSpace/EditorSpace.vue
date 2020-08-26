@@ -8,13 +8,13 @@
     <div class="persp full">
       <div class="cam-gp full">
         <div ref="drag-area" class="age-drag-area age-layer full"></div>
-          <EditBox v-for="win in wins" :key="win._id" :wins="wins" :win="win" :offset="offset" class="win-area">
-            <!-- <WinTitleBox v-if="wins && win" :wins="wins" :win="win"> -->
-            <EditorUnit></EditorUnit>
-            <!-- </WinTitleBox> -->
+          <EditBox v-for="win in wins" :key="win._id + '-wins'" :wins="wins" v-show="win.show" :win="win" :offset="offset" class="win-area">
+            <EditorUnit :win="win" :wins="wins" v-if="win.appName === 'editor'"></EditorUnit>
+            <PipelineController :win="win" :wins="wins" v-if="win.appName === 'project'"></PipelineController>
           </EditBox>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -31,16 +31,21 @@ export default {
         x: 0,
         y: 0
       },
-      wins: false,
-      iframe: 'about:blank'
+      projects: false,
+      wins: false
+      // iframe: 'about:blank'
     }
   },
   methods: {
     setup () {
-      this.wins = [
-        UI.getWin()
-      ]
-      this.setupDrag({ dom: this.$refs['drag-area'] })
+      this.$store.subscribe((v) => {
+        this.wins = v
+      }, s => s.wins)
+
+      let item = this.$store.getState()
+      item.bootup()
+
+      // this.setupDrag({ dom: this.$refs['drag-area'] })
     },
     setupDrag ({ dom }) {
       dom.addEventListener('wheel', (evt) => {
@@ -69,7 +74,7 @@ export default {
           })
         }
       })
-    },
+    }
   },
   mounted () {
     setTimeout(() => {

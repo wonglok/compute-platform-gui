@@ -59,7 +59,7 @@ export const getIO = (args) => {
   }
 }
 
-export const getWin = () => {
+export const getWin = (config = {}, pos = {}) => {
   return {
     _id: getID(),
     title: '',
@@ -70,9 +70,11 @@ export const getWin = () => {
       y: 15,
       w: 650,
       h: 600,
-      s: 1
+      s: 1,
+      ...pos
     },
-    appName: 'Lok',
+    show: true,
+    appName: 'editor',
     inputs: [
     ],
     outputs: [
@@ -83,7 +85,8 @@ export const getWin = () => {
     eval: '',
     resize: true,
     isRoot: false,
-    shaderType: ''
+    shaderType: '',
+    ...config
   }
 }
 

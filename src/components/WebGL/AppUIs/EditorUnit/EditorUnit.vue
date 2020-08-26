@@ -34,7 +34,7 @@
             </ACE>
           </keep-alive>
 
-          <div v-if="current && current.isFolder" class="full flex justify-center items-center text-sm text-white">
+          <div v-if="current && current.type === 'folder'" class="full flex justify-center items-center text-sm text-white">
             Folder {{ current.path }}
           </div>
         </div>
@@ -42,7 +42,7 @@
     </Pane>
 
     <Pane v-if="iframe" class="w-full" d-style="height: 250px; background-color: #09161e;">
-      <iframe :src="webURL" ref="iframer" class="w-full h-full" frameborder="0"></iframe>
+      <iframe :src="unitWebURL" ref="iframer" class="w-full h-full" frameborder="0"></iframe>
     </Pane>
 
     <div v-if="overlay === 'rename'" class="neu-bg absolute top-0 left-0 full tool-overlay z-50 flex justify-center items-center">
@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import { getDefaultTree, addFolder, makeURLByPackage } from '../../Packages/FSCompiler/FSCompiler.js'
+import { getDefaultTree, addFolder, treeToFlat, makeUnitPreview } from '../../Packages/FSCompiler/FSCompiler.js'
 import { O3DVue } from '../../Core/O3DVue.js'
 import { traverseDown } from '../../Core/O3DNode.js'
 import TreeItem from './TreeItem'
@@ -102,6 +102,10 @@ import path from 'path'
 import { Splitpanes, Pane } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
 //theme: "vs-dark",
+
+/*
+'https://unpkg.com/three@0.119.1/examples/js/misc/GPUComputationRenderer.js'
+*/
 
 export default {
   mixins: [
@@ -117,7 +121,7 @@ export default {
       overlay: '',
       isDirty: false,
       iframe: true,
-      webURL: false,
+      unitWebURL: false,
       current: false,
       currentParent: false,
       currentNewname: '',
@@ -241,21 +245,10 @@ export default {
       }
       let pack = {
         name: 'fun',
-        tree: this.tree
+        list: treeToFlat(this.tree)
       }
 
-      let dependencies = [
-        // {
-        //   name: 'fun2',
-        //   tree: JSON.parse(JSON.stringify(this.tree))
-        // },
-        // {
-        //   name: 'fun3',
-        //   tree: JSON.parse(JSON.stringify(this.tree))
-        // }
-      ]
-
-      this.webURL = await makeURLByPackage({ pack, dependencies })
+      this.unitWebURL = await makeUnitPreview({ pack })
     }
   }
 }
