@@ -1,20 +1,24 @@
 <template>
   <li class="text-white text-sm list-none">
     <div
-      :class="{'is-folder': item.isFolder}"
-      class="file-list-item hover:bg-gray-700"
+      :class="{'is-folder': isFolder }"
+      class="file-list-item hover:bg-gray-700 cursor-pointer"
+      v-show="showFolderOnly && isFolder || !showFolderOnly"
+
+      @click="onClickItem(item, parent)"
     >
-      <span class="mr-3 fiv-viv cursor-pointer" :class="{ [`fiv-icon-${ext}`]: true }"></span>
-      <span :class="{ 'cursor-pointer': !item.isFolder }" @click="onClickItem(item, parent)">{{ title }}</span>
+      <span class="mr-3 ml-1 fiv-viv cursor-pointer" :class="{ [`fiv-icon-${ext}`]: true }" ></span>
+      <span class="file-tree-file-item py-1" :class="{ 'cursor-pointer': !isFolder }" @click="onClickItem(item, parent)">{{ title }}</span>
       <!-- <span class="p-1" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span> -->
-      <span class="add p-2 addicon cursor-pointer" v-if="item.isFolder" @click="$emit('add-item', { folder: item })">+</span>
+      <span class="add px-2 addicon cursor-pointer rounded-full border-white border ml-3" v-if="!showFolderOnly && isFolder" @click="$emit('add-item', { folder: item })">+</span>
     </div>
-    <ul class="pl-5 mb-1" v-show="isOpen" v-if="item.isFolder">
+    <ul class="pl-5 mb-1" v-show="isOpen" v-if="isFolder">
       <TreeItem
         class="item"
         v-for="(child, index) in item.children"
         :key="index"
         :item="child"
+        :showFolderOnly="showFolderOnly"
         :parent="item.children"
         @click-item="$emit('click-item', $event)"
         @add-item="$emit('add-item', $event)"
@@ -29,6 +33,9 @@ import '../../../../assets/file-icons/file-icon-vivid.min.css'
 
 export default {
   props: {
+    showFolderOnly: {
+      default: false
+    },
     item: Object,
     parent: Array
   },
@@ -55,10 +62,13 @@ export default {
       if (ex === 'frag') {
         ex = 'txt'
       }
+      if (ex === '') {
+        ex = 'folder'
+      }
       return ex
     },
     isFolder () {
-      return !this.item.isFile
+      return this.item.type === 'folder'
     },
     title () {
       let title = path.basename(this.item.path)
@@ -70,7 +80,7 @@ export default {
   },
   methods: {
     onClickItem (item, parent) {
-      // if (!item.isFolder) {
+      // if (!isFolder) {
       this.$emit('click-item', { item, parent })
       // }
     },

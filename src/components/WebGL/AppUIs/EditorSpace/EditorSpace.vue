@@ -43,7 +43,7 @@ export default {
       this.setupDrag({ dom: this.$refs['drag-area'] })
     },
     setupDrag ({ dom }) {
-      this.$refs.area.addEventListener('wheel', (evt) => {
+      dom.addEventListener('wheel', (evt) => {
         if (this.overlay) {
           return
         }

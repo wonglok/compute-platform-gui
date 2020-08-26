@@ -1,12 +1,17 @@
 import * as Babel from '@babel/standalone/babel.js'
 // import * as VueCompo from './vue.processor.js'
 let requireLib = require('!raw-loader!./srcs/require.js').default
+let loadExt = require('!raw-loader!./srcs/loadExt.js').default
 
 function getTagContent (str, start, end) {
   if (str.indexOf(start) === -1) {
     return false
   }
   return str.slice(str.indexOf(start) + start.length, str.indexOf(end))
+}
+
+export const getID = () => {
+  return '_' + Math.random().toString(36).substr(2, 9)
 }
 
 const getCompoInfo = (compoStr) => {
@@ -21,12 +26,23 @@ const getCompoInfo = (compoStr) => {
   return output
 }
 
+/*
+
+// minified version (651B, and 336B with gzip)
+function loadExt(e,t){var s=this;s.files=e,s.js=[],s.head=document.getElementsByTagName("head")[0],s.after=t||function(){},s.loadStyle=function(e){var t=document.createElement("link");t.rel="stylesheet",t.type="text/css",t.href=e,s.head.appendChild(t)},s.loadScript=function(e){var t=document.createElement("script");t.type="text/javascript",t.src=s.js[e];var a=function(){++e<s.js.length?s.loadScript(e):s.after()};t.onload=function(){a()},s.head.appendChild(t)};for(var a=0;a<s.files.length;a++)/\.js$|\.js\?/.test(s.files[a])&&s.js.push(s.files[a]),/\.css$|\.css\?/.test(s.files[a])&&s.loadStyle(s.files[a]);s.js.length>0?s.loadScript(0):s.after()}
+
+// to use it
+new loadExt(["/path/file1.js","/path/file1.css", "file2.js?nocache="+(new Date().getTime()), "file3.js"], function() {
+  console.log("all loaded");
+})
+
+*/
+
 // var dynamicSpread = require('babel-plugin-transform-object-rest-spread')
 // Babel.registerPlugin('transform-object-rest-spread', dynamicSpread)
 
-Babel['umd'] = false
-if (!Babel['umd']) {
-  Babel['umd'] = true
+if (!window['babel-umd']) {
+  window['babel-umd'] = true
   var umd = require('babel-plugin-transform-es2015-modules-umd')
   Babel.registerPlugin('transform-es2015-modules-umd', umd)
 }
@@ -192,11 +208,21 @@ var compileEach = ({ path, src }) => {
 // default files
 var DefaultFilesList = [
   {
-    path: './main.js',
+    path: './share.js',
+    _id: getID(),
     type: 'file',
-    isFolder: false,
     src: `
-import { gets } from './share.js'
+export { gets } from './src/app.js'
+export const random = Math.random();
+
+`
+  },
+  {
+    path: './view.js',
+    _id: getID(),
+    type: 'file',
+    src: `
+import { gets, random } from './share.js'
 import fun from './src/fun.js'
 
 let i = 0;
@@ -205,25 +231,27 @@ setInterval(() => {
   i++
 }, 10)
 
+Resources.scripts([
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r119/three.min.js'
+]).then(() => {
+
+})
+
 let omg = async () => {
-  let t = await gets()
-  console.log(t)
+  // let t = await gets()
+  console.log(random)
+  for (let kn in Resources.all) {
+    let item = Resources.all[kn]
+    console.log(item.random)
+  }
 }
 omg()
 `
   },
   {
-    path: './share.js',
-    type: 'file',
-    isFolder: false,
-    src: `
-export { gets } from './src/app.js'
-`
-  },
-  {
     path: './src/fun.js',
+    _id: getID(),
     type: 'file',
-    isFolder: false,
     src: `
 const fun = () => "Hello Fun fun World";
 export default fun;
@@ -231,21 +259,21 @@ export default fun;
   },
   {
     path: './src/app.js',
+    _id: getID(),
     type: 'file',
-    isFolder: false,
     src: `
 import boxV from './shader/box.vert'
 import boxF from './shader/box.frag'
 console.log(boxV);
 console.log(boxF);
-export const gets = async () => "Cannot read asdsadasd. lol";
+export const gets = async () => "this is some text";
 export default gets;
 `
   },
   {
     path: './src/shader/box.vert',
+    _id: getID(),
     type: 'file',
-    isFolder: false,
     src: `
 // GLSL VERTEX SHADER
 uniform vec2 resolution;
@@ -255,8 +283,8 @@ main () {
   },
   {
     path: './src/shader/box.frag',
+    _id: getID(),
     type: 'file',
-    isFolder: false,
     src: `
 // GLSL FRAGMENT SHADER
 uniform vec2 resolution;
@@ -325,6 +353,7 @@ export function flatToTree (files) {
   }, [])
 
   return {
+    _id: getID(),
     path: './',
     type: 'folder',
     isFolder: true,
@@ -375,10 +404,10 @@ export function treeToFlat (tree) {
     return e.type === 'file'
   }).map(e => {
     return {
+      _id: e._id,
       path: e.path,
       src: e.src,
-      type: e.type,
-      isFile: e.type === 'file'
+      type: e.type
     }
   })
   return result
@@ -394,65 +423,162 @@ export const getDefaultTree = () => {
   return JSON.parse(JSON.stringify(flatToTree(DefaultFilesList)))
 }
 
-export const compilTree = async ({ tree = DefaultFilesTree }) => {
-  return compileList({ files: treeToFlat(tree) })
-}
-
-export const getNewItem = ({ path }) => {
+export const getNewFileObject = ({ path }) => {
   return {
+    _id: getID(),
     children: [],
-    name: 'new item.txt',
-    isFile: true,
+    name: 'new.js',
     type: 'file',
-    path:  path + '/new item.txt',
+    path:  path + '/new.js',
     src: `${path}\nsome new code`
   }
 }
 
 export const addFolder = ({ folder }) => {
-  let item = getNewItem({ path: folder.path })
+  let item = getNewFileObject({ path: folder.path })
   folder.children.push(item)
 }
 
-export const compileList = ({ files = DefaultFilesList }) => {
+export const compilTree = async ({ packageName, dependencies, type, tree = DefaultFilesTree }) => {
+  return compileList({ packageName, dependencies, type, files: treeToFlat(tree) })
+}
+
+export const compileList = ({ packageName = 'default-package', dependencies, type, files = DefaultFilesList }) => {
+  files = files.map(e => {
+    e.path = path.join(`./${packageName}/`, e.path)
+    return e
+  })
   return Promise.all(files.map((file) => {
     return compileEach(file)
   })).then((all) => {
     var modulesCodes = all.reduce((accu, val) => {
-      return accu + '\n\n' + val.output
+      return accu + '\n\n\n' + val.output
     }, '')
-    // var rand = (Math.random() * 100000000000000).toFixed(0)
-    var result = `
-${requireLib}
 
-(function(){
-  ${modulesCodes}
+    let names = dependencies.map(e => e.name)
+    // + 1 means the view package
 
-  BasicImport(['./main.js'], function (item) {
-  });
-  BasicImport(['./share.js'], function (item) {
-    console.log(item)
-  });
+    if (type === 'view') {
+      let result = `
+  (function(){
+    ${modulesCodes}
 
-}());
-`
-    return result
+    window.PACKAGE_NAME = ${JSON.stringify(packageName)};
+    window.PACKAGE_LIST = ${JSON.stringify(names)};
+
+    window.COMPUTE_PLATFORM_PACKAGES = window.COMPUTE_PLATFORM_PACKAGES || {}
+
+    window.Resources = {
+      all: window.COMPUTE_PLATFORM_PACKAGES,
+      names: window.PACKAGE_LIST,
+      onReady: () => {
+        return new Promise((resolve) => {
+          let tt = setInterval(() => {
+            let all = window.COMPUTE_PLATFORM_PACKAGES
+            let names = window.Resources.names
+            if (Object.keys(all).length === names.length) {
+              clearInterval(tt)
+              resolve()
+            }
+          })
+        })
+      },
+      ensure: (items) => {
+        return new Promise((resolve) => {
+          new loadExt([...items], function() {
+            console.log("all loaded", items);
+            resolve()
+          })
+        })
+      },
+      urls: new Map(),
+      scripts: (items) => {
+        return Promise.all(items.map(resourceURL =>  {
+          let getStuff = () => {
+            if (window.Resources.urls.has(resourceURL)) {
+              return Promise.resolve(window.Resources.urls.get(resourceURL))
+            }
+
+            return fetch(resourceURL, {
+              method: 'get'
+            })
+            .then(function(body){
+              return body.text();
+            })
+          }
+
+          return getStuff().then((text) => {
+            window.Resources.urls.set(resourceURL, text)
+            let appScriptBlob = new Blob([text], { type: 'text/javascript' })
+            let appScriptURL = URL.createObjectURL(appScriptBlob)
+            let script = document.createElement('script')
+            script.src = appScriptURL;
+            document.body.appendScript(script)
+
+            return { text, url: appScriptURL }
+          })
+        })).catch(console.log)
+      }
+    }
+
+    window.Resources.onReady().then(() => {
+      BasicImport(['./' + window.PACKAGE_NAME + '/view.js'], function () {
+      });
+    })
+  }());
+  `
+      return result
+    } else if (type === 'share') {
+      let result = `
+      (function(){
+        ${modulesCodes}
+
+        BasicImport(['./${packageName}/share.js'], function (item) {
+          console.log(item)
+          window.COMPUTE_PLATFORM_PACKAGES = window.COMPUTE_PLATFORM_PACKAGES || {}
+          window.COMPUTE_PLATFORM_PACKAGES['${packageName}'] = item
+          window.dispatchEvent(new Event('package-loaded'))
+        });
+
+      }());
+      `
+      return result
+    }
+
   })
 }
 
 let html = require('!raw-loader!./srcs/index.html').default
 
-export const makeURLByTree = async ({ tree }) => {
-  let appJsCode = await compilTree({ tree })
-  let appScriptBlob = new Blob([appJsCode], { type: 'text/javascript' })
+export const url2tag = (appScriptURL) => `<script src="${appScriptURL}"></script>`
+
+export const js2tag = ({ js }) => {
+  let appScriptBlob = new Blob([js], { type: 'text/javascript' })
   let appScriptURL = URL.createObjectURL(appScriptBlob)
-  let appScriptTag = `<script src="${appScriptURL}"></script>`
+  return url2tag(appScriptURL)
+}
+
+let DefaultPackages = [
+]
+
+export const makeURLByPackage = async ({ pack = { tree: getDefaultTree() }, dependencies = DefaultPackages }) => {
+  let appJsCode = await compilTree({ packageName: pack.name, type: 'view', dependencies, tree: pack.tree })
+  let mainTag = js2tag({ js: appJsCode })
+  let requireTag = js2tag({ js: requireLib + '\n' + loadExt })
+
+  let depTags = ''
+  for (let kn in dependencies) {
+    let pack = dependencies[kn]
+    let shareJSCode = await compilTree({ packageName: pack.name, type: 'share', dependencies, tree: pack.tree })
+    depTags += js2tag({ js: shareJSCode })
+  }
 
   let HTML = html + ''
   let appTag = `<div id="app"></div>`
-  HTML = HTML.replace(`${appTag}`,`${appTag}${appScriptTag}`)
+  HTML = HTML.replace(`${appTag}`,`${appTag}${requireTag}${mainTag}${depTags}`)
 
   let blob = new Blob([HTML], { type: 'text/html' })
   let htmlURL = URL.createObjectURL(blob)
   return htmlURL
 }
+

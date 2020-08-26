@@ -66,8 +66,8 @@ export const getWin = () => {
     type: 'purple',
     order: 0,
     pos: {
-      x: 50,
-      y: 50,
+      x: window.innerWidth - 650 - 15,
+      y: 15,
       w: 650,
       h: 600,
       s: 1

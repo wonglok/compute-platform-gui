@@ -286,7 +286,7 @@ export default {
       editor.setTheme('ace/theme/' + theme)
       editor.session.setValue(this.value, 1)
       editor.session.setOptions({ tabSize: 2, useSoftTabs: true })
-      editor.setOptions({ fontSize: '12px' })
+      editor.setOptions({ fontSize: '13px' })
       editor.session.setOption('useWorker', false)
 
       editor.on('change', function () {

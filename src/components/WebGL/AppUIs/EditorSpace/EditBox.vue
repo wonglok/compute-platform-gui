@@ -19,7 +19,7 @@ limitations under the License.
 -->
 
 <template>
-  <div :style="getBoxLayoutStyle()" @click="focusApp">
+  <div :style="getBoxLayoutStyle()" @click="focusApp" >
     <WinTitleBox class="relative" @gear="$emit('gear', $event)" v-if="wins && win" :wins="wins" :win="win">
       <slot :class="{ 'pointer-events-none select-none': isDown }"></slot>
       <div class="full absolute top-0 left-0" v-show="isDown"></div>
