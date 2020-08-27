@@ -76,21 +76,21 @@ out.w = 1;`
           type: 'sampler2D',
           updater: 'mic',
           value: null
-        },
-        {
-          name: 'speed',
-          type: 'float',
-          updater: 'slider',
-          value: 0
-        },
-        {
-          name: 'color',
-          type: 'vec3',
-          updater: 'picker',
-          value: {
-            x: 0, y: 0, z: 0
-          }
         }
+        // {
+        //   name: 'speed',
+        //   type: 'float',
+        //   updater: 'slider',
+        //   value: 0
+        // },
+        // {
+        //   name: 'color',
+        //   type: 'vec3',
+        //   updater: 'picker',
+        //   value: {
+        //     x: 0, y: 0, z: 0
+        //   }
+        // }
       ],
       varyingsStr: glsl`varying highp vec3 vPos;
 varying vec2 vUv;`,
