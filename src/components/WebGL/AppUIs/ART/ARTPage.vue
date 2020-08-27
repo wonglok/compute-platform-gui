@@ -1,14 +1,13 @@
 <template>
   <div class="w-full h-full relative">
-    <div v-if="art" class="h-full relative w-9/12">
+    <div v-if="art" class="h-full relative w-6/12">
       <div class="flex items-center p-3 border-b border-black" style="height: 50px;">
         Graphics Pipeline
         <span class="px-1">::</span>
         <select class="cursor-pointer" :value="art.config.WIDTH" @change="art.config.WIDTH = $event.target.value; flush()">
-          <option value="768">Size 768x768</option>
-          <option value="512">Size 512x512</option>
-          <option value="256">Size 256x256</option>
-          <option value="128">Size 128x128</option>
+          <option value="64">Size 64x64x64</option>
+          <option value="48">Size 48x48x48</option>
+          <option value="32">Size 32x32x32</option>
         </select>
 
         <span class="px-1">/</span>
@@ -26,7 +25,8 @@
       </div>
 
       <div v-if="settings === 'attributes'" class="p-3 border-b border-black flex items-center" style="height: calc(50px);">
-        <span @click="addNewAttr({ attrs: art.config.extraAttrs })">+ Attributes</span> <span class="px-1">::</span>
+        <span @click="addNewAttr({ attrs: art.config.extraAttrs })">+ Attributes</span>
+        <span class="px-1">::</span>
         <span :key="attr.name" v-for="(attr, i) in art.config.extraAttrs" @click="now.attr = attr">
           {{ attr.name }}
           <span class="px-1" v-if="i !== art.config.extraAttrs.length - 1">/</span>
@@ -34,11 +34,22 @@
       </div>
 
       <div v-if="settings === 'uniforms'" class="p-3 border-b border-black flex items-center" style="height: calc(50px);">
-        Uniforms <span class="px-1">::</span>
-        <span :key="unoform.name" v-for="(unoform, i) in art.config.extraUnifroms" @click="now.unoform = unoform">
-          {{ unoform.name }}
+        <span @click="addNewUniforms({ uniforms: art.config.extraUnifroms })">+ Uniforms</span>
+        <span class="px-1">::</span>
+        <span :key="uniform.name" v-for="(uniform, i) in art.config.extraUnifroms" @click="now.uniform = uniform">
+          {{ uniform.name }}
           <span class="px-1" v-if="i !== art.config.extraUnifroms.length - 1">/</span>
         </span>
+      </div>
+
+      <div v-if="panel === 'uniforms'" class="" style="height: calc(100% - 50px * 2);">
+        <div v-if="art && now.uniform" :key="now.uniform.name" class="p-3">
+          <div class="py-2">
+            Current Uniform: {{ now.uniform.name }}
+          </div>
+
+          <Mic v-if="now.uniform.updater === 'mic'" :uniform="now.uniform"></Mic>
+        </div>
       </div>
 
       <div v-if="panel === 'attributes'" class="" style="height: calc(100% - 50px * 2);">
@@ -62,7 +73,7 @@
         <div
         style="height: calc(100% - 50px);"
         class="">
-          <ACE2
+          <ACEFixedPos
             v-if="art && now.attr"
             @save="(v) => {
               now.attr.terser = v; now.attr.needsUpdate = true; flush()
@@ -72,16 +83,16 @@
             v-model="now.attr.terser"
             @input="(v) => { now.attr.terser = v; now.attr.needsUpdate = true; }"
             @slider="(v) => { now.attr.terser = v; now.attr.needsUpdate = true; }"
-            theme="monokai"
+            theme="chrome"
             width="100%"
             :height="'100%'"
           >
-          </ACE2>
+          </ACEFixedPos>
         </div>
       </div>
 
       <div v-if="panel === 'core'" class="" style="height: calc(100% - 50px * 2);">
-        <ACE2
+        <ACEFixedPos
           v-if="art && now.code"
           @save="(v) => {
             now.code.setter(v)
@@ -91,11 +102,11 @@
           v-model="now.code.src"
           @input="(v) => { now.code.setter(v) }"
           @slider="(v) => { now.code.setter(v) }"
-          theme="monokai"
+          theme="chrome"
           width="100%"
           :height="'100%'"
         >
-        </ACE2>
+        </ACEFixedPos>
 
         <div class="full flex justify-center items-center" v-else>
           Code Editor
@@ -104,7 +115,7 @@
 
     </div>
 
-    <div class="absolute top-0 right-0 w-3/12 h-full z-50 text-white ">
+    <div class="absolute top-0 right-0 w-6/12 h-full z-50 text-white ">
       <GLArtCanvas :rounded="'0px 0px 0px 0px'" :bgcolor="'#232323'" class="full">
         <ART @art="art = $event; setup(art)"></ART>
       </GLArtCanvas>
@@ -128,9 +139,10 @@ export default {
       now: {
         code: false,
         attr: false,
+        uniform: false,
       },
-      settings: 'core',
-      panel: 'core',
+      settings: 'uniforms',
+      panel: 'uniforms',
 
       current: false,
       art: false,
@@ -138,6 +150,10 @@ export default {
     }
   },
   methods: {
+    addNewUniforms ({ uniforms }) {
+      uniforms.push(this.art.getNewUniform())
+      this.flush()
+    },
     addNewAttr ({ attrs }) {
       attrs.push(this.art.getNewAttr())
       this.flush()
@@ -173,6 +189,7 @@ export default {
         }
       ]
       this.now.code = this.coreCodes[0]
+      this.now.uniform = this.art.config.extraUnifroms[0]
     },
     onChangeAttrType ({ type, attr }) {
       if (type === 'float') {

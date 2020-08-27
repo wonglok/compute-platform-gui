@@ -2,7 +2,7 @@
   <div class="" :style="{height: height ? px(height) : '100%',width: width ? px(width) : '100%'}">
     <div ref="mounter" class="full">
     </div>
-    <div class=" absolute" :style="{ zIndex: 300, left: widget.pageX + 'px', top: widget.pageY + 25 + 'px' }" ref="widget" v-show="widget.display">
+    <div class="fixed" :style="{ zIndex: 300, left: widget.pageX + 'px', top: widget.pageY + 25 + 'px' }" ref="widget" v-show="widget.display">
       <Chrome v-if="widget.type === 'color'" v-model="current.color" @input="onChangeColor($event)"></Chrome>
       <input v-if="widget.type === 'number'" v-model="current.number" style="width: 350px" min="-100" max="100" step="0.001" @input="onChangeNumber($event.target.value)" type="range" />
     </div>
@@ -175,8 +175,8 @@ export default {
 
         let rect = this.$el.getBoundingClientRect()
 
-        this.widget.pageX = pageX - rect.left + -50
-        this.widget.pageY = pageY - rect.top + 150
+        this.widget.pageX = pageX// + rect.left + -50
+        this.widget.pageY = pageY// + rect.top + 150
         if (text.indexOf('#') === 0 && text.length === 7) {
           console.log('isHexColorString', range)
           this.widget.display = true

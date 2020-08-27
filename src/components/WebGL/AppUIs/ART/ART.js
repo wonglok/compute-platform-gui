@@ -33,19 +33,26 @@ export class ART {
       name: 'specialSpeed_' + (Math.random() * 100).toFixed(0),
       isDynamic: false,
       terser: `
-// 'x', 'y', 'z', 'dimension', 'total', 'pointID', 'vertexID', 'out'
+// 'x', 'y', 'z', 'dimension', 'totalPoints', 'pointID', 'vertexID', 'totalVetex', 'out'
 
-out.x = x - dimension * 0.5
-out.y = y - dimension * 0.5
-out.z = z - dimension * 0.5
+out.x = x - dimension * 0.5;
+out.y = y - dimension * 0.5;
+out.z = z - dimension * 0.5;
 
-out.w = 1`
+out.w = 1;`
     }
   }
-
+  getNewUniform () {
+    return {
+      name: 'motion_' + (Math.random() * 100).toFixed(0),
+      type: 'float',
+      updater: 'slider',
+      value: 0
+    }
+  }
   getDefaultConfig () {
     return {
-      WIDTH: 512,
+      WIDTH: 48,
       extraAttrs: [
         {
           needsUpdate: true,
@@ -54,16 +61,22 @@ out.w = 1`
           name: 'specialColor',
           isDynamic: false,
           terser: `
-// 'x', 'y', 'z', 'dimension', 'total', 'pointID', 'vertexID', 'out'
+//'x', 'y', 'z', 'dimension', 'totalPoints', 'pointID', 'vertexID', 'totalVetex', 'out'
 
-out.x = x - dimension * 0.5
-out.y = y - dimension * 0.5
-out.z = z - dimension * 0.5
+out.x = x - dimension * 0.5;
+out.y = y - dimension * 0.5;
+out.z = z - dimension * 0.5;
 
-out.w = 1`
+out.w = 1;`
         }
       ],
       extraUnifroms: [
+        {
+          name: 'mic',
+          type: 'sampler2D',
+          updater: 'mic',
+          value: null
+        },
         {
           name: 'speed',
           type: 'float',
@@ -77,15 +90,10 @@ out.w = 1`
           value: {
             x: 0, y: 0, z: 0
           }
-        },
-        {
-          name: 'mic',
-          type: 'sampler2D',
-          updater: 'mic',
-          value: null
         }
       ],
-      varyingsStr: glsl`varying highp vec3 vPos;`,
+      varyingsStr: glsl`varying highp vec3 vPos;
+varying vec2 vUv;`,
       vertexMain: glsl`
         /*
           LIBRARY
@@ -217,6 +225,8 @@ out.w = 1`
             isInvalid = true;
           }
 
+          vec4 sound = texture2D(mic, uv);
+
           if (!isInvalid) {
             float dimension = (pow(totalSquares, 1.0 / 3.0));
 
@@ -240,7 +250,7 @@ out.w = 1`
             float az = 0.0;
             float el = 0.0;
             toBall(pos.xyz, az, el);
-            pos.xyz = fromBall(50.0, az, el);
+            pos.xyz = fromBall(50.0 + sound.r * 22.8, az, el);
 
             float pX = pos.x;
             float pY = pos.y;
@@ -250,21 +260,23 @@ out.w = 1`
             pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateY(time + pY * piz) * pos.xyz;
           }
 
-          if (squareIDX > 1024.0 * 14.5 && mod(squareIDX, 6.0) != 0.0) {
-            pos = vec4(0.0);
-          }
+          // if (squareIDX > 1024.0 * 14.5 && mod(squareIDX, 6.0) != 0.0) {
+          //   pos = vec4(0.0);
+          // }
 
           gl_Position = projectionMatrix * modelViewMatrix * vec4(pos);
           vPos = pos.xyz;
+          vUv = uv;
         }
       `,
       fragmentMain: glsl`
         void main (void) {
+          vec4 sound = texture2D(mic, vUv);
           vec3 v_tt = normalize(vPos);
           gl_FragColor = vec4(
-            0.25 + abs(v_tt.x),
-            0.75 + abs(v_tt.y),
-            0.25 + abs(v_tt.z),
+            sound.r + 0.25 + abs(v_tt.x),
+            sound.r + 0.75 + abs(v_tt.y),
+            sound.r + 0.25 + abs(v_tt.z),
             0.8
           );
         }
@@ -286,6 +298,7 @@ out.w = 1`
       let geo = new BufferGeometry()
       geo.setAttribute('position', new BufferAttribute(this.makePos(), 3))
       geo.setAttribute('meta', new BufferAttribute(this.makeMeta(), 4))
+      geo.setAttribute('uv', new BufferAttribute(this.makeMetaUV(), 2))
       this.geo = geo
     }
 
@@ -315,8 +328,10 @@ out.w = 1`
 
     this.uniformSignLast = this.uniformSign
     this.uniformSign = Object.keys(uniforms).join('-')
+    let UVSize = Math.pow(config.WIDTH * config.WIDTH * config.WIDTH, 0.5).toFixed(1)
 
     let vertexShader = glsl`
+      #define RESOLUTION vec2(${UVSize}, ${UVSize})
       uniform float time;
       attribute vec4 meta;
 
@@ -328,8 +343,9 @@ out.w = 1`
     `
 
     let fragmentShader = glsl`
+      #define RESOLUTION vec2(${UVSize}, ${UVSize})
       uniform float time;
-
+      ${uniformStr}
       ${config.varyingsStr}
 
 
@@ -353,6 +369,10 @@ out.w = 1`
 
     this.onLoop(() => {
       uniforms.time.value = window.performance.now() * 0.001
+
+      config.extraUnifroms.forEach(uniform => {
+        uniforms[uniform.name] = { value: uniform.value }
+      })
     })
 
     this.out.o3d.children.forEach(sub => {
@@ -364,11 +384,11 @@ out.w = 1`
   makeTerser ({ attr }) {
     let ARR_VALUE = []
     let WIDTH = this.width
-    let dimension = Math.floor(Math.pow(WIDTH * WIDTH, 1 / 3))
+    let dimension = Math.floor(Math.pow(WIDTH * WIDTH * WIDTH, 1 / 3))
     let total = dimension * dimension * dimension
     let iii = 0
 
-    let fnCall = new Function('x', 'y', 'z', 'dimension', 'total', 'pointID', 'vertexID', 'out', attr.terser)
+    let fnCall = new Function('x', 'y', 'z', 'dimension', 'totalPoints', 'pointID', 'vertexID', 'totalVetex', 'out', attr.terser)
 
     var out = {
       x: 0,
@@ -382,7 +402,7 @@ out.w = 1`
           // console.log(iii)
           let id = iii / attr.count
 
-          fnCall(ix, iy, iz, dimension, total, id, iii, out)
+          fnCall(ix, iy, iz, dimension, total, id, iii, total * attr.count, out)
 
           if (attr.count >= 1) {
             ARR_VALUE[iii + 0] = out.x // square vertex ID
@@ -406,7 +426,7 @@ out.w = 1`
   makeMeta () {
     let ARR_VALUE = []
     let WIDTH = this.width
-    let dimension = Math.floor(Math.pow(WIDTH * WIDTH, 1 / 3))
+    let dimension = Math.floor(Math.pow(WIDTH * WIDTH * WIDTH, 1 / 3))
     let total = dimension * dimension * dimension
     let iii = 0
     for (var ix = 0; ix < dimension; ix++) {
@@ -428,10 +448,49 @@ out.w = 1`
     }
     return new Float32Array(ARR_VALUE)
   }
+  makeMetaUV () {
+    /*
+    float dimension = (pow(totalSquares, 1.0 / 2.0));
+
+    float dX = mod(abs(squareIDX / pow(dimension, 0.0)), dimension) - dimension * 0.5;
+    float dY = mod(abs(squareIDX / pow(dimension, 1.0)), dimension) - dimension * 0.5;
+    */
+    let mod = (a, b) => {
+      return a % b
+    }
+
+    let ARR_VALUE = []
+    let WIDTH = this.width
+    let dimension = Math.floor(Math.pow(WIDTH * WIDTH * WIDTH, 1 / 3))
+    let total = dimension * dimension * dimension
+    let iii = 0
+
+    let totalSquares = total / 6.0
+    let dimens = (Math.pow(totalSquares, 1.0 / 2.0));
+    for (var ix = 0; ix < dimension; ix++) {
+      for (var iy = 0; iy < dimension; iy++) {
+        for (var iz = 0; iz < dimension; iz++) {
+          // console.log(iii)
+          let id = iii / 2
+
+          let squareIDX = Math.floor(id / 6)
+
+          let dU = mod(Math.abs(squareIDX / Math.pow(dimens, 0.0)), dimens) / dimens;
+          let dV = mod(Math.abs(squareIDX / Math.pow(dimens, 1.0)), dimens) / dimens;
+
+          ARR_VALUE[iii + 0] = dU // square vertex ID
+          ARR_VALUE[iii + 1] = dV // square ID
+
+          iii += 2
+        }
+      }
+    }
+    return new Float32Array(ARR_VALUE)
+  }
   makePos () {
     let ARR_VALUE = []
     let WIDTH = this.width
-    let dimension = Math.floor(Math.pow(WIDTH * WIDTH, 1 / 3))
+    let dimension = Math.floor(Math.pow(WIDTH * WIDTH * WIDTH, 1 / 3))
     // let total = WIDTH * WIDTH
     let iii = 0
     for (var ix = 0; ix < dimension; ix++) {

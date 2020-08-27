@@ -102,6 +102,3 @@ function handleSuccess( stream ) {
     var sound = new THREE.Audio( listener );
 }
 */
-
-export var APIs = {
-}
