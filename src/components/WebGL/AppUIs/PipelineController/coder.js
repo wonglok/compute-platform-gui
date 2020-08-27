@@ -75,6 +75,26 @@ export const makeTools = () => {
             }
           }
         ]
+      },
+      {
+        id: rID(),
+        put: false,
+        pull: false,
+        type: 'ShaderMaterial',
+        data: {
+          times: 5
+        },
+        children: [
+          {
+            id: rID(),
+            put: false,
+            pull: false,
+            type: 'mover2D.moveBy',
+            data: {
+              amount: 1
+            }
+          }
+        ]
       }
     ]
   }
@@ -98,8 +118,9 @@ export const makeDemo1 = () => {
       children: [
       ]
     },
+
     tree: {
-      type: 'program entry point',
+      type: 'cpu',
       children: [
         {
           id: rID(),

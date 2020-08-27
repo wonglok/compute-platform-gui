@@ -1,33 +1,45 @@
 <template>
-<div class="editor-2D">
+<div class="editor-2D text-sm h-full">
 
-  <div class="horizontal">
-    <ul v-if="tools">
-      <LoopItem
-        class="item"
-        :model="tools"
-      />
-    </ul>
+  <div class="horizontal h-full">
+    <div class="h-full ">
 
-    <div>
-      <ul v-if="current && current.blockers && current.blockers.bin">
+      <ul class="cmd-row-col" v-if="tools">
         <LoopItem
           class="item"
-          :mode="'bin'"
-          :model="current.blockers.bin"
+          style="height: calc(100% - 20px); overflow-y: scroll;"
+          :parent="tools.children"
+          :model="tools"
         />
       </ul>
-      <ul v-if="current && current.blockers && current.blockers.tree">
+    </div>
+
+    <div class="h-full">
+      <ul class="cmd-row-col" v-if="current && current.blockers && current.blockers.tree">
         <LoopItem
           class="item"
+          style="height: calc(100% - 20px); overflow-y: scroll;"
+          :parent="current.blockers.tree.children"
           :model="current.blockers.tree"
+          @click="openWindow($event)"
+        />
+      </ul>
+    </div>
+
+    <div class="h-full">
+      <ul class="cmd-row-col" v-if="current && current.blockers && current.blockers.bin">
+        <LoopItem
+          class="item"
+          style="height: calc(100% - 20px); overflow-y: scroll;"
+          :mode="'bin'"
+          :parent="current.blockers.bin.children"
+          :model="current.blockers.bin"
         />
       </ul>
     </div>
 
   </div>
-  <pre>{{ coder.getCode(current.blockers.tree, current.blockers.tree.id) }}</pre>
-
+  <!-- <pre>{{ coder.getCode(current.blockers.tree, current.blockers.tree.id) }}</pre> -->
   <!-- <pre>{{ demo.tree }}</pre> -->
 
 </div>
@@ -75,6 +87,9 @@ export default {
     }
   },
   methods: {
+    openWindow ({ model, parent }) {
+      console.log(model, parent)
+    }
   }
 }
 </script>
@@ -97,6 +112,7 @@ export default {
 .bold {
   font-weight: bold;
 }
-
-
+.cmd-row-col{
+  height: calc(100% - 20px);
+}
 </style>

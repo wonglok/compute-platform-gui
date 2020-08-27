@@ -17,7 +17,6 @@ export const getID = () => {
 
 // default files
 var DefaultFilesList = [
-
   {
     path: './share.js',
     _id: getID(),

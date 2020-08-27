@@ -7,6 +7,10 @@ export const routes = [
     component: () => import('./components/WebGL/AppUIs/Landing/LandingPage.vue')
   },
   {
+    path: '/art',
+    component: () => import('./components/WebGL/AppUIs/ART/ARTPage.vue')
+  },
+  {
     path: '/win',
     component: () => import('./components/WebGL/AppUIs/EditorUnit/EditorUnit.vue')
   },

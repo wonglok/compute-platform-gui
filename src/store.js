@@ -7,7 +7,7 @@ export const store = create(set => ({
     return {
       wins: [
         // UI.getWin({ tite: 'Editor', appName: 'editor' }),
-        UI.getWin({ title: 'Project', appName: 'project' }, { x: 15, y: 15, w: 690, h: 570 })
+        UI.getWin({ title: 'Project', appName: 'project' }, { x: 15, y: 15, w: 1024, h: 600 })
       ]
     }
   }),
