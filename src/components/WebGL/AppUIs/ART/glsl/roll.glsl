@@ -132,8 +132,6 @@ void main (void) {
     isInvalid = true;
   }
 
-
-
   if (!isInvalid) {
     float dimension2D = ceil(pow(totalSquares, 0.5));
     float d2X = (squareIDX / dimension2D) * 2.0 - dimension2D;
@@ -142,25 +140,28 @@ void main (void) {
     vUv.x = (squareIDX / dimension2D) / dimension2D;
     vUv.y = (mod(squareIDX, dimension2D)) / dimension2D;
 
-    vec4 past = texture2D(mic, vUv);
-    vec4 now = texture2D(micNow, vUv);
+    vec4 past = texture2D(mic, vUv.yx);
+    vec4 now = texture2D(micNow, vUv.yx);
 
-    float gapper = 2.0;
+    float gapperX = 5.0;
+    float gapperY = 2.0;
 
-    pos.x *= 2.0;
-    pos.y *= 2.0;
+    pos.x *= gapperX;
+    pos.y *= gapperY;
 
-    pos.x += d2X * gapper;
-    pos.y += d2Y * gapper;
+    pos.x += d2X * gapperX;
+    pos.y += d2Y * gapperY;
 
     pos.xyz *= 20.0;
 
-    pos.z += 47.90 * 100.0 * (now.r + past.r);
+    // pos.z += 47.90 * 100.0 * (now.r + past.r);
 
     float pX = pos.x;
     float pY = pos.y;
     float pZ = pos.z;
-    float piz = 0.001 * 2.0 * 3.14159265;
+    float piz = 0.1 * 2.0 * 3.14159265;
+
+    pos.xyz = rotateX(pos.x * 0.00001 * 46.12 + 0.001 * pos.x * now.x * 2.0 + pos.y * 0.001 * 1.76 * (now.x) * 1.0) * pos.xyz;
 
     // pos.xyz = rotateQ(normalize(vec3(1.0, pY * piz, 1.0)), time + pY * piz) * rotateY(time + pZ * piz) * pos.xyz;
     // pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pY * piz) * rotateZ(time + pZ * piz) * pos.xyz;
