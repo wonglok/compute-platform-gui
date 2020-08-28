@@ -125,6 +125,7 @@
     <div class="absolute top-0 right-0 w-5/12 h-full z-40 text-white ">
       <GLArtCanvas :rounded="'0px 0px 0px 0px'" :bgcolor="'#232323'" class="full">
         <ART @art="art = $event; setup(art)"></ART>
+        <GLArtCamControl></GLArtCamControl>
       </GLArtCanvas>
     </div>
 
