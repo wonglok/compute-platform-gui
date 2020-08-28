@@ -1,5 +1,6 @@
 import { BufferGeometry, Mesh, BufferAttribute, Object3D } from "three"
 import { ShaderMaterial, DoubleSide, Vector3 } from "three/build/three.module"
+import * as ArtCoder from '../ARTBlockers/art-coder.js'
 let glsl = (strings, ...args) => {
   let res = ''
 
@@ -50,9 +51,19 @@ out.w = 1;`
       value: 0
     }
   }
+  getBlockers () {
+    return {
+      type: 'blockers',
+      id: Math.random() + '',
+      vertexCode: '',
+      fragmentCode: '',
+      blockers: ArtCoder.makeDemo1()
+    }
+  }
   getDefaultConfig () {
     return {
       WIDTH: 48,
+      blockers: this.getBlockers(),
       extraAttrs: [
         {
           needsUpdate: true,
@@ -70,11 +81,12 @@ out.z = z - dimension * 0.5;
 out.w = 1;`
         }
       ],
-      extraUnifroms: [
+      extraUniforms: [
         {
           name: 'mic',
           type: 'sampler2D',
           updater: 'mic',
+          needsAuhtorises: true,
           value: null
         }
         // {
@@ -92,6 +104,9 @@ out.w = 1;`
         //   }
         // }
       ],
+
+      vertexBlockersCode: ``,
+      fragmentBlockersCode: ``,
       varyingsStr: glsl`varying highp vec3 vPos;
 varying vec2 vUv;`,
       vertexMain: glsl`
@@ -146,6 +161,7 @@ varying vec2 vUv;`,
             qx.y - qw.y,            qy + qw.x,              1.0 - (qq2.x + qq2.y)
           );
         }
+
         /*
           LIBRARY
         */
@@ -185,6 +201,8 @@ varying vec2 vUv;`,
         /* BALLIFY */
 
         void main (void) {
+          vUv = uv;
+
           float vertexIDX = meta.x;
           float squareIDX = meta.y;
           float totalSquares = meta.z;
@@ -264,21 +282,30 @@ varying vec2 vUv;`,
           //   pos = vec4(0.0);
           // }
 
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(pos);
+          vec4 dataOutput = pos;
+          vec4 defaultPosition = pos;
+
+          /* INSERT_BLOCKERS */
+
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(dataOutput);
           vPos = pos.xyz;
-          vUv = uv;
         }
       `,
       fragmentMain: glsl`
         void main (void) {
           vec4 sound = texture2D(mic, vUv);
           vec3 v_tt = normalize(vPos);
-          gl_FragColor = vec4(
+          vec4 dataOutput = vec4(
             sound.r + 0.25 + abs(v_tt.x),
             sound.r + 0.75 + abs(v_tt.y),
             sound.r + 0.25 + abs(v_tt.z),
             0.8
           );
+          vec4 defaultColor = dataOutput;
+
+          /* INSERT_BLOCKERS */
+
+          gl_FragColor = dataOutput;
         }
       `
     }
@@ -319,15 +346,15 @@ varying vec2 vUv;`,
     }
 
     let uniformStr = ``
-    config.extraUnifroms.forEach(uniform => {
+    config.extraUniforms.forEach(uniform => {
       uniformStr += `
         uniform ${uniform.type} ${uniform.name};
       `
       uniforms[uniform.name] = { value: uniform.value }
     })
-
     this.uniformSignLast = this.uniformSign
     this.uniformSign = Object.keys(uniforms).join('-')
+
     let UVSize = Math.pow(config.WIDTH * config.WIDTH * config.WIDTH, 0.5).toFixed(1)
 
     let vertexShader = glsl`
@@ -352,6 +379,10 @@ varying vec2 vUv;`,
       ${config.fragmentMain}
     `
 
+    let blockersToken = `/* INSERT_BLOCKERS */`
+    vertexShader = vertexShader.replace(blockersToken, config.blockers.vertexCode)
+    fragmentShader = fragmentShader.replace(blockersToken, config.blockers.fragmentCode)
+
     this.mat = new ShaderMaterial({
       uniforms,
       side: DoubleSide,
@@ -370,7 +401,7 @@ varying vec2 vUv;`,
     this.onLoop(() => {
       uniforms.time.value = window.performance.now() * 0.001
 
-      config.extraUnifroms.forEach(uniform => {
+      config.extraUniforms.forEach(uniform => {
         uniforms[uniform.name] = { value: uniform.value }
       })
     })

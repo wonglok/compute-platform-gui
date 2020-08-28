@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!api" class="p-2 border border-black inline-block rounded-full" @click="setup">Setup Mic</div>
+    <div v-if="!api" class="neu-md cursor-pointer px-4 py-3 inline-block rounded-full" @click="setup">Setup Mic</div>
   </div>
 </template>
 
@@ -27,7 +27,7 @@ export default {
         }
       }
       loop()
-    },
+    }
   },
   beforeDestroy () {
     // this.api = false

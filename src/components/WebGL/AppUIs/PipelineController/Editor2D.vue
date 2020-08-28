@@ -79,6 +79,7 @@ export default {
   watch: {
     formula () {
       this.current.formula = this.formula
+      this.$emit('code', this.formula)
     }
   },
   computed: {
