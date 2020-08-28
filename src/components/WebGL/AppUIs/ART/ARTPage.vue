@@ -45,7 +45,7 @@
         </span>
       </div>
 
-      <div v-if="settings === 'blockers'" class="p-3 border-b border-black flex items-center" style="height: calc(100% - 50px);">
+      <div v-if="settings === 'blockers'" class="p-3 flex items-center" style="height: calc(100% - 50px);">
         <ARTBlockers :art="art" v-if="art" :current="art.config.blockers" @change="onChangeCode($event)"></ARTBlockers>
       </div>
 

@@ -243,9 +243,13 @@ varying vec2 vUv;`,
             isInvalid = true;
           }
 
-          vec4 sound = texture2D(mic, uv);
 
           if (!isInvalid) {
+            float uvDimension = ceil(pow(totalSquares, 0.5));
+            vUv.x = (squareIDX / uvDimension) / uvDimension;
+            vUv.y = (mod(squareIDX, uvDimension)) / uvDimension;
+            vec4 sound = texture2D(mic, uv);
+
             float dimension = (pow(totalSquares, 1.0 / 3.0));
 
             float dX = mod(abs(squareIDX / pow(dimension, 0.0)), dimension) - dimension * 0.5;

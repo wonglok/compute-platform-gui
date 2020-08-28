@@ -131,6 +131,45 @@ export default {
           //   }
           // },
 
+          {
+            id: rID(),
+            put: true,
+            pull: true,
+            type: 'rotateX',
+            displayName: `RotateX`,
+            data: {
+              amount: 'time * 3.5',
+              select: 'xyz',
+              variableName: 'dataInput',
+            }
+          },
+
+          {
+            id: rID(),
+            put: true,
+            pull: true,
+            type: 'rotateY',
+            displayName: `RotateY`,
+            data: {
+              amount: 'time * 3.5',
+              select: 'xyz',
+              variableName: 'dataInput',
+            }
+          },
+
+          {
+            id: rID(),
+            put: true,
+            pull: true,
+            type: 'rotateZ',
+            displayName: `RotateZ`,
+            data: {
+              amount: 'time * 3.5',
+              select: 'xyz',
+              variableName: 'dataInput',
+            }
+          },
+
           ...this.getDeclearVariable(),
           this.getSampler2D(),
 
