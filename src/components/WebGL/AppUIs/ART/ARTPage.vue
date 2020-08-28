@@ -106,7 +106,7 @@
           style="height: 50px;"
         >
           <div>
-            <div class="inline-block px-2" @click="art.config.vertexMain = code.default; flush()" :key="key" v-for="(code, key) in GLSLExamples">{{ key }}</div>
+            <div class="inline-block px-2" @click="art.config.vertexMain = code.default; coreCodes[0].src = code.default; flush()" :key="key" v-for="(code, key) in GLSLExamples">{{ key }}</div>
           </div>
         </div>
 
@@ -179,8 +179,8 @@ export default {
         uniform: false,
       },
 
-      settings: 'blockers',
-      panel: 'blockers',
+      settings: 'core',
+      panel: 'core',
 
       current: false,
       art: false,
