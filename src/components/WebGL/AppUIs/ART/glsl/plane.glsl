@@ -135,22 +135,23 @@ void main (void) {
 
 
   if (!isInvalid) {
-    float dimension = ceil(pow(totalSquares, 0.5));
-    float dX = (squareIDX / dimension) * 2.0 - dimension;
-    float dY = (mod(squareIDX, dimension)) * 2.0 - dimension;
+    float dimension2D = ceil(pow(totalSquares, 0.5));
+    float d2X = (squareIDX / dimension2D) * 2.0 - dimension2D;
+    float d2Y = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
 
-    vUv.x = (squareIDX / dimension) / dimension;
-    vUv.y = (mod(squareIDX, dimension)) / dimension;
+    vUv.x = (squareIDX / dimension2D) / dimension2D;
+    vUv.y = (mod(squareIDX, dimension2D)) / dimension2D;
 
-    vec4 sound = texture2D(mic, vUv);
+    vec4 past = texture2D(mic, vUv);
+    vec4 now = texture2D(micNow, vUv);
 
-    float gapper = 2.0 + sound.b;
+    float gapper = 2.0 + now.r + past.r;
 
     pos.x *= 2.0;
     pos.y *= 2.0;
 
-    pos.x += dX * gapper;
-    pos.y += dY * gapper;
+    pos.x += d2X * gapper;
+    pos.y += d2Y * gapper;
 
     pos.xyz *= 20.0;
 

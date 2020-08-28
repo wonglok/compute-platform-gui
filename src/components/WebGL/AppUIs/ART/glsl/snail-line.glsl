@@ -151,20 +151,20 @@ void main (void) {
     pos.x += dX * gapper;
     pos.y += dY * gapper;
 
-    pos.xyz *= 13.0;
+    pos.xyz *= 1.0 + now.r * 0.1;
 
     float pX = pos.x;
     float pY = pos.y;
     float pZ = pos.y;
-    float piz = 0.0002* 2.0 * 3.14159265;
+    float piz = 0.001 * 2.0 * 3.14159265;
 
-    pos.xyz = rotateQ(normalize(vec3(1.0, pY * piz, 1.0)), time + pY * piz) * rotateY(time + pZ * piz) * pos.xyz;
-    pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pY * piz) * rotateZ(time + pZ * piz) * pos.xyz;
+    pos.xyz = rotateQ(normalize(vec3(1.0, pY * piz, 1.0)), time + pY * piz) * rotateY(now.r * 1.7 + time + pZ * piz) * pos.xyz;
+    pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pY * piz) * rotateZ(now.r * 1.7 +time + pZ * piz) * pos.xyz;
 
-    pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateY(time + pY * piz) * pos.xyz;
-    pos.z += sin(time * 20.0 + pX * piz * 1.333) * 69.29;
+    pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateY(now.r * 1.7 +time + pY * piz) * pos.xyz;
+    // pos.z += sin(time * 20.0 + pX * piz * 1.333) * 69.29;
 
-    pos.xyz *= 0.01;
+    pos.xyz *= 14.16 / 100.0;
     pos.w = 1.0;
   }
 

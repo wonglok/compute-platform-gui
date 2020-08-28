@@ -56,6 +56,7 @@
           </div>
 
           <Mic v-if="now.uniform.updater === 'mic'" :uniform="now.uniform"></Mic>
+          <MicNow v-if="now.uniform.updater === 'mic-now'" :uniform="now.uniform"></MicNow>
         </div>
       </div>
 
@@ -99,7 +100,21 @@
       </div>
 
       <div v-if="panel === 'core'" class="" style="height: calc(100% - 50px * 2);">
-        <ACEFixedPos
+        <div
+          v-if="art && now.code"
+          class="p-3 border-black border-b"
+          style="height: 50px;"
+        >
+          <div>
+            <div class="inline-block px-2" @click="art.config.vertexMain = code.default; flush()" :key="key" v-for="(code, key) in GLSLExamples">{{ key }}</div>
+          </div>
+        </div>
+
+        <div
+        style="height: calc(100% - 50px);"
+        class="">
+
+          <ACEFixedPos
           v-if="art && now.code"
           @save="(v) => {
             now.code.setter(v)
@@ -118,6 +133,10 @@
         <div class="full flex justify-center items-center" v-else>
           Code Editor
         </div>
+
+        </div>
+
+
       </div>
 
     </div>
@@ -130,9 +149,10 @@
     </div>
 
     <div v-if="art && art.config.extraUniforms.filter(e => e.needsAuhtorises && !e.value).length > 0" class="absolute top-0 right-0 w-5/12 h-full z-50" style="background-color: rgba(255,255,255,0.85);">
-      <div class="h-full flex justify-center items-center">
-        <div :key="ui" v-for="(uniform, ui) in art.config.extraUniforms">
+      <div class="h-full flex flex-col justify-center items-center">
+        <div :key="ui" v-for="(uniform, ui) in art.config.extraUniforms" class="mb-5">
           <Mic v-if="uniform.updater === 'mic'" :uniform="uniform"></Mic>
+          <MicNow v-if="uniform.updater === 'mic-now'" :uniform="uniform"></MicNow>
         </div>
       </div>
     </div>
@@ -143,7 +163,7 @@
 <script>
 import { ART } from './ART.js'
 import { getID } from '../../Core/O3DNode.js'
-
+import GLSLExamples from './glsl/glsl.js'
 export default {
   props: {
   },
@@ -152,6 +172,7 @@ export default {
   ],
   data () {
     return {
+      GLSLExamples,
       now: {
         code: false,
         attr: false,

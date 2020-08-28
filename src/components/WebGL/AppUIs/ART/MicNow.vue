@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div v-if="!api" class="neu-md cursor-pointer px-4 py-3 inline-block rounded-full" @click="setup">Setup History Mic</div>
+    <div v-if="!api" class="neu-md cursor-pointer px-4 py-3 inline-block rounded-full" @click="setup">Setup Realtime Mic</div>
   </div>
 </template>
 
 <script>
-import * as Mic from './Mic.js'
+import * as Mic from './MicNow.js'
 export default {
   props: {
     uniform: {}
