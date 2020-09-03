@@ -259,7 +259,6 @@ export default {
   background-color: #dededeef;
 }
 
-
 .splitpanes__pane {
   box-shadow: 0 0 5px rgba(0, 0, 0, .2) inset;
   justify-content: center;

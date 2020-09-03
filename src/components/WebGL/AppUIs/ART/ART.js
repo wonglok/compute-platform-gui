@@ -117,23 +117,7 @@ out.w = 1;`
       varyingsStr: glsl`varying highp vec3 vPos;
 varying vec2 vUv;`,
       vertexMain: require('raw-loader!./glsl/shield.glsl').default,
-      fragmentMain: glsl`
-        void main (void) {
-          vec4 sound = texture2D(mic, vUv);
-          vec3 v_tt = normalize(vPos);
-          vec4 dataOutput = vec4(
-            sound.r + 0.25 + abs(v_tt.x),
-            sound.r + 0.75 + abs(v_tt.y),
-            sound.r + 0.25 + abs(v_tt.z),
-            0.8
-          );
-          vec4 defaultColor = dataOutput;
-
-          /* INSERT_BLOCKERS */
-
-          gl_FragColor = dataOutput;
-        }
-      `
+      fragmentMain: require('raw-loader!./frag/main.glsl').default
     }
   }
   set config (v) {

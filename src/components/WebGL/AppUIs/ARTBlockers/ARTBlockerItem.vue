@@ -359,7 +359,7 @@ export default output
 .item{
   min-width: 200px;
   border-radius: 5px;
-  max-width: 250px;
+  max-width: 100%;
   margin: 15px 4px;
   padding: 5px 7px;
   border: rgb(20, 193, 236) solid 1px;

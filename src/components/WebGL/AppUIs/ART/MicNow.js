@@ -15,7 +15,7 @@ export const setup = () => {
     sound.setNodeSource( source );
 
     analyser = new AudioAnalyser(sound, fftSize)
-    console.log(analyser.data)
+    // console.log(analyser.data)
     texture = new DataTexture(analyser.data, fftSize / 2.0, 1.0, LuminanceFormat)
   });
 
