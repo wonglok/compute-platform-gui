@@ -73,7 +73,7 @@ export default {
 
     this.$root.escs = this.$root.escs || []
     this.$root.escs.push(() => {
-      let win = this.wins.find(e => e.show)
+      let win = this.wins.slice().reverse().filter(e => e.show)[0]
       if (win) {
         this.$core.removeWin({ win })
       }

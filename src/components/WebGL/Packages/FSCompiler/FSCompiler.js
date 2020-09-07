@@ -19,34 +19,37 @@ export const getID = () => {
 var DefaultFilesList = [
   {
     path: './package.js',
+    isPackageEntry: true,
+    isEntry: true,
     _id: getID(),
     type: 'file',
     src: `export { unit } from './package/main.js'`
   },
   {
-    path: './demo.js',
+    path: './preview.js',
     _id: getID(),
+    isPreviewEntry: true,
+    isEntry: true,
     type: 'file',
     src: `
 import { unit } from './package.js'
-import { DemoPreviewer } from './demo/DemoPreviewer.js'
+import { VisualEngine } from './preview/VisualEngine.js'
 
-let engine = new DemoPreviewer()
+let engine = new VisualEngine()
 engine.waitForSetup()
   .then(async () => {
     let visual = await unit.make(engine)
-    engine.preview(visual)
   })
 `
   },
   {
-    path: './demo/localForage.js',
+    path: './preview/localForage.js',
     _id: getID(),
     type: 'file',
     src: require('!raw-loader!./srcs/localforage.js').default
   },
   {
-    path: './demo/DemoPreviewer.js',
+    path: './preview/VisualEngine.js',
     _id: getID(),
     type: 'file',
     src: `
@@ -95,7 +98,7 @@ export const importCache = async (url) => {
   return MOD
 }
 
-export class DemoPreviewer {
+export class VisualEngine {
   constructor () {
     this.wait = this.setup()
   }
@@ -190,9 +193,6 @@ export class DemoPreviewer {
 
     return this
   }
-  preview (v) {
-    this.scene.add(v)
-  }
 }
 `
   },
@@ -205,7 +205,8 @@ import boxV from './shader/box.vert'
 import boxF from './shader/box.frag'
 
 export const unit = {
-  make: async ({ THREE, onLoop, onResize, onClean }) => {
+  make: async (engine) => {
+    let { THREE, onLoop, onResize, onClean, scene } = engine
     let { Mesh, BoxBufferGeometry, MeshBasicMaterial, Color } = THREE
     // let { GPUComputationRenderer } = await import('https://unpkg.com/three@0.119.1/examples/jsm/misc/GPUComputationRenderer.js')
 
@@ -230,7 +231,9 @@ export const unit = {
     onResize(() => {
 
     })
-    return box
+
+    scene.add(box)
+
   }
 }
 `
@@ -263,7 +266,7 @@ void main (void) {
   },
 
   {
-    path: './demo/util.js',
+    path: './preview/util.js',
     _id: getID(),
     type: 'file',
     src: `
@@ -387,12 +390,16 @@ export function treeToFlat (tree) {
   result = result.filter(e => {
     return e.type === 'file'
   }).map(e => {
-    return {
+    let r = {
+      ...e,
       _id: e._id,
       path: e.path,
       src: e.src,
       type: e.type
     }
+    delete r.parent
+    delete r.level
+    return r
   })
   return result
 }
@@ -474,7 +481,7 @@ export const makeUnitPreview = async ({ pack, others = '' }) => {
       name: 'main',
       list: getDefaultList()
     }
-    console.log('you missed pack')
+    console.log('You missed pack')
   }
 
   let code = await RollMeUp.buildInput({ pack, mode: 'view' })
@@ -500,7 +507,7 @@ export const makeUnitModule = async ({ pack }) => {
       name: 'makeUnitModule',
       list: getDefaultList()
     }
-    console.log('you missed pack')
+    console.log('You missed pack')
   }
 
   let code = await RollMeUp.buildInput({ pack, mode: 'package' })

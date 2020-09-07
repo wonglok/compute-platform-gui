@@ -1,6 +1,7 @@
 <template>
   <div :horizontal="true" class="full h-full relative overflow-hidden flex flex-col">
     <div @wheel.prevent="" @wheel.stop="" class="flex h-full">
+
       <div style="width: 270px; background-color: #09161e;" class="h-full p-4 " >
         <div :style="iframe ? 'height: calc(100% - ' + iframeHeight + 'px);' : 'height: calc(100%);'">
           <keep-alive>
@@ -12,6 +13,7 @@
           <iframe :src="unitWebURL" ref="iframer" class="w-full h-full" frameborder="0"></iframe>
         </div>
       </div>
+
       <div :style="{ width: 'calc(100% - 270px)', minWidth: '400px' }" class="h-full">
         <div style="height: 30px; background-color: #09161e;" class="text-white text-xs flex items-center">
           <div v-if="current">
@@ -277,10 +279,10 @@ export default {
       if (!this.tree) {
         return
       }
-      let module1 = {
-        name: 'myModule1',
-        list: treeToFlat(this.tree)
-      }
+      // let module1 = {
+      //   name: 'myModule1',
+      //   list: treeToFlat(this.tree)
+      // }
 
       let main = {
         name: 'myNewPackageName',

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- @texture = rtt -->
     <slot></slot>
   </div>
 </template>
@@ -8,6 +9,7 @@
 import { BoxBufferGeometry, CircleBufferGeometry, Color, Mesh, MeshStandardMaterial, PlaneBufferGeometry, Vector3 } from 'three'
 import O3DNode from '../../Core/O3DNode'
 import { make } from '../ARTBlockers/art-coder'
+import { loadTexture } from '../../Core/loadTexture'
 export default {
   props: {
     project: {},
@@ -25,7 +27,7 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     let scale = 4
     let boxDepth = 3 * scale
     let boxWidth = 40 * scale
@@ -99,12 +101,13 @@ export default {
       return baseMesh
     }
 
-    let makeButton = ({ corner, color = '#0000ff' }) => {
+    let makeButton = async ({ corner, color = '#0000ff' }) => {
       let geo = new CircleBufferGeometry(btnW, 32)
       let mat = new MeshStandardMaterial({ color: new Color(color), transparent: true })
       let btn = new Mesh(geo, mat)
       btn.name = corner
       btn.layers.enableAll()
+      btn.layers.disable(1)
 
       btn.rotation.x = Math.PI * -0.5
       btn.position.y += boxDepth * 0.5 + 1 + 1
@@ -139,6 +142,7 @@ export default {
         this.ctx.rayplay.remove(btn)
       })
 
+
       return btn
     }
 
@@ -170,23 +174,23 @@ export default {
 
       return screen
     }
-
+    let closeBtn = await loadTexture(require('./icon/close-circle.svg'))
     let baseMesh = makeBaseMesh()
-    let button1 = makeButton({ corner: 'tl', color: '#0000ff' })
+    // let button1 = makeButton({ corner: 'tl', color: '#0000ff' })
     let button2 = makeButton({ corner: 'tr', color: '#ff0000' })
-    let button3 = makeButton({ corner: 'bl', color: '#00ff00' })
-    let button4 = makeButton({ corner: 'br', color: '#00ffff' })
+    // let button3 = makeButton({ corner: 'bl', color: '#00ff00' })
+    // let button4 = makeButton({ corner: 'br', color: '#00ffff' })
 
-    baseMesh.add(button1)
+    // baseMesh.add(button1)
     baseMesh.add(button2)
-    baseMesh.add(button3)
-    baseMesh.add(button4)
+    // baseMesh.add(button3)
+    // baseMesh.add(button4)
 
     this.onClean(() => {
-      baseMesh.remove(button1)
+      // baseMesh.remove(button1)
       baseMesh.remove(button2)
-      baseMesh.remove(button3)
-      baseMesh.remove(button4)
+      // baseMesh.remove(button3)
+      // baseMesh.remove(button4)
     })
 
     let screen = makeScreen()

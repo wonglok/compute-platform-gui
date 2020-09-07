@@ -7,13 +7,14 @@ export async function buildInput ({ pack, mode = 'view' }) {
     filesMap[item.path] = item.src
   })
 
-  let entry = './package.js'
+  console.log(pack.list)
+  let entry = pack.list.find(e => e.isPackageEntry).path
 
   if (mode === 'view') {
-    entry = './demo.js'
+    entry = pack.list.find(e => e.isPreviewEntry).path
   }
   if (mode === 'package') {
-    entry = './package.js'
+    entry = pack.list.find(e => e.isPackageEntry).path
   }
 
   let inputOptions = {
