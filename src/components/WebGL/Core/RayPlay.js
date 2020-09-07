@@ -2,9 +2,12 @@
 import { Raycaster, Vector2 } from 'three'
 
 export class RayPlay {
-  constructor ({ mounter, onResize = () => {}, onLoop, camera, onClean = () => {} }) {
+  constructor ({ toucher, onResize = () => {}, onLoop, camera, onClean = () => {} }) {
     this.skip = true
     this.raycaster = new Raycaster()
+    this.setLayer = (v) => {
+      this.raycaster.layers.set(v)
+    }
     this.camera = camera
     this.activeTargets = []
     this.mouser = new Vector2(0, 0)
@@ -105,13 +108,13 @@ export class RayPlay {
             let first = tryhover[0]
             let userData = first.object.userData
             if (userData && userData.noHover) {
-              document.body.style.cursor = ''
+              toucher.style.cursor = 'auto'
             } else {
-              document.body.style.cursor = 'pointer'
+              toucher.style.cursor = 'pointer'
             }
           }
         } else {
-          document.body.style.cursor = ''
+          toucher.style.cursor = 'auto'
           this.activeTargets.forEach((sceneObj) => {
             let userData = sceneObj.userData
             userData.hovering = false
@@ -126,12 +129,12 @@ export class RayPlay {
         }
       }
     }
-    let rect = mounter.getBoundingClientRect()
+    let rect = toucher.getBoundingClientRect()
     onResize(() => {
-      rect = mounter.getBoundingClientRect()
+      rect = toucher.getBoundingClientRect()
     })
     onLoop(() => {
-      rect = mounter.getBoundingClientRect()
+      rect = toucher.getBoundingClientRect()
     })
     var onDocumentMouseMove = (event) => {
       this.skip = false
@@ -193,18 +196,20 @@ export class RayPlay {
       moveAmount = 0
     }
     onClean(() => {
-      document.body.style.cursor = ''
+      toucher.style.cursor = 'auto'
     })
 
-    mounter.addEventListener('mousedown', onMouseDown)
-    mounter.addEventListener('mouseup', onMouseUp)
-    mounter.addEventListener('mousemove', onMouseMove)
+    toucher.addEventListener('mousedown', onMouseDown)
+    toucher.addEventListener('mouseup', onMouseUp)
+    toucher.addEventListener('mousemove', onMouseMove)
 
-    mounter.addEventListener('touchstart', (evt) => { onStart(evt); onDocumentTouchMove(evt) }, { passive: false })
-    mounter.addEventListener('touchmove', onDocumentTouchMove, { passive: false })
-    mounter.addEventListener('mousemove', onDocumentMouseMove, { passive: false })
-    mounter.addEventListener('click', onDocumentClick, { passive: false })
-    mounter.addEventListener('touchend', onDocumentClick, { passive: false })
+    toucher.addEventListener('touchstart', (evt) => { onStart(evt); onDocumentTouchMove(evt) }, { passive: false })
+    toucher.addEventListener('touchmove', onDocumentTouchMove, { passive: false })
+    toucher.addEventListener('mousemove', onDocumentMouseMove, { passive: false })
+    toucher.addEventListener('click', onDocumentClick, { passive: false })
+    toucher.addEventListener('touchend', onDocumentClick, { passive: false })
+
+    // toucher.addEventListener('mousemove', onDocumentHover, { passive: false })
     onLoop(onDocumentHover)
   }
 }

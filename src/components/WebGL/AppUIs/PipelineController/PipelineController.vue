@@ -17,7 +17,7 @@ export default {
   data () {
     return {
       current: false,
-      api: this.$store.getState()
+      // api: this.$store.getState()
     }
   },
   methods: {

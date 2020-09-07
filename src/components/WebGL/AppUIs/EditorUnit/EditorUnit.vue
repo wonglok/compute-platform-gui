@@ -1,11 +1,18 @@
 <template>
-  <Splitpanes :horizontal="true" class="full relative overflow-hidden">
-    <Pane @wheel.prevent="" @wheel.stop="" class="flex" :d-style="iframe ? 'height: calc(100% - 250px);' : 'height: calc(100%);'">
-      <div style="width: 200px; background-color: #09161e;" class="h-full p-4 ">
-        <TreeItem class="select-none h-full overflow-y scrolling-touch" v-if="tree" @add-item="addItem" @click-item="clickItem" :item="tree"></TreeItem>
+  <div :horizontal="true" class="full h-full relative overflow-hidden flex flex-col">
+    <div @wheel.prevent="" @wheel.stop="" class="flex h-full">
+      <div style="width: 270px; background-color: #09161e;" class="h-full p-4 " >
+        <div :style="iframe ? 'height: calc(100% - ' + iframeHeight + 'px);' : 'height: calc(100%);'">
+          <keep-alive>
+            <TreeItem class="select-none h-full overflow-y scrolling-touch" v-if="tree" @add-item="addItem" @add-folder="addFolder" @click-item="clickItem" :item="tree"></TreeItem>
+          </keep-alive>
+        </div>
         <!-- <FolderTree class="full" :allowMultiselect="false" @nodeclick="onClick" v-model="tree.children"></FolderTree> -->
+        <div v-if="iframe" class="w-full" :style="{ height: iframeHeight + 'px', 'background-color': '#09161e' }">
+          <iframe :src="unitWebURL" ref="iframer" class="w-full h-full" frameborder="0"></iframe>
+        </div>
       </div>
-      <div :style="{ width: 'calc(100% - 200px)', minWidth: '400px' }" class="h-full">
+      <div :style="{ width: 'calc(100% - 270px)', minWidth: '400px' }" class="h-full">
         <div style="height: 30px; background-color: #09161e;" class="text-white text-xs flex items-center">
           <div v-if="current">
             <button class="mx-1 rounded-full px-3 border bg-white text-black" @click="onRun()">Run</button>
@@ -29,7 +36,7 @@
               @slider="() => { isDirty = true; }"
               theme="monokai"
               width="100%"
-              :height="'100%'"
+              :height="'calc(100%)'"
             >
             </ACE>
           </keep-alive>
@@ -39,11 +46,7 @@
           </div>
         </div>
       </div>
-    </Pane>
-
-    <Pane v-if="iframe" class="w-full" d-style="height: 250px; background-color: #09161e;">
-      <iframe :src="unitWebURL" ref="iframer" class="w-full h-full" frameborder="0"></iframe>
-    </Pane>
+    </div>
 
     <div v-if="overlay === 'rename'" class="neu-bg absolute top-0 left-0 full tool-overlay z-50 flex justify-center items-center">
       <div class=" neu-lg bg-white rounded-lg p-10 py-12">
@@ -90,17 +93,17 @@
         </div>
       </div>
     </div>
-  </Splitpanes>
+  </div>
 </template>
 
 <script>
-import { getDefaultTree, addFolder, treeToFlat, makeUnitPreview } from '../../Packages/FSCompiler/FSCompiler.js'
+import { getDefaultTree, addFile, addFolder, treeToFlat, makeUnitPreview, makeUnitModule } from '../../Packages/FSCompiler/FSCompiler.js'
 import { O3DVue } from '../../Core/O3DVue.js'
 import { traverseDown } from '../../Core/O3DNode.js'
 import TreeItem from './TreeItem'
 import path from 'path'
-import { Splitpanes, Pane } from 'splitpanes'
-import 'splitpanes/dist/splitpanes.css'
+// import { Splitpanes, Pane } from 'splitpanes'
+// import 'splitpanes/dist/splitpanes.css'
 //theme: "vs-dark",
 
 /*
@@ -108,16 +111,21 @@ import 'splitpanes/dist/splitpanes.css'
 */
 
 export default {
+  props: {
+    win: {}
+  },
   mixins: [
     O3DVue
   ],
   components: {
     TreeItem,
-    Splitpanes,
-    Pane
+    // Splitpanes,
+    // Pane
   },
   data () {
     return {
+      spaceAPI: false,
+      iframeHeight: 250,
       overlay: '',
       isDirty: false,
       iframe: true,
@@ -132,24 +140,36 @@ export default {
   watch: {
     current () {
       window.dispatchEvent(new Event('plot'))
+    },
+    overlay () {
+      if (this.overlay !== '') {
+        this.$root.escs = this.$root.escs || []
+        this.$root.escs.unshift(() => {
+          this.overlay = ''
+        })
+      }
     }
   },
   created () {
-    window.addEventListener('keydown', (evt) => {
-      if (evt.keyCode === 27) {
-        this.overlay = ''
+    window.addEventListener('resize', () => {
+      let iframe = this.$refs['iframer']
+      if (iframe) {
+        iframe.contentWindow.dispatchEvent(new Event('resize'))
+        iframe.contentWindow.postMessage({ event: 'resize' })
       }
     })
   },
   mounted () {
-    setTimeout(() => {
-      this.tree = getDefaultTree()
-      if (this.tree) {
-        this.currentParent = this.tree.children
-        this.current = this.tree.children[0]
-        this.onSave()
-      }
-    }, 1000)
+    // this.spaceAPI = this.$store.getState()
+    this.work = this.$core.getWorkByWin({ win: this.win })
+
+    let tree = this.work.tree
+    this.load({ tree })
+
+    // setTimeout(() => {
+    //   // let tree = getDefaultTree()
+    //   // this.load({ tree })
+    // }, 1000)
 
     // let tt = 0
     // window.addEventListener('plot', () => {
@@ -160,6 +180,12 @@ export default {
     // })
   },
   methods: {
+    load ({ tree }) {
+      this.tree = tree
+      this.currentParent = this.tree.children
+      this.current = this.tree.children[0]
+      this.onSave()
+    },
     checkEnable () {
       if (this.current.path === './') {
         return false
@@ -221,11 +247,15 @@ export default {
     },
     toggleFrame () {
       this.iframe = !this.iframe
-      if (!this.iframe) {
-        this.$parent.$emit('delta-height', -250)
-      } else {
-        this.$parent.$emit('delta-height', 250)
-      }
+      // if (!this.iframe) {
+      //   this.$parent.$emit('delta-height', -this.iframeHeight)
+      // } else {
+      //   this.$parent.$emit('delta-height', this.iframeHeight)
+      // }
+      window.dispatchEvent(new Event('resize'))
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'))
+      }, 10)
     },
     clickItem ({ item, parent }) {
       this.currentParent = parent
@@ -233,6 +263,10 @@ export default {
     },
     addItem ({ folder }) {
       // console.log(folder)
+      addFile({ folder })
+    },
+    addFolder ({ folder }) {
+      console.log(folder)
       addFolder({ folder })
     },
     onClick (item) {
@@ -243,12 +277,22 @@ export default {
       if (!this.tree) {
         return
       }
-      let pack = {
-        name: 'fun',
+      let module1 = {
+        name: 'myModule1',
         list: treeToFlat(this.tree)
       }
 
-      this.unitWebURL = await makeUnitPreview({ pack })
+      let main = {
+        name: 'myNewPackageName',
+        list: treeToFlat(this.tree)
+      }
+
+      let others = ''
+
+      // others += await makeUnitModule({ pack: module1 })
+      // others += await makeUnitModule({ pack: main })
+
+      this.unitWebURL = await makeUnitPreview({ pack: main, others })
     }
   }
 }
@@ -260,6 +304,7 @@ export default {
 }
 
 .splitpanes__pane {
+  transition: opacity 0.4s;
   box-shadow: 0 0 5px rgba(0, 0, 0, .2) inset;
   justify-content: center;
   align-items: center;

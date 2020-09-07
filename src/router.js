@@ -7,7 +7,7 @@ export const routes = [
     component: () => import('./components/WebGL/AppUIs/Landing/LandingPage.vue')
   },
   {
-    path: '/',
+    path: '/art',
     component: () => import('./components/WebGL/AppUIs/ART/ARTPage.vue')
   },
   {
@@ -15,7 +15,7 @@ export const routes = [
     component: () => import('./components/WebGL/AppUIs/EditorUnit/EditorUnit.vue')
   },
   {
-    path: '/space',
+    path: '/',
     component: () => import('./components/WebGL/AppUIs/EditorSpace/EditorSpace.vue')
   },
   {

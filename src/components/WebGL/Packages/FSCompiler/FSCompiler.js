@@ -18,22 +18,21 @@ export const getID = () => {
 // default files
 var DefaultFilesList = [
   {
-    path: './share.js',
+    path: './package.js',
     _id: getID(),
     type: 'file',
-    src: `export { unit } from './src/unit.js'`
+    src: `export { unit } from './package/main.js'`
   },
   {
-    path: './view.js',
+    path: './demo.js',
     _id: getID(),
     type: 'file',
     src: `
-import { unit } from './share.js'
-import { engine } from './hooks-engine.js'
+import { unit } from './package.js'
+import { DemoPreviewer } from './demo/DemoPreviewer.js'
 
-Promise.all([
-  engine.wait
-])
+let engine = new DemoPreviewer()
+engine.waitForSetup()
   .then(async () => {
     let visual = await unit.make(engine)
     engine.preview(visual)
@@ -41,15 +40,67 @@ Promise.all([
 `
   },
   {
-    path: './hooks-engine.js',
+    path: './demo/localForage.js',
+    _id: getID(),
+    type: 'file',
+    src: require('!raw-loader!./srcs/localforage.js').default
+  },
+  {
+    path: './demo/DemoPreviewer.js',
     _id: getID(),
     type: 'file',
     src: `
+import localForage from './localForage.js'
 
-class PreviewBox {
+const store = localForage.createInstance({
+  driver: localForage.INDEXEDDB,
+  name: "ScriptProvider"
+});
+
+// console.log(store)
+
+export const loadFile = (url) => {
+  return new Promise((resolve) => {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        resolve(this.responseText)
+      }
+    };
+
+    xhttp.open("GET", url, true);
+    xhttp.send();
+  })
+}
+
+export const js2url = ({ js }) => {
+  let appScriptBlob = new Blob([js], { type: 'text/javascript' })
+  let appScriptURL = URL.createObjectURL(appScriptBlob)
+  return appScriptURL
+}
+
+export const provideURL = async (url) => {
+  let js = await store.getItem(url)
+  if (!js) {
+    let text = await loadFile(url)
+    await store.setItem(url, text)
+    js = text
+  }
+  return js2url({ js })
+}
+
+export const importCache = async (url) => {
+  url = await provideURL(url)
+  let MOD = await import(url)
+  return MOD
+}
+
+export class DemoPreviewer {
   constructor () {
-    let wait = this.setup()
-    this.wait = wait
+    this.wait = this.setup()
+  }
+  async waitForSetup () {
+    return this.wait
   }
   async setup () {
     let isAborted = false
@@ -65,12 +116,22 @@ class PreviewBox {
       this.resizeTasks.push(v)
     }
 
+    let intv = 0
+    let internalResize = () => {
+      clearTimeout(intv)
+      intv = setTimeout(() => {
+        this.renderer.setSize(window.innerWidth, window.innerHeight)
+        this.renderer.setPixelRatio(window.devicePixelRatio || 1.0)
+      }, 16.6668)
+    }
+
+    window.addEventListener('message', (ev) => {
+      // console.log(ev.data.event === 'resize')
+      internalResize()
+    })
+
     window.addEventListener('resize', () => {
-      try {
-        this.resizeTasks.forEach(e => e())
-      } catch (e) {
-        console.error(e)
-      }
+      internalResize()
     })
 
     this.cleanUp = () => {
@@ -82,7 +143,7 @@ class PreviewBox {
       }
     }
 
-    let THREE = await import('https://unpkg.com/three@0.119.1/build/three.module.js')
+    let THREE = await importCache('https://unpkg.com/three@0.119.1/build/three.module.js')
     this.THREE = THREE
     let { Scene, WebGLRenderer, PerspectiveCamera } = THREE
 
@@ -96,7 +157,11 @@ class PreviewBox {
 
     this.renderer = new WebGLRenderer({
       antialias: true,
-      alpah: true
+      alpha: true
+    })
+    this.onResize(() => {
+      this.renderer.setSize(window.innerWidth, window.innerHeight)
+      this.renderer.setPixelRatio(window.devicePixelRatio || 1.0)
     })
 
     this.renderer.setSize(window.innerWidth, window.innerHeight)
@@ -129,13 +194,10 @@ class PreviewBox {
     this.scene.add(v)
   }
 }
-
-const engine = new PreviewBox()
-export { engine }
 `
   },
   {
-    path: './src/unit.js',
+    path: './package/main.js',
     _id: getID(),
     type: 'file',
     src: `
@@ -174,7 +236,7 @@ export const unit = {
 `
   },
   {
-    path: './src/shader/box.vert',
+    path: './package/shader/box.vert',
     _id: getID(),
     type: 'file',
     src: `uniform float time;
@@ -189,7 +251,7 @@ void main(void) {
 `
   },
   {
-    path: './src/shader/box.frag',
+    path: './package/shader/box.frag',
     _id: getID(),
     type: 'file',
     src: `varying vec3 v_pos;
@@ -201,7 +263,7 @@ void main (void) {
   },
 
   {
-    path: './src/tools.js',
+    path: './demo/util.js',
     _id: getID(),
     type: 'file',
     src: `
@@ -360,8 +422,33 @@ export const getNewFileObject = ({ path }) => {
   }
 }
 
-export const addFolder = ({ folder }) => {
+export const getNewFolderObject = ({ path }) => {
+  let name = 'new-folder-' + Math.floor(Math.random() * 1000)
+  return {
+    _id: getID(),
+    children: [
+      // {
+      //   _id: getID(),
+      //   children: [],
+      //   name: 'new.js',
+      //   type: 'file',
+      //   path:  path + '/new-folder' + '/new.js',
+      //   src: `${path + '/new-folder'}\nsome new code`
+      // }
+    ],
+    name,
+    type: 'folder',
+    path:  path + '/' + name
+  }
+}
+
+export const addFile = ({ folder }) => {
   let item = getNewFileObject({ path: folder.path })
+  folder.children.push(item)
+}
+
+export const addFolder = ({ folder }) => {
+  let item = getNewFolderObject({ path: folder.path })
   folder.children.push(item)
 }
 
@@ -381,12 +468,13 @@ export const js2url = ({ js }) => {
   return appScriptURL
 }
 
-export const makeUnitPreview = async ({ pack }) => {
+export const makeUnitPreview = async ({ pack, others = '' }) => {
   if (!pack) {
     pack = {
       name: 'main',
       list: getDefaultList()
     }
+    console.log('you missed pack')
   }
 
   let code = await RollMeUp.buildInput({ pack, mode: 'view' })
@@ -394,12 +482,40 @@ export const makeUnitPreview = async ({ pack }) => {
 
   let HTML = html + ''
   let appTag = `<div id="app"></div>`
+
   HTML = HTML.replace(`${appTag}`,`${appTag}
+    ${js2tag({ js: others })}
     ${mainTag}
   `)
 
   let blob = new Blob([HTML], { type: 'text/html' })
   let htmlURL = URL.createObjectURL(blob)
   return htmlURL
+}
+
+
+export const makeUnitModule = async ({ pack }) => {
+  if (!pack) {
+    pack = {
+      name: 'makeUnitModule',
+      list: getDefaultList()
+    }
+    console.log('you missed pack')
+  }
+
+  let code = await RollMeUp.buildInput({ pack, mode: 'package' })
+
+  // let mainTag = js2tag({ js: code })
+
+  // let HTML = html + ''
+  // let appTag = `<div id="app"></div>`
+  // HTML = HTML.replace(`${appTag}`,`${appTag}
+  //   ${mainTag}
+  // `)
+
+  // let blob = new Blob([HTML], { type: 'text/html' })
+  // let htmlURL = URL.createObjectURL(blob)
+
+  return code
 }
 

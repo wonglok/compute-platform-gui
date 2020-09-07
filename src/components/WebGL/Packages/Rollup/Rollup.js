@@ -7,12 +7,13 @@ export async function buildInput ({ pack, mode = 'view' }) {
     filesMap[item.path] = item.src
   })
 
-  let entry = './share.js'
+  let entry = './package.js'
+
   if (mode === 'view') {
-    entry = './view.js'
+    entry = './demo.js'
   }
-  if (mode === 'share') {
-    entry = './share.js'
+  if (mode === 'package') {
+    entry = './package.js'
   }
 
   let inputOptions = {
@@ -84,8 +85,8 @@ export async function buildInput ({ pack, mode = 'view' }) {
 
 // export async function build ({ pack }) {
 //   let codes = await Promise.all([
-//     buildInput({ pack, input: './view.js' }),
-//     buildInput({ pack, input: './share.js' })
+//     buildInput({ pack, input: './demo.js' }),
+//     buildInput({ pack, input: './package.js' })
 //   ])
 
 //   return codes

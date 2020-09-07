@@ -59,17 +59,18 @@ export const getIO = (args) => {
   }
 }
 
-export const getWin = (config = {}, pos = {}) => {
+export const getWin = (config = {}, pos = {}, data = {}) => {
+  let width = window.innerWidth - 270 - 15 - 15
   return {
     _id: getID(),
     title: '',
     type: 'purple',
     order: 0,
     pos: {
-      x: window.innerWidth - 650 - 15,
+      x: window.innerWidth - width - 15,
       y: 15,
-      w: 650,
-      h: 600,
+      w: width,
+      h: window.innerHeight - 15 * 2,
       s: 1,
       ...pos
     },
@@ -86,7 +87,8 @@ export const getWin = (config = {}, pos = {}) => {
     resize: true,
     isRoot: false,
     shaderType: '',
-    ...config
+    ...config,
+    data
   }
 }
 

@@ -11,6 +11,7 @@
       <span class="file-tree-file-item py-1" :class="{ 'cursor-pointer': !isFolder }" @click="onClickItem(item, parent)">{{ title }}</span>
       <!-- <span class="p-1" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span> -->
       <span class="add px-2 addicon cursor-pointer rounded-full border-white border ml-3" v-if="!showFolderOnly && isFolder" @click="$emit('add-item', { folder: item })">+</span>
+      <span class="add px-2 addicon cursor-pointer rounded-full border-white border ml-1" v-if="!showFolderOnly && isFolder" @click="$emit('add-folder', { folder: item })">/</span>
     </div>
     <ul class="pl-5 mb-1" v-show="isOpen" v-if="isFolder">
       <TreeItem
@@ -22,6 +23,7 @@
         :parent="item.children"
         @click-item="$emit('click-item', $event)"
         @add-item="$emit('add-item', $event)"
+        @add-folder="$emit('add-folder', $event)"
       ></TreeItem>
     </ul>
   </li>

@@ -5,13 +5,14 @@
         <div>
           {{ win.title || 'New Box' }}
         </div>
-        <div class="center" v-if="win.appName !== 'project'">
-          <img class="age-gear click" src="./icon/gear.svg" @click="$emit('gear', { win, wins })" alt="">
+        <div class="center flex" v-if="win.appName !== 'project'">
+          <!-- <img class="age-win-title-icon click" src="./icon/wins.svg" @click="$emit('min-win', { win, wins })" alt=""> -->
+          <img class="age-win-title-icon click" src="./icon/close-circle.svg" @click="$emit('min-win', { win, wins })" alt="">
         </div>
       </div>
     </div>
     <div class="bg-white win-content" ref="contentarea">
-      <slot></slot>
+      <slot v-if="showMain"></slot>
     </div>
   </div>
 </template>
@@ -23,13 +24,23 @@ export default {
     wins: {},
     win: {}
   },
+  data () {
+    return {
+      showMain: true
+    }
+  },
   created () {
     this.$on('delta-height', (deltaHeight) => {
       this.win.pos.h += deltaHeight
     })
-    this.$on('gear', ({ win, wins }) => {
-      this.$store.getState().minWin(win)
+
+    this.$on('min-win', ({ win, wins }) => {
+      this.$core.removeWin({ win })
     })
+
+    this.$watch('win.pos', () => {
+      // window.dispatchEvent(new Event('resize'))
+    }, { deep: true })
   },
   methods: {
     getTitleStyle () {
@@ -55,6 +66,21 @@ export default {
   },
   mounted () {
     this.setupSubCompo({ subCompo: this })
+    // this.$el.addEventListener('touchmove', (ev) => {
+    //   ev.stopImmediatePropagation()
+    //   ev.stopPropagation()
+    // })
+
+    this.$root.escs = this.$root.escs || []
+    this.$root.escs.push(() => {
+      let win = this.wins.find(e => e.show)
+      if (win) {
+        this.$core.removeWin({ win })
+      }
+    })
+  },
+  activated () {
+
   }
 }
 </script>
@@ -68,15 +94,14 @@ export default {
   background-color: transparent;
 }
 
-
 .win-title{
   border-radius: 8px 8px 0px 0px;
   overflow: hidden;
   cursor: grab;
-  padding-left: 6px;
-  padding-right: 6px;
+  padding-left: 8px;
+  padding-right: 8px;
   width: calc(100%);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 26px;
   height: 26px;
   text-shadow: rgba(0, 0, 0, 0.5) 0px 2px 3px;
@@ -86,5 +111,10 @@ export default {
 .win-content{
   height: calc(100% - 26px);
   background: rgb(255, 255, 255);
+}
+
+.age-win-title-icon{
+  height: 18px;
+  margin-left: 4px;
 }
 </style>
