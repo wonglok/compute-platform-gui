@@ -14,6 +14,7 @@ export class AppCore extends EventDispatcher {
       workFrom: false,
       genesisType: false
     }
+    this.initAir = 5
   }
   refresh () {
     window.dispatchEvent(new Event('plot-curve'))
@@ -24,12 +25,20 @@ export class AppCore extends EventDispatcher {
   getCurrentWorkFrom () {
     return this.works.find(e => e._id === this.current.workFrom._id)
   }
+  removeArrow ({ arrow }) {
+    let idx = this.arrows.findIndex(a => a._id === arrow._id)
+    console.log(idx, arrow)
+    if (idx !== -1) {
+      this.arrows.splice(idx, 1)
+    }
+    this.refresh()
+  }
   createWorkAtPos ({ position }) {
     let newItem = {
       _id: getID(),
       type: this.current.genesisType,
       tree: getDefaultTree(),
-      position: { x: position.x, y: position.y + 10, z: position.z },
+      position: { x: position.x, y: position.y + this.initAir, z: position.z },
     }
     this.works.push(newItem)
     this.refresh()
@@ -51,11 +60,11 @@ export class AppCore extends EventDispatcher {
   }
   onAddArrow ({ workTo }) {
     // console.log(workTo, this.current)
-
     let hasFound = this.arrows.find(e => {
       return e.from === this.current.workFrom._id && e.to === workTo._id
       || e.to === this.current.workFrom._id && e.from === workTo._id
     })
+
     if (!hasFound) {
       this.arrows.push({
         _id: getID(),
@@ -150,10 +159,12 @@ export class AppCore extends EventDispatcher {
     this.arrows.push(
       ...[
         {
+          _id: getID(),
           from: this.works[0]._id,
           to: this.works[1]._id,
         },
         {
+          _id: getID(),
           from: this.works[1]._id,
           to: this.works[2]._id,
         }

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { CylinderBufferGeometry, CircleBufferGeometry, Mesh, MeshBasicMaterial, PlaneBufferGeometry, TextureLoader } from 'three'
+import { CylinderBufferGeometry, CircleBufferGeometry, Mesh, MeshBasicMaterial, PlaneBufferGeometry, TextureLoader, BoxBufferGeometry } from 'three'
 import O3DNode from '../../Core/O3DNode'
 export default {
   mixins: [
@@ -24,21 +24,22 @@ export default {
       })
       this.o3d.add(mesh)
     } else {
-      let depth = 3 / 4
+      let depth = 3 / 6
       let curveness = 36
-      let geoFrame = new CylinderBufferGeometry(128 / 4 / 2, 128 / 4 / 2, depth, curveness, curveness)
-      geoFrame.rotateY(Math.PI / 3 / 2)
-      let geoScreen = new CircleBufferGeometry(128 / 4 / 2, curveness)
+      let width = 64 / 4
+      let geoFrame = new BoxBufferGeometry(width, depth, width)
+      // geoFrame.rotateY(Math.PI / 3 / 2)
+      let geoScreen = new PlaneBufferGeometry(width, width, 1, 1)
       geoScreen.rotateX(Math.PI * -0.5)
       let matScreen = new MeshBasicMaterial({ color: 0xffffff })
 
       let matFrame = new MeshBasicMaterial({ color: 0xbababa })
       let screen = new Mesh(geoScreen, matScreen)
       let frame = new Mesh(geoFrame, matFrame)
-      screen.position.y += depth / 2 + 0.1
-      screen.scale.x *= 0.9
-      // screen.scale.y *= 0.9
-      screen.scale.z *= 0.9
+      screen.position.y += depth / 2 + 0.2
+      screen.scale.x *= 0.95
+      screen.scale.y *= 0.95
+      screen.scale.z *= 0.95
       this.onLoop(() => {
         frame.position.copy(this.cursor.position)
       })
@@ -47,7 +48,7 @@ export default {
       frame.layers.enableAll()
       frame.layers.disable(1)
       this.o3d.add(frame)
-      this.o3d.position.y += 10
+      this.o3d.position.y += 3
     }
   },
   beforeDestroy () {

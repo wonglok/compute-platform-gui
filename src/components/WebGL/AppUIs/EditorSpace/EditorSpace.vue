@@ -48,12 +48,11 @@
     <CurosrImg v-if="!isTouch && cursor.enableImg" :cursor="cursor"></CurosrImg>
     <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
 
-    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
-      <Genesis @choose="onChooseGenesis" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></Genesis>
+    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'influence'">
+      <OVInfluence @choose="onChooseGenesis" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVInfluence>
     </div>
 
     <!-- <div ref="drag-area" class="age-drag-area age-layer full"></div> -->
-
   </div>
 </template>
 
@@ -75,6 +74,7 @@ export default {
   ],
   data () {
     return {
+      rayplay: false,
       isTouch: 'ontouchstart' in window,
       screen: false,
       overlay: '',
@@ -149,6 +149,7 @@ export default {
             z: ev.event.point.z
           }
         })
+
         this.core.onAddArrow({ workTo: work })
         this.mouseMode = ''
       } else if (this.mouseMode === 'connect') {
@@ -173,7 +174,7 @@ export default {
     },
     onClickBR2 ({ work }) {
       this.core.onSetCurrentWorkFrom({ work })
-      this.overlay = 'genesis'
+      this.overlay = 'influence'
     },
     onClickToucher () {
 
@@ -186,9 +187,9 @@ export default {
     },
     onClickPreview ($event) {
       if (this.mouseMode === 'connect') {
+        console.log($event)
         this.core.onAddArrow({ workTo: $event.work })
         this.mouseMode = ''
-        return
       }
     },
     onEditWork ({ work }) {

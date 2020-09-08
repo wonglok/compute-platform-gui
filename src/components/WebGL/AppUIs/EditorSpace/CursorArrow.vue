@@ -30,6 +30,7 @@ export default {
     })
 
     var curveO3D = new Line(undefined, material)
+
     let ball = new Mesh(new CircleBufferGeometry(5 / 2, 10), new MeshBasicMaterial({ color: 0xde20bd }))
     ball.rotateX(Math.PI * -0.5)
     this.o3d.add(ball)
@@ -51,20 +52,16 @@ export default {
         return
       }
 
-      pt1.set(from.position.x, from.position.y - 4, from.position.z)
-      pt2.set(to.position.x, to.position.y - 4, to.position.z)
+      pt1.set(from.position.x, from.position.y, from.position.z)
+      pt2.set(to.position.x, to.position.y, to.position.z)
 
       var points = curve.getPoints(2);
       var geometry = new BufferGeometry().setFromPoints(points);
       curveO3D.geometry = geometry
       curveO3D.computeLineDistances()
-
-      return {
-        curve
-      }
     }
-
     plot()
+
     let i = 0
     this.onLoop(() => {
       curve.getPoint((i % 100) / 100, ball.position)

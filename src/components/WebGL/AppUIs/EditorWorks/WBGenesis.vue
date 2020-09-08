@@ -201,9 +201,9 @@ export default {
           this.$emit('preview', { work: this.work })
         })
         this.ctx.rayplay.hover(screen, (v) => {
-          // mat.emissive = new Color('#bababa')
+          mat.emissive = new Color('#bababa')
         }, () => {
-          // mat.emissive = new Color('#000000')
+          mat.emissive = new Color('#000000')
         })
         this.onClean(() => {
           this.ctx.rayplay.remove(screen)
@@ -225,7 +225,7 @@ export default {
     makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon: require('./icon/pencil.png') })
     makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
     makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/add-bg.png') })
-    makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
+    // makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
 
     makeScreen({ baseMesh })
   }

@@ -84,70 +84,116 @@ export class RayPlay {
 
         // var findings = rc.intersectObjects(this.o3dHovers)
         var tryhover = rc.intersectObjects(this.activeTargets)
+
+        let hovered = []
         // console.log(tryhover)
-        if ((tryhover.length) > 0) {
-          tryhover.forEach((rayObj) => {
-            let sceneObj = rayObj.object
-            let userData = sceneObj.userData
-            userData.wasHovering = userData.hovering
-
-            if (userData.moveFnc) {
-              userData.moveFnc({
-                ray: rayObj,
-                type: 'move',
-                object: sceneObj,
-                userData
-              })
-            }
-
-            if (userData && !userData.wasHovering) {
-              if (userData.enterHoverFnc) {
-                cancelArr.forEach(e => e())
-                cancelArr = []
-                cancelArr.push(() => {
-                  userData.leaveHoverFnc({
-                    type: 'hoverout',
-                    object: sceneObj,
-                    userData
-                  })
-                })
-                userData.enterHoverFnc({
-                  type: 'hoverin',
-                  object: sceneObj,
+        this.activeTargets.forEach((obj) => {
+          tryhover.forEach(hover => {
+            if (hover.object.uuid === obj.uuid) {
+              let userData = obj.userData
+              if (userData.moveFnc) {
+                userData.moveFnc({
+                  ray: hover,
+                  type: 'move',
+                  object: hover.object,
                   userData
                 })
-                this.activeTargets.forEach((sceneObj) => {
-                  let userData = sceneObj.userData
-                  userData.hovering = true
+              }
+
+              if (userData.enterHoverFnc) {
+                userData.enterHoverFnc({
+                  type: 'hoverin',
+                  ray: hover,
+                  object: hover.object,
+                  userData
                 })
               }
+
+              hovered.push(obj)
             }
           })
+        })
 
-          if (tryhover[0]) {
-            let first = tryhover[0]
-            let userData = first.object.userData
-            if (userData && userData.noHover) {
-              wrapper.style.cursor = 'inherit'
-            } else {
-              // console.log(userData.hoverCursor)
-              wrapper.style.cursor = userData.hoverCursor || 'pointer'
-            }
-          }
-        } else {
-          wrapper.style.cursor = 'inherit'
-          this.activeTargets.forEach((sceneObj) => {
-            let userData = sceneObj.userData
-            userData.hovering = false
-            if (userData && userData.wasHovering && userData.leaveHoverFnc) {
+        this.activeTargets.forEach((obj) => {
+          if (!hovered.includes(obj)) {
+            let userData = obj.userData
+
+            if (userData.leaveHoverFnc) {
               userData.leaveHoverFnc({
                 type: 'hoverout',
+                object: obj,
                 userData
               })
-              userData.wasHovering = false
             }
-          })
-        }
+          }
+        })
+
+        // if ((tryhover.length) > 0) {
+        //   tryhover.forEach((rayObj) => {
+        //     let sceneObj = rayObj.object
+        //     let userData = sceneObj.userData
+        //     userData.wasHovering = userData.hovering
+
+        //     if (userData.moveFnc) {
+        //       userData.moveFnc({
+        //         ray: rayObj,
+        //         type: 'move',
+        //         object: sceneObj,
+        //         userData
+        //       })
+        //     }
+
+        //     if (userData && !userData.wasHovering) {
+        //       if (userData.enterHoverFnc) {
+        //         cancelArr.forEach(e => e())
+        //         cancelArr = []
+
+        //         cancelArr.push(() => {
+        //           userData.leaveHoverFnc({
+        //             type: 'hoverout',
+        //             object: sceneObj,
+        //             userData
+        //           })
+        //         })
+
+        //         userData.enterHoverFnc({
+        //           type: 'hoverin',
+        //           object: sceneObj,
+        //           userData
+        //         })
+
+        //         this.activeTargets.forEach((sceneObj) => {
+        //           let userData = sceneObj.userData
+        //           userData.hovering = true
+        //         })
+        //       }
+        //     }
+        //   })
+
+        //   if (tryhover[0]) {
+        //     let first = tryhover[0]
+        //     let userData = first.object.userData
+        //     if (userData && userData.noHover) {
+        //       wrapper.style.cursor = 'inherit'
+        //     } else {
+        //       // console.log(userData.hoverCursor)
+        //       wrapper.style.cursor = userData.hoverCursor || 'pointer'
+        //     }
+        //   }
+        // } else {
+        //   wrapper.style.cursor = 'inherit'
+        //   this.activeTargets.forEach((sceneObj) => {
+        //     let userData = sceneObj.userData
+        //     userData.hovering = false
+        //     if (userData && userData.wasHovering && userData.leaveHoverFnc) {
+        //       userData.leaveHoverFnc({
+        //         type: 'hoverout',
+        //         userData
+        //       })
+        //       userData.wasHovering = false
+        //     }
+        //   })
+        // }
       }
     }
     let rect = toucher.getBoundingClientRect()
