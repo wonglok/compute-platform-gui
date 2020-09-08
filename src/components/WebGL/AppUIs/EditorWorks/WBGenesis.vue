@@ -29,7 +29,7 @@ export default {
   },
   async mounted () {
     let scale = 4
-    let boxDepth = 3 * scale
+    let boxDepth = 2 * scale
     let boxWidth = 40 * scale
     let boxHeight = 40 * scale
 
@@ -98,10 +98,14 @@ export default {
         })
       }
 
+      this.o3d.add(baseMesh)
+      this.onClean(() => {
+        this.o3d.remove(baseMesh)
+      })
       return baseMesh
     }
 
-    let makeButton = async ({ corner, color = '#0000ff' }) => {
+    let makeButton = async ({ corner, color = '#0000ff', baseMesh }) => {
       let geo = new CircleBufferGeometry(btnW, 32)
       let mat = new MeshStandardMaterial({ color: new Color(color), transparent: true })
       let btn = new Mesh(geo, mat)
@@ -142,11 +146,16 @@ export default {
         this.ctx.rayplay.remove(btn)
       })
 
+      baseMesh.add(btn)
+
+      this.onClean(() => {
+        baseMesh.remove(btn)
+      })
 
       return btn
     }
 
-    let makeScreen = () => {
+    let makeScreen = ({ baseMesh }) => {
       let geo = new PlaneBufferGeometry(boxW, boxH)
       let mat = new MeshStandardMaterial({ color: new Color('#cccccc') })
       let screen = new Mesh(geo, mat)
@@ -172,34 +181,23 @@ export default {
         })
       }
 
+      baseMesh.add(screen)
+      this.onClean(() => {
+        baseMesh.remove(screen)
+      })
+
       return screen
     }
-    let closeBtn = await loadTexture(require('./icon/close-circle.svg'))
+    console.log(require('./icon/close-circle.svg'))
+
     let baseMesh = makeBaseMesh()
-    // let button1 = makeButton({ corner: 'tl', color: '#0000ff' })
-    let button2 = makeButton({ corner: 'tr', color: '#ff0000' })
-    // let button3 = makeButton({ corner: 'bl', color: '#00ff00' })
-    // let button4 = makeButton({ corner: 'br', color: '#00ffff' })
 
-    // baseMesh.add(button1)
-    baseMesh.add(button2)
-    // baseMesh.add(button3)
-    // baseMesh.add(button4)
+    // makeButton({ corner: 'tl', color: '#0000ff', baseMesh })
+    makeButton({ corner: 'tr', color: '#ff0000', baseMesh })
+    // makeButton({ corner: 'bl', color: '#00ff00', baseMesh })
+    // makeButton({ corner: 'br', color: '#00ffff', baseMesh })
 
-    this.onClean(() => {
-      // baseMesh.remove(button1)
-      baseMesh.remove(button2)
-      // baseMesh.remove(button3)
-      // baseMesh.remove(button4)
-    })
-
-    let screen = makeScreen()
-    baseMesh.add(screen)
-    this.onClean(() => {
-      baseMesh.remove(screen)
-    })
-
-    this.o3d.add(baseMesh)
+    makeScreen({ baseMesh })
   }
 }
 </script>

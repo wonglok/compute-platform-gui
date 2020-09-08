@@ -21,8 +21,10 @@
 
     <O3D v-if="core && ammo">
       <WorkFloor @delta="onPan($event)"></WorkFloor>
-      <WorkBox v-for="work in core.works" :key="work._id" :ops="core.works" :work="work" @preview="onEditWork($event)" @tr="onRemoveWork($event)">
-      </WorkBox>
+      <O3D v-for="work in core.works" :key="work._id" >
+        <WBGenesis v-if="work.type === 'genesis'" :ops="core.works" :work="work" @preview="onEditWork($event)" @tr="onRemoveWork($event)">
+        </WBGenesis>
+      </O3D>
     </O3D>
 
     <div class="absolute top-0 left-0 full" ref="wrapper">
@@ -34,6 +36,10 @@
         <EditorUnit :win="win" :wins="core.wins" v-if="win.appName === 'editor'"></EditorUnit>
         <!-- <PipelineController :win="win" :wins="wins" v-if="win.appName === 'project'"></PipelineController> -->
       </EditBox>
+    </div>
+
+    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
+      <Genesis></Genesis>
     </div>
     <!-- <div ref="drag-area" class="age-drag-area age-layer full"></div> -->
 
@@ -59,8 +65,8 @@ export default {
   ],
   data () {
     return {
-      valid: true,
-      delta: false,
+      overlay: 'genesis',
+      isComponentActive: true,
       ammo: false,
       camera: false,
       scene: false,
@@ -69,10 +75,6 @@ export default {
         x: 0,
         y: 0
       },
-      project: {
-        needsSave: true
-      },
-      wins: false
       // iframe: 'about:blank'
     }
   },
@@ -204,7 +206,7 @@ export default {
     this.$root.escs = this.$root.escs || []
 
     window.addEventListener('keydown', (ev) => {
-      if (!this.valid) {
+      if (!this.isComponentActive) {
         return
       }
       if (ev.keyCode === 27) {
@@ -216,7 +218,7 @@ export default {
     })
   },
   beforeDestroy () {
-    this.valid = false
+    this.isComponentActive = false
     if (process.env.NODE_ENV === 'development') {
       window.location.reload()
     }

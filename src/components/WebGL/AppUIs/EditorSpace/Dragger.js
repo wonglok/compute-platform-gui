@@ -109,17 +109,17 @@ export class Dragger {
 
     // this.rendererDOM.addEventListener('click', this.onClick.bind(this), false)
 
-    window.addEventListener( 'keydown', this.onKeyDown.bind(this), false )
-    window.addEventListener( 'keyup', this.onKeyUp.bind(this), false )
+    // window.addEventListener( 'keydown', this.onKeyDown.bind(this), false )
+    // window.addEventListener( 'keyup', this.onKeyUp.bind(this), false )
   }
 
-  onKeyDown ( event ) {
-    this.enableSelection = ( event.keyCode === 16 ) ? true : false;
-  }
+  // onKeyDown ( event ) {
+  //   this.enableSelection = ( event.keyCode === 16 ) ? true : false;
+  // }
 
-  onKeyUp () {
-    this.enableSelection = false;
-  }
+  // onKeyUp () {
+  //   this.enableSelection = false;
+  // }
 
   // onClick ( event ) {
   //   event.preventDefault();

@@ -146,7 +146,7 @@ export default {
     overlay () {
       if (this.overlay !== '') {
         this.$root.escs = this.$root.escs || []
-        this.$root.escs.unshift(() => {
+        this.$root.escs.push(() => {
           this.overlay = ''
         })
       }

@@ -6,6 +6,9 @@ export class AppCore {
   constructor () {
     this.wins = []
     this.works = []
+    this.resources = []
+    this.pub = []
+    this.sub = []
   }
   getWorkByWin ({ win }) {
     let _id = win.data._id
@@ -71,13 +74,21 @@ export class AppCore {
       ...[
         {
           _id: getID(),
+          type: 'genesis',
           tree: getDefaultTree(),
           position: { x: 0, y: 0, z: 0 },
         },
         {
           _id: getID(),
+          type: 'resources',
           tree: getDefaultTree(),
-          position: { x: 100, y: 0, z: 0 },
+          position: { x: 100, y: 1, z: 0 },
+        },
+        {
+          _id: getID(),
+          type: 'resources',
+          tree: getDefaultTree(),
+          position: { x: 130, y: 2, z: 0 },
         }
       ]
     )
