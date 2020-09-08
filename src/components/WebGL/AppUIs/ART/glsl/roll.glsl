@@ -140,8 +140,8 @@ void main (void) {
     vUv.x = (squareIDX / dimension2D) / dimension2D;
     vUv.y = (mod(squareIDX, dimension2D)) / dimension2D;
 
-    vec4 past = texture2D(mic, vUv.yx);
-    vec4 now = texture2D(micNow, vUv.yx);
+    vec4 past = texture2D(mic, vec2(1.0 - vUv.y, vUv.y));
+    vec4 now = texture2D(micNow, vec2(vUv.y, vUv.x));
 
     float gapperX = 5.0;
     float gapperY = 2.0;
@@ -161,7 +161,9 @@ void main (void) {
     float pZ = pos.z;
     float piz = 0.1 * 2.0 * 3.14159265;
 
-    pos.xyz = rotateX(pos.x * 0.00001 * 46.12 + 0.001 * pos.x * now.x * 2.0 + pos.y * 0.001 * 1.76 * (now.x) * 1.0) * pos.xyz;
+    float v = ((now.x) * (1.0 - past.x)) * 1.0;
+
+    pos.xyz = rotateX(pos.x * 0.0001 * 43.20 / 10.0 + 0.001 * pos.x * v * 55.51 / 100.0 + pos.y * 0.0001 * 93.55/ 100.0 * 4.69 * (v) * 1.0) * pos.xyz;
 
     // pos.xyz = rotateQ(normalize(vec3(1.0, pY * piz, 1.0)), time + pY * piz) * rotateY(time + pZ * piz) * pos.xyz;
     // pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pY * piz) * rotateZ(time + pZ * piz) * pos.xyz;

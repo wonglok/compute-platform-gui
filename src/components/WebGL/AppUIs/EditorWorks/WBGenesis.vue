@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { BoxBufferGeometry, CircleBufferGeometry, Color, Mesh, MeshStandardMaterial, PlaneBufferGeometry, Vector3 } from 'three'
+import { BoxBufferGeometry, CircleBufferGeometry, Color, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, TextureLoader, Vector3 } from 'three'
 import O3DNode from '../../Core/O3DNode'
 import { make } from '../ARTBlockers/art-coder'
 import { loadTexture } from '../../Core/loadTexture'
@@ -29,7 +29,7 @@ export default {
   },
   async mounted () {
     let scale = 4
-    let boxDepth = 2 * scale
+    let boxDepth = 1 * scale
     let boxWidth = 40 * scale
     let boxHeight = 40 * scale
 
@@ -38,7 +38,7 @@ export default {
     let buttonHeight = 8 * scale
     let buttonWidth = 8 * scale
 
-    let btnW = 10
+    let btnW = 10 / 4 * scale * 1.5
 
     let boxW = boxWidth - gap
     let boxH = boxHeight - gap
@@ -85,6 +85,7 @@ export default {
             if (!baseMesh.userData.canRun) {
               return
             }
+            window.dispatchEvent(new CustomEvent('plot-curve', { detail: { work: this.work } }))
             lerpRotation.copy(baseMesh.rotation)
             lerpRotation.lerp(zero, 0.2)
             baseMesh.rotation.set(lerpRotation.x, lerpRotation.y, lerpRotation.z)
@@ -105,9 +106,13 @@ export default {
       return baseMesh
     }
 
-    let makeButton = async ({ corner, color = '#0000ff', baseMesh }) => {
-      let geo = new CircleBufferGeometry(btnW, 32)
-      let mat = new MeshStandardMaterial({ color: new Color(color), transparent: true })
+    let makeButton = async ({ corner, color = '#0000ff', baseMesh, icon }) => {
+      let geo = new CircleBufferGeometry(btnW, 24)
+      let mat = new MeshBasicMaterial({ color: new Color(color), transparent: true })
+      if (icon) {
+        let texture = new TextureLoader().load(icon)
+        mat.map = texture
+      }
       let btn = new Mesh(geo, mat)
       btn.name = corner
       btn.layers.enableAll()
@@ -122,16 +127,29 @@ export default {
         btn.position.x = boxWidth * -0.5
         btn.position.z = boxHeight * -0.5
       }
+
       if (corner === 'tr') {
         btn.position.x = boxWidth * 0.5
         btn.position.z = boxHeight * -0.5
       }
+
       if (corner === 'bl') {
         btn.position.x = boxWidth * -0.5
         btn.position.z = boxHeight * 0.5
       }
+
       if (corner === 'br') {
         btn.position.x = boxWidth * 0.5
+        btn.position.z = boxHeight * 0.5
+      }
+
+      if (corner === 'br2') {
+        btn.position.x = boxWidth * 0.5 - btnW * 2 - gap * 0.5
+        btn.position.z = boxHeight * 0.5
+      }
+
+      if (corner === 'br3') {
+        btn.position.x = boxWidth * 0.5 - btnW * 4 - gap * 1
         btn.position.z = boxHeight * 0.5
       }
 
@@ -155,13 +173,15 @@ export default {
       return btn
     }
 
-    let makeScreen = ({ baseMesh }) => {
+    let makeScreen = async ({ baseMesh }) => {
       let geo = new PlaneBufferGeometry(boxW, boxH)
       let mat = new MeshStandardMaterial({ color: new Color('#cccccc') })
       let screen = new Mesh(geo, mat)
       screen.name = 'preview'
       screen.layers.enableAll()
       screen.layers.disable(1)
+
+      screen.userData.hoverCursor = 'grab'
 
       screen.rotation.x = Math.PI * -0.5
       screen.position.y += boxDepth * 0.5 + 1
@@ -176,6 +196,11 @@ export default {
           console.log(v.object.name)
           this.$emit('preview', { work: this.work })
         })
+        this.ctx.rayplay.hover(screen, (v) => {
+          mat.emissive = new Color('#bababa')
+        }, () => {
+          mat.emissive = new Color('#000000')
+        })
         this.onClean(() => {
           this.ctx.rayplay.remove(screen)
         })
@@ -188,14 +213,15 @@ export default {
 
       return screen
     }
-    console.log(require('./icon/close-circle.svg'))
 
     let baseMesh = makeBaseMesh()
 
-    // makeButton({ corner: 'tl', color: '#0000ff', baseMesh })
-    makeButton({ corner: 'tr', color: '#ff0000', baseMesh })
-    // makeButton({ corner: 'bl', color: '#00ff00', baseMesh })
-    // makeButton({ corner: 'br', color: '#00ffff', baseMesh })
+    // makeButton({ corner: 'tl', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
+    makeButton({ corner: 'tr', color: '#ffffff', baseMesh, icon: require('./icon/close.png') })
+    makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon: require('./icon/pencil.png') })
+    makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
+    makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/add-bg.png') })
+    makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
 
     makeScreen({ baseMesh })
   }

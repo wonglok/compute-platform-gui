@@ -1,14 +1,69 @@
 import * as UI from '../../AppUIs/EditorSpace/ageUI'
 import { getID } from '../../Core/O3DNode'
 import { getDefaultTree } from './FSCompiler'
+import { EventDispatcher } from 'three/build/three.module'
 
-export class AppCore {
+export class AppCore extends EventDispatcher {
   constructor () {
+    super()
     this.wins = []
     this.works = []
-    this.resources = []
-    this.pub = []
-    this.sub = []
+    this.arrows = []
+
+    this.current = {
+      workFrom: false,
+      genesisType: false
+    }
+  }
+  refresh () {
+    window.dispatchEvent(new Event('plot-curve'))
+    setTimeout(() => {
+      window.dispatchEvent(new Event('plot-curve'))
+    })
+  }
+  getCurrentWorkFrom () {
+    return this.works.find(e => e._id === this.current.workFrom._id)
+  }
+  createWorkAtPos ({ position }) {
+    let newItem = {
+      _id: getID(),
+      type: this.current.genesisType,
+      tree: getDefaultTree(),
+      position: { x: position.x, y: position.y, z: position.z },
+    }
+    this.works.push(newItem)
+    this.refresh()
+    return newItem
+  }
+  removeLinksOfWork ({ work }) {
+    let arrowsToBeRemoved = this.arrows.filter(e => e.from === work._id || e.to === work._id)
+    arrowsToBeRemoved.forEach((arrow) => {
+      let idx = this.arrows.findIndex(a => a === arrow)
+      this.arrows.splice(idx, 1)
+    })
+    this.refresh()
+  }
+  onSetCurrentWorkFrom ({ work }) {
+    this.current.workFrom = work
+  }
+  onSetCurrentGenesisType ({ type }) {
+    this.current.genesisType = type
+  }
+  onAddArrow ({ workTo }) {
+    // console.log(workTo, this.current)
+
+    let hasFound = this.arrows.find(e => {
+      return e.from === this.current.workFrom._id && e.to === workTo._id
+      || e.to === this.current.workFrom._id && e.from === workTo._id
+    })
+    if (!hasFound) {
+      this.arrows.push({
+        _id: getID(),
+        from: this.current.workFrom._id,
+        to: workTo._id
+      })
+    }
+    this.refresh()
   }
   getWorkByWin ({ win }) {
     let _id = win.data._id
@@ -61,13 +116,12 @@ export class AppCore {
     }
   }
   removeWork ({ work }) {
-    if (this.canDelete()) {
-      let works = this.works
-      works.splice(works.findIndex(e => e === work), 1)
-      let win = this.findWinByWork({ work })
-      this.removeWin({ win })
-    }
+    this.removeLinksOfWork({ work })
 
+    let works = this.works
+    works.splice(works.findIndex(e => e === work), 1)
+    let win = this.findWinByWork({ work })
+    this.removeWin({ win })
   }
   addDemoOps () {
     this.works.push(
@@ -76,22 +130,37 @@ export class AppCore {
           _id: getID(),
           type: 'genesis',
           tree: getDefaultTree(),
-          position: { x: 0, y: 0, z: 0 },
+          position: { x: -250, y: 0, z: 0 },
         },
         {
           _id: getID(),
-          type: 'resources',
+          type: 'genesis',
           tree: getDefaultTree(),
-          position: { x: 100, y: 1, z: 0 },
+          position: { x: 0, y: 1, z: -100 },
         },
         {
           _id: getID(),
-          type: 'resources',
+          type: 'genesis',
           tree: getDefaultTree(),
-          position: { x: 130, y: 2, z: 0 },
+          position: { x: 250, y: 2, z: 0 },
         }
       ]
     )
+
+    this.arrows.push(
+      ...[
+        {
+          from: this.works[0]._id,
+          to: this.works[1]._id,
+        },
+        {
+          from: this.works[1]._id,
+          to: this.works[2]._id,
+        }
+      ]
+    )
+
+    this.refresh()
   }
   // UI.getWin({ title: 'Editor', appName: 'editor' })
   removeWin ({ win }) {

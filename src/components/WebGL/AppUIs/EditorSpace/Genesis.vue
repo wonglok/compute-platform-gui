@@ -9,28 +9,22 @@
     </div>
     <div class="flex justify-around max-w-4xl mx-auto">
       <div class="">
-        <div class="text-center mb-12">點 Dot</div>
+        <div class="text-center mb-12">點 Dots</div>
         <div>
-          <img src="./img/dots.svg" alt="">
+          <img src="./img/dots.svg" class="  cursor-pointer" @click="$emit('choose', 'dots')" alt="">
         </div>
       </div>
       <div>
         <div class="text-center mb-12">線 Line</div>
         <div>
-          <img src="./img/lines.svg" alt="">
+          <img src="./img/lines.svg" class="  cursor-pointer" @click="$emit('choose', 'line')" alt="">
         </div>
       </div>
       <div>
         <div class="text-center mb-12">面 Faces</div>
         <div>
-          <img src="./img/faces.svg" alt="">
+          <img src="./img/faces.svg" class="  cursor-pointer" @click="$emit('choose', 'faces')" alt="">
         </div>
-      </div>
-    </div>
-
-    <div class="absolsute top-0 right-0">
-      <div class="p-5">
-
       </div>
     </div>
   </div>
@@ -42,6 +36,20 @@ export default {
   data () {
     return {
       // tt: getLang('genesis')
+    }
+  },
+  mounted () {
+    this.$root.escs = this.$root.escs || []
+    this.cancel = () => {
+      this.$emit('overlay', false)
+      this.$emit('mouse-mode', '')
+    }
+    this.$root.escs.push(this.cancel)
+  },
+  beforeDestroy () {
+    let idx = this.$root.escs.indexOf(this.cancel)
+    if (idx !== -1) {
+      this.$root.escs.splice(idx, 1)
     }
   }
 }

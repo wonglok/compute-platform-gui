@@ -7,7 +7,7 @@ export async function buildInput ({ pack, mode = 'view' }) {
     filesMap[item.path] = item.src
   })
 
-  console.log(pack.list)
+  // console.log(pack.list)
   let entry = pack.list.find(e => e.isPackageEntry).path
 
   if (mode === 'view') {

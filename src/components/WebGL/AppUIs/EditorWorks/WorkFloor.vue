@@ -19,6 +19,14 @@ export default {
     if (this.ctx.ammo) {
       this.ctx.ammo.addSimpleMesh({ mesh, mass: 0, flags: { isFloor: true, isWorld: true } })
     }
+    if (this.ctx.mouseWorldPos) {
+      this.ctx.mouseWorldPos.add(mesh, (ev) => {
+        this.$emit('click-floor', ev)
+      })
+      this.ctx.mouseWorldPos.move(mesh, (ev) => {
+        this.$emit('move-point', { point: ev.ray.point })
+      })
+    }
   }
 }
 </script>

@@ -2,8 +2,9 @@
 import { Raycaster, Vector2 } from 'three'
 
 export class RayPlay {
-  constructor ({ toucher, onResize = () => {}, onLoop, camera, onClean = () => {} }) {
+  constructor ({ toucher, wrapper, onResize = () => {}, onLoop, camera, onClean = () => {} }) {
     this.skip = true
+    this.wrapper = wrapper
     this.raycaster = new Raycaster()
     this.setLayer = (v) => {
       this.raycaster.layers.set(v)
@@ -40,8 +41,17 @@ export class RayPlay {
       // v.frustumCulled = false
       v.userData = v.userData || {}
       v.userData.clicker = handler
-      this.activeTargets.push(v)
+      if (!this.activeTargets.includes(v)) {
+        this.activeTargets.push(v)
+      }
       // console.log(this.activeTargets)
+    }
+    this.move = (v, handler = () => {}) => {
+      v.userData = v.userData || {}
+      v.userData.moveFnc = handler
+      if (!this.activeTargets.includes(v)) {
+        this.activeTargets.push(v)
+      }
     }
 
     this.hover = (v, enter = () => {}, leave = () => {}) => {
@@ -80,6 +90,16 @@ export class RayPlay {
             let sceneObj = rayObj.object
             let userData = sceneObj.userData
             userData.wasHovering = userData.hovering
+
+            if (userData.moveFnc) {
+              userData.moveFnc({
+                ray: rayObj,
+                type: 'move',
+                object: sceneObj,
+                userData
+              })
+            }
+
             if (userData && !userData.wasHovering) {
               if (userData.enterHoverFnc) {
                 cancelArr.forEach(e => e())
@@ -108,13 +128,14 @@ export class RayPlay {
             let first = tryhover[0]
             let userData = first.object.userData
             if (userData && userData.noHover) {
-              toucher.style.cursor = 'auto'
+              wrapper.style.cursor = 'inherit'
             } else {
-              toucher.style.cursor = 'pointer'
+              // console.log(userData.hoverCursor)
+              wrapper.style.cursor = userData.hoverCursor || 'pointer'
             }
           }
         } else {
-          toucher.style.cursor = 'auto'
+          wrapper.style.cursor = 'inherit'
           this.activeTargets.forEach((sceneObj) => {
             let userData = sceneObj.userData
             userData.hovering = false
@@ -162,7 +183,7 @@ export class RayPlay {
         moveAmount = 0
         return
       }
-      if (movement > 50) {
+      if (movement > 25) {
         return
       }
       let rc = this.raycaster
@@ -196,7 +217,7 @@ export class RayPlay {
       moveAmount = 0
     }
     onClean(() => {
-      toucher.style.cursor = 'auto'
+      wrapper.style.cursor = 'inherit'
     })
 
     toucher.addEventListener('mousedown', onMouseDown)

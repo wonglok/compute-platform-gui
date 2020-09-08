@@ -59,14 +59,18 @@ var store = localforage.createInstance({
 });
 
 export const loadTexture = async (url) => {
-  let arrayBuffer = await provideArrayBuffer(url, store)
-  // await rafSleep()
-  let blobURL = await getBlobFromArrayBuffer(arrayBuffer)
-  // await rafSleep()
-  let texture = await textureParser(blobURL)
-  // await rafSleep()
+  try {
+    let arrayBuffer = await provideArrayBuffer(url, store)
+    // await rafSleep()
+    let blobURL = await getBlobFromArrayBuffer(arrayBuffer)
+    // await rafSleep()
+    let texture = await textureParser(blobURL)
+    // await rafSleep()
 
-  return texture
+    return texture
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 export const loadImage = async (url) => {

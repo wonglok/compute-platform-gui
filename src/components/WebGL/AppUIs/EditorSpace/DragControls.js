@@ -117,7 +117,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 				scope.dispatchEvent( { type: 'hoveron', object: object } );
 
-				_domElement.style.cursor = 'pointer';
+				// _domElement.style.cursor = 'pointer';
 				_hovered = object;
 
 			}
@@ -128,7 +128,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 				scope.dispatchEvent( { type: 'hoveroff', object: _hovered } );
 
-				_domElement.style.cursor = 'auto';
+				_domElement.style.cursor = 'inherit';
 				_hovered = null;
 
 			}
@@ -159,10 +159,9 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 			}
 
-			_domElement.style.cursor = 'move';
+			_domElement.style.cursor = 'grabbing';
 
 			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
-
 		}
 
 
@@ -180,7 +179,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 		}
 
-		_domElement.style.cursor = _hovered ? 'pointer' : 'auto';
+		_domElement.style.cursor = _hovered ? 'grab' : 'inherit';
 
 	}
 
@@ -235,7 +234,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 		if ( _intersections.length > 0 ) {
 			oev.stopPropagation();
 			oev.stopImmediatePropagation();
-			oev.target.click()
+			// oev.target.click()
 
 			_selected = ( scope.transformGroup === true ) ? _objects[ 0 ] : _intersections[ 0 ].object;
 
@@ -248,7 +247,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 			}
 
-			_domElement.style.cursor = 'move';
+			_domElement.style.cursor = 'grabbing';
 
 			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
 
@@ -269,7 +268,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 		}
 
-		_domElement.style.cursor = 'auto';
+		_domElement.style.cursor = 'inherit';
 
 	}
 

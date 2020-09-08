@@ -44,7 +44,7 @@ export const getLang = (type) => {
       }
     },
     set: (obj, key, val) => {
-      console.log('there so setter. read only')
+      console.log('there no setter. read only')
     }
   })
 

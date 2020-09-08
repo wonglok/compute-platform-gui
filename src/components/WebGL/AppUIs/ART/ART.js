@@ -19,7 +19,9 @@ export class ART {
     this.renderer = renderer
     this.onClean = onClean
     this.onLoop = onLoop
+
     this.o3d = new Object3D()
+
     this.out = {
       o3d: this.o3d
     }
