@@ -21,7 +21,7 @@
     </O3D>
 
     <O3D v-if="core && ammo">
-      <WorkFloor @move-point="onMove($event)" @click-floor="onClickFloor" @delta="onPan($event)"></WorkFloor>
+      <WorkFloor :mouseMode="mouseMode" @move-point="onMove($event)" @click-floor="onClickFloor" @delta="onPan($event)"></WorkFloor>
 
       <O3D v-for="work in core.works" :key="work._id" >
         <WBGenesis :key="work._id" :core="core" :works="core.works" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
@@ -45,8 +45,8 @@
       </EditBox>
     </div>
 
-    <CurosrImg v-if="cursor.enableImg" :cursor="cursor"></CurosrImg>
-    <CursorArrow v-if="cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
+    <CurosrImg v-if="!isTouch && cursor.enableImg" :cursor="cursor"></CurosrImg>
+    <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
 
     <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
       <Genesis @choose="onChooseGenesis" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></Genesis>
@@ -75,6 +75,7 @@ export default {
   ],
   data () {
     return {
+      isTouch: 'ontouchstart' in window,
       screen: false,
       overlay: '',
       isComponentActive: true,

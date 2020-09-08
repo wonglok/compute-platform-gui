@@ -25,12 +25,12 @@ export default {
   mounted () {
     var material = new LineDashedMaterial({
       color: 0xde20bd,
-      dashSize: 15,
-      gapSize: 5
+      dashSize: 15 / 4,
+      gapSize: 5 / 4
     })
 
     var curveO3D = new Line(undefined, material)
-    let ball = new Mesh(new CircleBufferGeometry(5, 10), new MeshBasicMaterial({ color: 0xde20bd }))
+    let ball = new Mesh(new CircleBufferGeometry(5 / 2, 10), new MeshBasicMaterial({ color: 0xde20bd }))
     ball.rotateX(Math.PI * -0.5)
     this.o3d.add(ball)
 

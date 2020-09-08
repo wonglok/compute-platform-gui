@@ -14,7 +14,7 @@ export default {
   },
   mounted () {
     if (this.cursor.type === 'img') {
-      let geo = new PlaneBufferGeometry(64, 64, 1, 1)
+      let geo = new PlaneBufferGeometry(64 / 4, 64 / 4, 1, 1)
       geo.rotateX(Math.PI * -0.5)
       geo.translate(0, 10, 0)
       let mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, map: new TextureLoader().load(this.cursor.img) })
@@ -24,15 +24,15 @@ export default {
       })
       this.o3d.add(mesh)
     } else {
-      let depth = 3
-      let curveness = 6
-      let geoFrame = new CylinderBufferGeometry(128 / 2, 128 / 2, depth, curveness, curveness)
+      let depth = 3 / 4
+      let curveness = 36
+      let geoFrame = new CylinderBufferGeometry(128 / 4 / 2, 128 / 4 / 2, depth, curveness, curveness)
       geoFrame.rotateY(Math.PI / 3 / 2)
-      let geoScreen = new CircleBufferGeometry(128 / 2, curveness)
+      let geoScreen = new CircleBufferGeometry(128 / 4 / 2, curveness)
       geoScreen.rotateX(Math.PI * -0.5)
       let matScreen = new MeshBasicMaterial({ color: 0xffffff })
 
-      let matFrame = new MeshBasicMaterial({ color: 0xaaaaaa })
+      let matFrame = new MeshBasicMaterial({ color: 0xbababa })
       let screen = new Mesh(geoScreen, matScreen)
       let frame = new Mesh(geoFrame, matFrame)
       screen.position.y += depth / 2 + 0.1
@@ -43,7 +43,11 @@ export default {
         frame.position.copy(this.cursor.position)
       })
       frame.add(screen)
+
+      frame.layers.enableAll()
+      frame.layers.disable(1)
       this.o3d.add(frame)
+      this.o3d.position.y += 10
     }
   },
   beforeDestroy () {

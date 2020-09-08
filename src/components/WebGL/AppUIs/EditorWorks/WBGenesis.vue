@@ -85,12 +85,16 @@ export default {
             if (!baseMesh.userData.canRun) {
               return
             }
-            window.dispatchEvent(new CustomEvent('plot-curve', { detail: { work: this.work } }))
+            window.dispatchEvent(new Event('plot-curve'))
             lerpRotation.copy(baseMesh.rotation)
             lerpRotation.lerp(zero, 0.2)
             baseMesh.rotation.set(lerpRotation.x, lerpRotation.y, lerpRotation.z)
             this.ctx.ammo.setMeshPosition({ mesh: baseMesh })
           }
+        })
+
+        this.onLoop(() => {
+          window.dispatchEvent(new Event('plot-curve'))
         })
 
         this.onClean(() => {
@@ -197,9 +201,9 @@ export default {
           this.$emit('preview', { work: this.work })
         })
         this.ctx.rayplay.hover(screen, (v) => {
-          mat.emissive = new Color('#bababa')
+          // mat.emissive = new Color('#bababa')
         }, () => {
-          mat.emissive = new Color('#000000')
+          // mat.emissive = new Color('#000000')
         })
         this.onClean(() => {
           this.ctx.rayplay.remove(screen)

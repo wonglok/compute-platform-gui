@@ -29,7 +29,7 @@ export class AppCore extends EventDispatcher {
       _id: getID(),
       type: this.current.genesisType,
       tree: getDefaultTree(),
-      position: { x: position.x, y: position.y, z: position.z },
+      position: { x: position.x, y: position.y + 10, z: position.z },
     }
     this.works.push(newItem)
     this.refresh()
