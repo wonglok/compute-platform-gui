@@ -24,13 +24,13 @@ export default {
   },
   mounted () {
     var material = new LineDashedMaterial({
-      color: 0xffaa00,
+      color: 0xde20bd,
       dashSize: 15,
       gapSize: 5
     })
 
     var curveO3D = new Line(undefined, material)
-    let ball = new Mesh(new CircleBufferGeometry(5, 10), new MeshBasicMaterial({ color: 0xffaa00 }))
+    let ball = new Mesh(new CircleBufferGeometry(5, 10), new MeshBasicMaterial({ color: 0xde20bd }))
     ball.rotateX(Math.PI * -0.5)
     this.o3d.add(ball)
 
@@ -68,7 +68,7 @@ export default {
     let i = 0
     this.onLoop(() => {
       curve.getPoint((i % 100) / 100, ball.position)
-      i += 1 / 60 * 100.0
+      i += 1 / 60 * 100.0 * 0.553
 
       plot()
     })

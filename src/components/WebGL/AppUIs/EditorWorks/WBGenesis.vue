@@ -28,7 +28,7 @@ export default {
     }
   },
   async mounted () {
-    let scale = 4
+    let scale = 1
     let boxDepth = 1 * scale
     let boxWidth = 40 * scale
     let boxHeight = 40 * scale
@@ -119,7 +119,7 @@ export default {
       btn.layers.disable(1)
 
       btn.rotation.x = Math.PI * -0.5
-      btn.position.y += boxDepth * 0.5 + 1 + 1
+      btn.position.y += boxDepth * 0.5 + 3 / 4
 
       // console.log(corner)
 
@@ -184,7 +184,7 @@ export default {
       screen.userData.hoverCursor = 'grab'
 
       screen.rotation.x = Math.PI * -0.5
-      screen.position.y += boxDepth * 0.5 + 1
+      screen.position.y += boxDepth * 0.5 + 1 / 4
 
       this.onClean(() => {
         geo.dispose()

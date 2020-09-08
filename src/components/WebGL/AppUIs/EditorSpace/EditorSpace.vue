@@ -88,6 +88,7 @@ export default {
         y: 0
       },
       cursor: {
+        type: 'img',
         position: new Vector3(),
         img: '',
         enable: false
@@ -112,6 +113,7 @@ export default {
         this.cursor.enableImg = false
         this.$forceUpdate()
       } else if (this.mouseMode === 'connect') {
+        this.cursor.type = 'img'
         this.cursor.img = `${require('./img/network.png')}`
         this.cursor.enableImg = true
         this.cursor.enableArrow = true
@@ -120,6 +122,7 @@ export default {
         this.$forceUpdate()
       } else if (this.mouseMode === 'create') {
         this.cursor.img = `${require('./img/add.png')}`
+        this.cursor.type = 'block'
         this.cursor.enableImg = true
         this.cursor.enableArrow = true
         this.$root.escs = this.$root.escs || []
@@ -207,15 +210,15 @@ export default {
         onResize: this.onResize
       })
 
-      this.mouseWorldPos = new RayPlay({
-        toucher: this.$refs.toucher,
-        wrapper: this.$refs.wrapper,
-        // rendererDOM: this.ctx.renderer.domElement,
-        onResize: this.onResize,
-        onLoop: this.onLoop,
-        camera: this.camera,
-        onClean: this.onClean
-      })
+      // this.mouseWorldPos = new RayPlay({
+      //   toucher: this.$refs.toucher,
+      //   wrapper: this.$refs.wrapper,
+      //   // rendererDOM: this.ctx.renderer.domElement,
+      //   onResize: this.onResize,
+      //   onLoop: this.onLoop,
+      //   camera: this.camera,
+      //   onClean: this.onClean
+      // })
 
       this.scene = new Scene()
       this.scene.add(this.o3d)
@@ -230,7 +233,7 @@ export default {
         onClean: this.onClean
       })
 
-      this.camera.position.y = 450
+      this.camera.position.y = 100
       this.camera.position.z = 0
       this.camera.lookAt(this.scene.position)
 

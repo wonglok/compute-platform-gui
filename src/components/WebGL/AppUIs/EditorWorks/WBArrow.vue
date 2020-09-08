@@ -24,14 +24,22 @@ export default {
   mounted () {
     var material = new LineDashedMaterial({
       color: 0xffaa00,
-      dashSize: 15,
-      gapSize: 5
+      dashSize: 15 / 4,
+      gapSize: 5 / 4
     })
 
     var curveO3D = new Line(undefined, material)
-    let ball = new Mesh(new CircleBufferGeometry(5, 10), new MeshBasicMaterial({ color: 0xffaa00 }))
+    let ball = new Mesh(new CircleBufferGeometry(5 / 2, 10), new MeshBasicMaterial({ color: 0xffaa00 }))
     ball.rotateX(Math.PI * -0.5)
     this.o3d.add(ball)
+
+    let pt1 = new Vector3()
+    let pt2 = new Vector3()
+
+    var curve = new CatmullRomCurve3([
+      pt1,
+      pt2
+    ]);
 
     let plot = () => {
       let from = this.core.works.find(w => w._id === this.arrow.from)
@@ -40,23 +48,17 @@ export default {
         return
       }
 
-      var curve = new CatmullRomCurve3([
-        new Vector3(from.position.x, from.position.y - 4, from.position.z),
-        new Vector3(to.position.x, to.position.y - 4, to.position.z)
-      ]);
+      pt1.set(from.position.x, from.position.y - 4, from.position.z)
+      pt2.set(to.position.x, to.position.y - 4, to.position.z)
 
       var points = curve.getPoints(2);
       var geometry = new BufferGeometry().setFromPoints(points);
       curveO3D.geometry = geometry
       curveO3D.computeLineDistances()
-
-      return {
-        curve
-      }
     }
 
-    let pRes = plot()
-    let curve = pRes.curve
+    plot()
+
 
     let i = 0
     this.onLoop(() => {
@@ -68,8 +70,7 @@ export default {
       if (!this.isValid) {
         return
       }
-      let pRes = plot()
-      curve = pRes.curve
+      plot()
     })
 
     this.o3d.add(curveO3D)

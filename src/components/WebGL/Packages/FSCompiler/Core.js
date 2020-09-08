@@ -130,19 +130,19 @@ export class AppCore extends EventDispatcher {
           _id: getID(),
           type: 'genesis',
           tree: getDefaultTree(),
-          position: { x: -250, y: 0, z: 0 },
+          position: { x: -250 / 4, y: 0, z: 0 },
         },
         {
           _id: getID(),
           type: 'genesis',
           tree: getDefaultTree(),
-          position: { x: 0, y: 1, z: -100 },
+          position: { x: 0, y: 1, z: -100 / 4 },
         },
         {
           _id: getID(),
           type: 'genesis',
           tree: getDefaultTree(),
-          position: { x: 250, y: 2, z: 0 },
+          position: { x: 250 / 4, y: 2, z: 0 },
         }
       ]
     )
