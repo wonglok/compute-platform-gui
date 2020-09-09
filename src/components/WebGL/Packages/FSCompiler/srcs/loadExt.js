@@ -38,3 +38,4 @@ function loadExt(files, after) {
 // new loadExt(["/path/file1.js","/path/file1.css", "file2.js?nocache="+(new Date().getTime()), "file3.js"], function() {
 //   console.log("all loaded");
 // })
+

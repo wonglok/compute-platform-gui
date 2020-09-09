@@ -41,7 +41,7 @@
 
     <div v-if="core">
       <EditBox v-for="win in core.wins" :key="win._id + '-wins'" :wins="core.wins" v-show="win.show" :win="win" :offset="offset" class="win-area">
-        <EditorUnit :win="win" :wins="core.wins" v-if="win.appName === 'editor'"></EditorUnit>
+        <EditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'editor'"></EditorUnit>
         <!-- <PipelineController :win="win" :wins="wins" v-if="win.appName === 'project'"></PipelineController> -->
       </EditBox>
     </div>
@@ -228,7 +228,7 @@ export default {
       this.core.provideWorkWin({ work })
     },
     onRemoveWork ({ work }) {
-      this.core.removeWork({ work })
+      this.core.moveWorkToTrash({ work })
     },
     async setupAmmo () {
       let ammo = new AmmoPhysics({
@@ -356,7 +356,6 @@ export default {
     this.setupGraphics()
     this.setupDOM()
     this.core = new AppCore()
-    // this.core.addDemoOps()
     Vue.prototype.$core = this.core
 
     this.$root.escs = this.$root.escs || []
@@ -372,6 +371,10 @@ export default {
         }
       }
     })
+
+    // run demo
+    this.core.addDemoOps()
+    this.overlay = ''
   },
   beforeDestroy () {
     this.isComponentActive = false

@@ -10,10 +10,10 @@ export const routes = [
     path: '/art',
     component: () => import('./components/WebGL/AppUIs/ART/ARTPage.vue')
   },
-  {
-    path: '/win',
-    component: () => import('./components/WebGL/AppUIs/EditorUnit/EditorUnit.vue')
-  },
+  // {
+  //   path: '/editor',
+  //   component: () => import('./components/WebGL/AppUIs/EditorUnit/EditorUnit.vue')
+  // },
   {
     path: '/',
     component: () => import('./components/WebGL/AppUIs/EditorSpace/EditorSpace.vue')

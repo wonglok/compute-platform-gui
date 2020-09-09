@@ -1,7 +1,9 @@
 import * as UI from '../../AppUIs/EditorSpace/ageUI'
 import { getID } from '../../Core/O3DNode'
-import { getDefaultTree } from './FSCompiler'
+import { getDefaultTree, makeUnitModule, treeToFlat } from './FSCompiler'
 import { EventDispatcher } from 'three/build/three.module'
+
+
 
 export class AppCore extends EventDispatcher {
   constructor () {
@@ -9,6 +11,8 @@ export class AppCore extends EventDispatcher {
     this.wins = []
     this.works = []
     this.arrows = []
+
+    this.trashedWorks = []
 
     this.current = {
       workFrom: false,
@@ -27,8 +31,13 @@ export class AppCore extends EventDispatcher {
       'faces'
     ]
   }
-  createGenesis ({ type }) {
-    console.log(type)
+  async makeUnitModule ({ work }) {
+    let main = {
+      name: work._id,
+      list: treeToFlat(work.tree)
+    }
+    let code = await makeUnitModule({ pack: main })
+    return code
   }
   refresh () {
     window.dispatchEvent(new Event('plot-curve'))
@@ -152,54 +161,80 @@ export class AppCore extends EventDispatcher {
     let works = this.works
     works.splice(works.findIndex(e => e === work), 1)
     let win = this.findWinByWork({ work })
-    this.removeWin({ win })
+    if (win) {
+      this.removeWin({ win })
+    }
+  }
+  moveWorkToTrash ({ work }) {
+    this.removeLinksOfWork({ work })
+    let works = this.works
+    let idx = works.findIndex(e => e === work)
+    works.splice(idx, 1)
+    let win = this.findWinByWork({ work })
+    if (win) {
+      this.removeWin({ win })
+    }
+    this.trashedWorks.push(work)
+  }
+  restoreWork ({ work }) {
+    let idx = this.trashedWorks.indexOf(work)
+    if (idx !== -1) {
+      this.trashedWorks.splice(idx, 1)
+    }
+    this.works.push(work)
   }
   addDemoOps () {
-    this.works.push(
-      ...[
-        {
-          _id: getID(),
-          type: 'genesis',
-          tree: getDefaultTree(),
-          position: { x: -250 / 4, y: 0, z: 0 },
-        },
-        {
-          _id: getID(),
-          type: 'genesis',
-          tree: getDefaultTree(),
-          position: { x: 0, y: 1, z: -100 / 4 },
-        },
-        {
-          _id: getID(),
-          type: 'genesis',
-          tree: getDefaultTree(),
-          position: { x: 250 / 4, y: 2, z: 0 },
-        }
-      ]
-    )
+    // this.works.push(
+    //   ...[
+    //     {
+    //       _id: getID(),
+    //       type: 'genesis',
+    //       isGenesis: true,
+    //       tree: getDefaultTree(),
+    //       position: { x: -250 / 4, y: 0, z: 0 },
+    //     },
+    //     // {
+    //     //   _id: getID(),
+    //     //   type: 'genesis',
+    //     //   tree: getDefaultTree(),
+    //     //   position: { x: 0, y: 1, z: -100 / 4 },
+    //     // },
+    //     // {
+    //     //   _id: getID(),
+    //     //   type: 'genesis',
+    //     //   tree: getDefaultTree(),
+    //     //   position: { x: 250 / 4, y: 2, z: 0 },
+    //     // }
+    //   ]
+    // )
 
-    this.arrows.push(
-      ...[
-        {
-          _id: getID(),
-          from: this.works[0]._id,
-          to: this.works[1]._id,
-        },
-        {
-          _id: getID(),
-          from: this.works[1]._id,
-          to: this.works[2]._id,
-        }
-      ]
-    )
+    // this.arrows.push(
+    //   ...[
+    //     {
+    //       _id: getID(),
+    //       from: this.works[0]._id,
+    //       to: this.works[1]._id,
+    //     },
+    //     {
+    //       _id: getID(),
+    //       from: this.works[1]._id,
+    //       to: this.works[2]._id,
+    //     }
+    //   ]
+    // )
+
+    this.current.workType = 'mesh'
+    this.createWorkAtPos({ position: { x: -125, y: 0, z: 0 } })
+    this.provideWorkWin({ work: this.works[0] })
 
     this.refresh()
   }
   // UI.getWin({ title: 'Editor', appName: 'editor' })
   removeWin ({ win }) {
-    let wins = this.wins
-    let idx = wins.findIndex(e => e === win)
-    wins.splice(idx, 1)
+    let idx = this.wins.findIndex(e => e === win)
+    if (idx !== -1) {
+      this.wins.splice(idx, 1)
+    }
   }
   toggleWin ({ win }) {
     win.show = !win.show

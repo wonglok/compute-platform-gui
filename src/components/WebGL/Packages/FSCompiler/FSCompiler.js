@@ -23,36 +23,89 @@ var DefaultFilesList = [
     isEntry: true,
     _id: getID(),
     type: 'file',
-    src: `export { unit } from './package/main.js'`
+    src: `export * as WorkBox from './package/main.js'`
   },
   {
-    path: './preview.js',
+    path: './iframe.js',
     _id: getID(),
     isPreviewEntry: true,
     isEntry: true,
     type: 'file',
     src: `
-import { unit } from './package.js'
-import { VisualEngine } from './preview/VisualEngine.js'
+import { WorkBox } from './package.js'
+import { VisualEngine } from './iframe/VisualEngine.js'
+import * as Util from './iframe/util.js'
 
-let engine = new VisualEngine()
-engine.waitForSetup()
+Promise.resolve()
   .then(async () => {
-    let visual = await unit.make(engine)
+    let THREE = await Util.cachedImport('https://unpkg.com/three@0.119.1/build/three.module.js')
+
+    let engine = new VisualEngine({ THREE, cachedImport: Util.cachedImport })
+    await engine.waitForSetup()
+    let visual = await WorkBox.use(engine)
   })
 `
   },
+
   {
-    path: './preview/localForage.js',
+    path: './package/main.js',
+    _id: getID(),
+    type: 'file',
+    src: require('!raw-loader!./srcs/main.js').default
+  },
+  {
+    path: './package/shader/box.vert',
+    _id: getID(),
+    type: 'file',
+    src: `uniform float time;
+varying vec3 v_pos;
+void main(void) {
+  vec3 nPos = position;
+  nPos.x += sin(nPos.y * 0.1 + time * 10.0) * 10.0;
+
+  v_pos = vec3(nPos.x, nPos.y, nPos.z);
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(nPos, 1.0);
+}
+`
+  },
+  {
+    path: './package/shader/box.frag',
+    _id: getID(),
+    type: 'file',
+    src: `varying vec3 v_pos;
+
+void main (void) {
+  gl_FragColor = vec4(normalize(v_pos.xyz) + 0.3, 1.0);
+}
+`
+  },
+  {
+    path: './iframe/localForage.js',
     _id: getID(),
     type: 'file',
     src: require('!raw-loader!./srcs/localforage.js').default
   },
   {
-    path: './preview/VisualEngine.js',
+    path: './iframe/VisualEngine.js',
+    _id: getID(),
+    type: 'file',
+    src: require('!raw-loader!./srcs/VisualEngine.js').default
+  },
+  {
+    path: './iframe/util.js',
     _id: getID(),
     type: 'file',
     src: `
+${loadExt}
+
+export const load = (urls) => {
+  return new Promise((resolve) => {
+    new loadExt(urls, () => {
+      resolve()
+    })
+  })
+}
+
 import localForage from './localForage.js'
 
 const store = localForage.createInstance({
@@ -92,192 +145,10 @@ export const provideURL = async (url) => {
   return js2url({ js })
 }
 
-export const importCache = async (url) => {
+export const cachedImport = async (url) => {
   url = await provideURL(url)
   let MOD = await import(url)
   return MOD
-}
-
-export class VisualEngine {
-  constructor () {
-    this.wait = this.setup()
-  }
-  async waitForSetup () {
-    return this.wait
-  }
-  async setup () {
-    let isAborted = false
-    this.tasks = []
-    this.resizeTasks = []
-    this.cleanTasks = []
-    this.onLoop = (v) => {
-      this.tasks.push(v)
-    }
-
-    this.onResize = (v) => {
-      v()
-      this.resizeTasks.push(v)
-    }
-
-    let intv = 0
-    let internalResize = () => {
-      clearTimeout(intv)
-      intv = setTimeout(() => {
-        this.renderer.setSize(window.innerWidth, window.innerHeight)
-        this.renderer.setPixelRatio(window.devicePixelRatio || 1.0)
-      }, 16.6668)
-    }
-
-    window.addEventListener('message', (ev) => {
-      // console.log(ev.data.event === 'resize')
-      internalResize()
-    })
-
-    window.addEventListener('resize', () => {
-      internalResize()
-    })
-
-    this.cleanUp = () => {
-      isAborted = true
-      try {
-        this.cleanTasks.forEach(e => e())
-      } catch (e) {
-        console.error(e)
-      }
-    }
-
-    let THREE = await importCache('https://unpkg.com/three@0.119.1/build/three.module.js')
-    this.THREE = THREE
-    let { Scene, WebGLRenderer, PerspectiveCamera } = THREE
-
-    var camera = this.camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    camera.position.z = 50
-
-    this.onResize(() => {
-      camera.aspect = window.innerWidth / window.innerHeight
-      camera.updateProjectionMatrix()
-    })
-
-    this.renderer = new WebGLRenderer({
-      antialias: true,
-      alpha: true
-    })
-    this.onResize(() => {
-      this.renderer.setSize(window.innerWidth, window.innerHeight)
-      this.renderer.setPixelRatio(window.devicePixelRatio || 1.0)
-    })
-
-    this.renderer.setSize(window.innerWidth, window.innerHeight)
-    this.renderer.setPixelRatio(window.devicePixelRatio || 1.0)
-
-    document.body.appendChild(this.renderer.domElement);
-    document.body.style.cssText = 'margin: 0px; padding: 0px;'
-    this.scene = new Scene()
-
-    var animate = () => {
-      requestAnimationFrame(animate);
-
-      if (isAborted) {
-        return
-      }
-
-      try {
-        this.tasks.forEach(e => e())
-      } catch (e) {
-        console.error(e)
-      }
-
-      this.renderer.render(this.scene, this.camera);
-    }
-    animate()
-
-    return this
-  }
-}
-`
-  },
-  {
-    path: './package/main.js',
-    _id: getID(),
-    type: 'file',
-    src: `
-import boxV from './shader/box.vert'
-import boxF from './shader/box.frag'
-
-export const unit = {
-  make: async (engine) => {
-    let { THREE, onLoop, onResize, onClean, scene } = engine
-    let { Mesh, BoxBufferGeometry, MeshBasicMaterial, Color } = THREE
-    // let { GPUComputationRenderer } = await import('https://unpkg.com/three@0.119.1/examples/jsm/misc/GPUComputationRenderer.js')
-
-    let geo = new BoxBufferGeometry(25, 25, 25, 10, 10, 10)
-
-    let uniforms = {
-      time: { value: 0 }
-    }
-    var mat = new THREE.ShaderMaterial({
-      uniforms,
-      wireframe: true,
-      transparent: true,
-      vertexShader: boxV,
-      fragmentShader: boxF
-    });
-
-    let box = new Mesh(geo, mat)
-    onLoop(() => {
-      uniforms.time.value = window.performance.now() * 0.001
-    })
-
-    onResize(() => {
-
-    })
-
-    scene.add(box)
-
-  }
-}
-`
-  },
-  {
-    path: './package/shader/box.vert',
-    _id: getID(),
-    type: 'file',
-    src: `uniform float time;
-varying vec3 v_pos;
-void main(void) {
-  vec3 nPos = position;
-  nPos.x += sin(nPos.y * 0.1 + time * 10.0) * 10.0;
-
-  v_pos = vec3(nPos.x, nPos.y, nPos.z);
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(nPos, 1.0);
-}
-`
-  },
-  {
-    path: './package/shader/box.frag',
-    _id: getID(),
-    type: 'file',
-    src: `varying vec3 v_pos;
-
-void main (void) {
-  gl_FragColor = vec4(normalize(v_pos.xyz) + 0.3, 1.0);
-}
-`
-  },
-
-  {
-    path: './preview/util.js',
-    _id: getID(),
-    type: 'file',
-    src: `
-${loadExt}
-
-export const load = (urls) => {
-  return new Promise((resolve) => {
-    new loadExt(urls, () => {
-      resolve()
-    })
-  })
 }
 `
   },

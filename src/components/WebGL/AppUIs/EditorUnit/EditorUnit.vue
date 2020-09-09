@@ -2,14 +2,14 @@
   <div :horizontal="true" class="full h-full relative overflow-hidden flex flex-col">
     <div @wheel.prevent="" @wheel.stop="" class="flex h-full">
 
-      <div style="width: 270px; background-color: #09161e;" class="h-full p-4 " >
-        <div :style="iframe ? 'height: calc(100% - ' + iframeHeight + 'px);' : 'height: calc(100%);'">
+      <div style="width: 270px; background-color: #09161e;" class="h-full relative" >
+        <div class="absolute z-10 top-0 left-0 w-full p-3" :style="iframe ? 'height: calc(100% - ' + iframeHeight + 'px);' : 'height: calc(100%);'">
           <keep-alive>
             <TreeItem class="select-none h-full overflow-y scrolling-touch" v-if="tree" @add-item="addItem" @add-folder="addFolder" @click-item="clickItem" :item="tree"></TreeItem>
           </keep-alive>
         </div>
         <!-- <FolderTree class="full" :allowMultiselect="false" @nodeclick="onClick" v-model="tree.children"></FolderTree> -->
-        <div v-if="iframe" class="w-full" :style="{ height: iframeHeight + 'px', 'background-color': '#09161e' }">
+        <div v-if="iframe" class="w-full absolute bottom-0 left-0" :style="{ zIndex: '0', height: iframeHeight + 'px', 'background-color': '#09161e' }">
           <iframe :src="unitWebURL" ref="iframer" class="w-full h-full" frameborder="0"></iframe>
         </div>
       </div>
@@ -24,6 +24,7 @@
             <button class="mx-1 rounded-full px-3 border bg-white text-black" v-if="checkEnable()" @click="onMovePrompt()">Move</button>
           </div>
         </div>
+
         <div class="w-full bg-gray-800" :style="'height: calc(100% - 30px);'" ref="ace">
           <keep-alive>
             <ACE
@@ -249,11 +250,13 @@ export default {
     },
     toggleFrame () {
       this.iframe = !this.iframe
+
       // if (!this.iframe) {
       //   this.$parent.$emit('delta-height', -this.iframeHeight)
       // } else {
       //   this.$parent.$emit('delta-height', this.iframeHeight)
       // }
+
       window.dispatchEvent(new Event('resize'))
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'))
