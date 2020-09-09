@@ -36,7 +36,7 @@ export class ART {
       name: 'specialSpeed_' + (Math.random() * 100).toFixed(0),
       isDynamic: false,
       terser: `
-// 'x', 'y', 'z', 'dimension', 'totalPoints', 'pointID', 'vertexID', 'totalVetex', 'out'
+// 'x', 'y', 'z', 'dimension', 'totalUnits', 'unitID', 'vertexID', 'totalVetex', 'out'
 
 out.x = x - dimension * 0.5;
 out.y = y - dimension * 0.5;
@@ -74,7 +74,7 @@ out.w = 1;`
           name: 'specialColor',
           isDynamic: false,
           terser: `
-//'x', 'y', 'z', 'dimension', 'totalPoints', 'pointID', 'vertexID', 'totalVetex', 'out'
+//'x', 'y', 'z', 'dimension', 'totalUnits', 'unitID', 'vertexID', 'totalVetex', 'out'
 
 out.x = x - dimension * 0.5;
 out.y = y - dimension * 0.5;
@@ -231,7 +231,7 @@ varying vec2 vUv;`,
     let total = dimension * dimension * dimension
     let iii = 0
 
-    let fnCall = new Function('x', 'y', 'z', 'dimension', 'totalPoints', 'pointID', 'vertexID', 'totalVetex', 'out', attr.terser)
+    let fnCall = new Function('x', 'y', 'z', 'dimension', 'totalUnits', 'unitID', 'vertexID', 'totalVetex', 'out', attr.terser)
 
     var out = {
       x: 0,

@@ -14,13 +14,13 @@
           <img src="./img/dots.svg" class="  cursor-pointer" @click="$emit('choose', 'points')" alt="">
         </div>
       </div>
-      <!--
+
       <div class=" w-1/4  flex flex-col justify-center items-center">
         <div class="text-center mb-12">線 Line</div>
         <div>
           <img src="./img/lines.svg" class="  cursor-pointer" @click="$emit('choose', 'linesegments')" alt="">
         </div>
-      </div> -->
+      </div>
 
       <div class=" w-1/4  flex flex-col justify-center items-center">
         <div class="text-center mb-12">網面 Mesh</div>
@@ -58,5 +58,4 @@ export default {
 </script>
 
 <style>
-
 </style>

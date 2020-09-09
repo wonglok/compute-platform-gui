@@ -239,7 +239,7 @@ export class AppCore extends EventDispatcher {
     // )
 
     this.current.workType = 'mesh'
-    this.createWorkAtPos({ position: { x: -125, y: 0, z: 0 } })
+    this.createWorkAtPos({ position: { x: -108, y: 0, z: 0 } })
     this.provideWorkWin({ work: this.works[0] })
 
     this.refresh()

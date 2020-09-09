@@ -3,7 +3,7 @@ import boxF from './shader/box.frag'
 
 export const use = async (execEnv) => {
   let { THREE, onLoop, onResize, onClean, scene, cachedImport } = execEnv
-  let { Mesh, BoxBufferGeometry, MeshBasicMaterial, Color } = THREE
+  let { Mesh, BoxBufferGeometry, ShaderMaterial, Color } = THREE
   // let { GPUComputationRenderer } = await import('https://unpkg.com/three@0.119.1/examples/jsm/misc/GPUComputationRenderer.js')
 
   let geo = new BoxBufferGeometry(25, 25, 25, 10, 10, 10)
@@ -11,7 +11,7 @@ export const use = async (execEnv) => {
   let uniforms = {
     time: { value: 0 }
   }
-  var mat = new THREE.ShaderMaterial({
+  var mat = new ShaderMaterial({
     uniforms,
     wireframe: true,
     transparent: true,
@@ -30,3 +30,5 @@ export const use = async (execEnv) => {
 
   scene.add(box)
 }
+
+export const monitor = use
