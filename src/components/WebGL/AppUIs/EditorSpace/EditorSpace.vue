@@ -24,8 +24,9 @@
       <WorkFloor :mouseMode="mouseMode" @move-point="onMove($event)" @click-floor="onClickFloor" @delta="onPan($event)"></WorkFloor>
 
       <O3D v-for="work in core.works" :key="work._id" >
-        <WBGenesis :key="work._id" :core="core" :works="core.works" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-        </WBGenesis>
+        <WorkBox :key="work._id" :core="core" :works="core.works" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
+
+        </WorkBox>
       </O3D>
 
       <O3D v-for="arrow in core.arrows" :key="arrow._id">
@@ -49,7 +50,11 @@
     <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
 
     <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'influence'">
-      <OVInfluence @choose="onChooseGenesis" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVInfluence>
+      <OVInfluence @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVInfluence>
+    </div>
+
+    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
+      <OVGenesis @choose="onChooseGenesis" @overlay="overlay = $event"></OVGenesis>
     </div>
 
     <!-- <div ref="drag-area" class="age-drag-area age-layer full"></div> -->
@@ -77,7 +82,7 @@ export default {
       rayplay: false,
       isTouch: 'ontouchstart' in window,
       screen: false,
-      overlay: '',
+      overlay: 'genesis',
       isComponentActive: true,
       ammo: false,
       camera: false,
@@ -121,11 +126,19 @@ export default {
         this.$root.escs = this.$root.escs || []
         this.$root.escs.push(restore)
         this.$forceUpdate()
-      } else if (this.mouseMode === 'create') {
+      } else if (this.mouseMode === 'influence') {
         this.cursor.img = `${require('./img/add.png')}`
         this.cursor.type = 'block'
         this.cursor.enableImg = true
         this.cursor.enableArrow = true
+        this.$root.escs = this.$root.escs || []
+        this.$root.escs.push(restore)
+        this.$forceUpdate()
+      } else if (this.mouseMode === 'genesis') {
+        this.cursor.img = `${require('./img/add.png')}`
+        this.cursor.type = 'block'
+        this.cursor.enableImg = true
+        this.cursor.enableArrow = false
         this.$root.escs = this.$root.escs || []
         this.$root.escs.push(restore)
         this.$forceUpdate()
@@ -135,13 +148,18 @@ export default {
   created () {
   },
   methods: {
-    onChooseGenesis (chosen) {
-      this.core.onSetCurrentGenesisType({ type: chosen })
+    onChooseInfluence (chosen) {
+      this.core.onSetCurrentWorkType({ type: chosen })
       this.overlay = false
-      this.mouseMode = 'create'
+      this.mouseMode = 'influence'
+    },
+    onChooseGenesis (chosen) {
+      this.core.onSetCurrentWorkType({ type: chosen })
+      this.mouseMode = 'genesis'
+      this.overlay = false
     },
     onClickFloor (ev) {
-      if (this.mouseMode === 'create') {
+      if (this.mouseMode === 'influence') {
         let work = this.core.createWorkAtPos({
           position: {
             x: ev.event.point.x,
@@ -155,6 +173,20 @@ export default {
       } else if (this.mouseMode === 'connect') {
         // console.log('click-floor', ev)
         this.mouseMode = ''
+      } else if (this.mouseMode === 'genesis') {
+        let work = this.core.createWorkAtPos({
+          position: {
+            x: ev.event.point.x,
+            y: 0,
+            z: ev.event.point.z
+          }
+        })
+        this.mouseMode = ''
+
+        // this.overlay = 'genesis'
+        // console.log('genesis')
+      } else if (this.core.works.length === 0) {
+        this.overlay = 'genesis'
       }
     },
     onMove({ point }) {
@@ -187,7 +219,7 @@ export default {
     },
     onClickPreview ($event) {
       if (this.mouseMode === 'connect') {
-        console.log($event)
+        // console.log($event)
         this.core.onAddArrow({ workTo: $event.work })
         this.mouseMode = ''
       }
@@ -324,7 +356,7 @@ export default {
     this.setupGraphics()
     this.setupDOM()
     this.core = new AppCore()
-    this.core.addDemoOps()
+    // this.core.addDemoOps()
     Vue.prototype.$core = this.core
 
     this.$root.escs = this.$root.escs || []

@@ -12,15 +12,32 @@ export class AppCore extends EventDispatcher {
 
     this.current = {
       workFrom: false,
-      genesisType: false
+      workType: false
     }
     this.initAir = 5
+
+    this.genesisTypes = [
+      'points',
+      'linesegments',
+      'mesh'
+    ]
+    this.influenceType = [
+      'dots',
+      'line',
+      'faces'
+    ]
+  }
+  createGenesis ({ type }) {
+    console.log(type)
   }
   refresh () {
     window.dispatchEvent(new Event('plot-curve'))
     setTimeout(() => {
       window.dispatchEvent(new Event('plot-curve'))
-    })
+    }, 50)
+    setTimeout(() => {
+      window.dispatchEvent(new Event('plot-curve'))
+    }, 100)
   }
   getCurrentWorkFrom () {
     return this.works.find(e => e._id === this.current.workFrom._id)
@@ -36,9 +53,12 @@ export class AppCore extends EventDispatcher {
   createWorkAtPos ({ position }) {
     let newItem = {
       _id: getID(),
-      type: this.current.genesisType,
+      type: this.current.workType,
       tree: getDefaultTree(),
       position: { x: position.x, y: position.y + this.initAir, z: position.z },
+    }
+    if (this.genesisTypes.includes(this.current.workType)) {
+      newItem.isGenesis = true
     }
     this.works.push(newItem)
     this.refresh()
@@ -55,8 +75,8 @@ export class AppCore extends EventDispatcher {
   onSetCurrentWorkFrom ({ work }) {
     this.current.workFrom = work
   }
-  onSetCurrentGenesisType ({ type }) {
-    this.current.genesisType = type
+  onSetCurrentWorkType ({ type }) {
+    this.current.workType = type
   }
   onAddArrow ({ workTo }) {
     // console.log(workTo, this.current)
@@ -71,6 +91,8 @@ export class AppCore extends EventDispatcher {
         from: this.current.workFrom._id,
         to: workTo._id
       })
+    } else {
+      console.log('already added link')
     }
     this.refresh()
   }

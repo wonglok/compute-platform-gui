@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { CylinderBufferGeometry, CircleBufferGeometry, Mesh, MeshBasicMaterial, PlaneBufferGeometry, TextureLoader, BoxBufferGeometry } from 'three'
+import { CylinderBufferGeometry, CircleBufferGeometry, Mesh, MeshBasicMaterial, PlaneBufferGeometry, TextureLoader, BoxBufferGeometry, DoubleSide } from 'three'
 import O3DNode from '../../Core/O3DNode'
 export default {
   mixins: [
@@ -14,9 +14,9 @@ export default {
   },
   mounted () {
     if (this.cursor.type === 'img') {
-      let geo = new PlaneBufferGeometry(64 / 4, 64 / 4, 1, 1)
+      let geo = new PlaneBufferGeometry(12, 12, 1, 1)
       geo.rotateX(Math.PI * -0.5)
-      geo.translate(0, 10, 0)
+      geo.translate(0, 1, 0)
       let mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, map: new TextureLoader().load(this.cursor.img) })
       let mesh = new Mesh(geo, mat)
       this.onLoop(() => {
@@ -24,22 +24,32 @@ export default {
       })
       this.o3d.add(mesh)
     } else {
-      let depth = 3 / 6
+      let depth = 0.5
       let curveness = 36
-      let width = 64 / 4
-      let geoFrame = new BoxBufferGeometry(width, depth, width)
+      let width = 10
+      let geoFrame = new CylinderBufferGeometry(width, width, depth, curveness)
       // geoFrame.rotateY(Math.PI / 3 / 2)
-      let geoScreen = new PlaneBufferGeometry(width, width, 1, 1)
+      let geoScreen = new CircleBufferGeometry(width, curveness)
       geoScreen.rotateX(Math.PI * -0.5)
-      let matScreen = new MeshBasicMaterial({ color: 0xffffff })
-
+      let matScreen = new MeshBasicMaterial({ side: DoubleSide, color: 0xffffff, transparent: true })
+      let matScreenBase = new MeshBasicMaterial({ side: DoubleSide, color: 0xffffff, transparent: true })
       let matFrame = new MeshBasicMaterial({ color: 0xbababa })
+
+      new TextureLoader().load(require('./img/add-bg.png'), (tex) => {
+        matScreen.map = tex
+        matScreen.needsUpdate = true
+      })
+
       let screen = new Mesh(geoScreen, matScreen)
       let frame = new Mesh(geoFrame, matFrame)
-      screen.position.y += depth / 2 + 0.2
+      screen.position.y += depth / 2 + 0.3
       screen.scale.x *= 0.95
       screen.scale.y *= 0.95
       screen.scale.z *= 0.95
+      let screenBG = screen.clone()
+      screenBG.position.y -= 0.1
+      screenBG.material = matScreenBase
+      frame.add(screenBG)
       this.onLoop(() => {
         frame.position.copy(this.cursor.position)
       })

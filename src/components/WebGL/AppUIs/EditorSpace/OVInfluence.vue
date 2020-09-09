@@ -2,28 +2,37 @@
   <div class="">
     <div class="mb-12"></div>
     <div class=" text-center text-4xl mb-6">
-      您想畫設麽？
+      請選擇動畫種類
     </div>
     <div class=" text-center text-lg mb-12">
-      What do you want to draw?
+      What do you want to animate?
     </div>
     <div class="flex justify-around max-w-4xl mx-auto">
-      <div class="">
-        <div class="text-center mb-12">點 Dots</div>
+      <div class="w-1/4 flex flex-col justify-center items-center">
+        <div class="text-center mb-12">立方體群分佈 <br/> Cube Cluster Distribution</div>
         <div>
-          <img src="./img/dots.svg" class="  cursor-pointer" @click="$emit('choose', 'dots')" alt="">
+          <img src="./img/cube-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'cube-distribution')" alt="">
         </div>
       </div>
-      <div>
-        <div class="text-center mb-12">線 Line</div>
+
+      <div class="w-1/4 flex flex-col justify-center items-center">
+        <div class="text-center mb-12">平面群分佈 <br/> Plane Cluster Distribution</div>
         <div>
-          <img src="./img/lines.svg" class="  cursor-pointer" @click="$emit('choose', 'line')" alt="">
+          <img src="./img/plane-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'plane-distribution')" alt="">
         </div>
       </div>
-      <div>
-        <div class="text-center mb-12">面 Faces</div>
+
+      <div class="w-1/4 flex flex-col justify-center items-center">
+        <div class="text-center mb-12">動感 <br/> Motion</div>
         <div>
-          <img src="./img/faces.svg" class="  cursor-pointer" @click="$emit('choose', 'faces')" alt="">
+          <img src="./img/motion.svg" class="  cursor-pointer" @click="$emit('choose', 'motion')" alt="">
+        </div>
+      </div>
+
+      <div class="w-1/4 flex flex-col justify-center items-center">
+        <div class="text-center mb-12">顏色 <br/> Color</div>
+        <div>
+          <img src="./img/color.svg" class="  cursor-pointer" @click="$emit('choose', 'color')" alt="">
         </div>
       </div>
     </div>

@@ -221,7 +221,10 @@ export default {
     let baseMesh = makeBaseMesh()
 
     // makeButton({ corner: 'tl', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
-    makeButton({ corner: 'tr', color: '#ffffff', baseMesh, icon: require('./icon/close.png') })
+    if (!this.work.isGenesis) {
+      makeButton({ corner: 'tr', color: '#ffffff', baseMesh, icon: require('./icon/close.png') })
+    }
+
     makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon: require('./icon/pencil.png') })
     makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
     makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/add-bg.png') })
