@@ -25,7 +25,7 @@
 
       <O3D v-for="work in core.works" :key="work._id" >
         <WorkBox :key="work._id" :core="core" :works="core.works" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-
+          <WBTextureProvider :key="work._id" :work="work"></WBTextureProvider>
         </WorkBox>
       </O3D>
 

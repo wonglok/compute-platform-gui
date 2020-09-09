@@ -31,13 +31,28 @@ export class AppCore extends EventDispatcher {
       'faces'
     ]
   }
-  async makeUnitModule ({ work }) {
+  async makeModuleByWork ({ work }) {
     let main = {
       name: work._id,
       list: treeToFlat(work.tree)
     }
     let code = await makeUnitModule({ pack: main })
-    return code
+    try {
+      let simpleFnc = new Function(`
+        let exports = {};
+        let module = {};
+        function newFunc () {
+          ${code}
+        }
+        new newFunc()
+        return exports
+      `)
+      let obj = simpleFnc()
+      return obj
+    } catch (e) {
+      console.log(e)
+      return false
+    }
   }
   refresh () {
     window.dispatchEvent(new Event('plot-curve'))

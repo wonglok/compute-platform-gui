@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- @texture = rtt -->
-    <slot></slot>
+    <slot @texture="texture = $event; $emit('texture', texture)"></slot>
   </div>
 </template>
 
@@ -20,6 +20,7 @@ export default {
   ],
   data () {
     return {
+      texture: false,
       unitPos: {
         x: 0,
         y: 0,
@@ -201,14 +202,19 @@ export default {
           this.$emit('preview', { work: this.work })
         })
         this.ctx.rayplay.hover(screen, (v) => {
-          mat.emissive = new Color('#bababa')
+          mat.emissive = new Color('#323232')
         }, () => {
           mat.emissive = new Color('#000000')
         })
+
         this.onClean(() => {
           this.ctx.rayplay.remove(screen)
         })
       }
+
+      this.$on('texture', (texture) => {
+        mat.map = texture
+      })
 
       baseMesh.add(screen)
       this.onClean(() => {

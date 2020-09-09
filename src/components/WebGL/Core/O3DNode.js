@@ -238,6 +238,7 @@ export const O3DNode = {
   },
   data  () {
     return {
+      isDestroyed: false,
       self: false,
       isDev: process.env.NODE_ENV === 'development',
       pi: Math.PI,
@@ -409,6 +410,7 @@ export const O3DNode = {
     }
   },
   beforeDestroy() {
+    this.isDestroyed = true
     this.o3d.visible = false
     try {
       if (this.$parent) {

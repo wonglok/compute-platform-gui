@@ -23,7 +23,7 @@ var DefaultFilesList = [
     isEntry: true,
     _id: getID(),
     type: 'file',
-    src: `export * as WorkBox from './package/main.js'`
+    src: `export { use } from './package/main.js'`
   },
   {
     path: './iframe.js',
@@ -32,15 +32,15 @@ var DefaultFilesList = [
     isEntry: true,
     type: 'file',
     src: `
-import { WorkBox } from './package.js'
+import * as WorkBox from './package.js'
 import { VisualEngine } from './iframe/VisualEngine.js'
 import * as Util from './iframe/util.js'
 
 Promise.resolve()
   .then(async () => {
-    let THREE = await Util.cachedImport('https://unpkg.com/three@0.119.1/build/three.module.js')
+    let THREE = await Util.singleCachedImport('https://unpkg.com/three@0.119.1/build/three.module.js')
 
-    let engine = new VisualEngine({ THREE, cachedImport: Util.cachedImport })
+    let engine = new VisualEngine({ THREE, singleCachedImport: Util.singleCachedImport })
     await engine.waitForSetup()
     let visual = await WorkBox.use(engine)
   })
@@ -145,7 +145,7 @@ export const provideURL = async (url) => {
   return js2url({ js })
 }
 
-export const cachedImport = async (url) => {
+export const singleCachedImport = async (url) => {
   url = await provideURL(url)
   let MOD = await import(url)
   return MOD

@@ -1,7 +1,7 @@
 export class VisualEngine {
-  constructor ({ THREE, cachedImport }) {
+  constructor ({ THREE, singleCachedImport }) {
     this.THREE = THREE
-    this.cachedImport = cachedImport
+    this.singleCachedImport = singleCachedImport
     this.wait = this.setup()
   }
   async waitForSetup () {

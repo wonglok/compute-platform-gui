@@ -298,6 +298,8 @@ export default {
       // others += await makeUnitModule({ pack: main })
 
       this.unitWebURL = await makeUnitPreview({ pack: main, others })
+
+      this.$root.$emit('compile-workbox', { work: this.work })
     }
   }
 }
