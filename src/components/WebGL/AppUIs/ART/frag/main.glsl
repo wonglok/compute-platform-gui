@@ -100,7 +100,7 @@ void main (void) {
   );
   vec4 defaultColor = dataOutput;
 
-  /* INSERT_BLOCKERS */
+  /* INSERT_REMIX_CODE */
 
   gl_FragColor = dataOutput;
 }

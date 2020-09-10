@@ -3,9 +3,9 @@
     <div class="flex h-full w-full">
 
       <!-- <FolderTree class="full" :allowMultiselect="false" @nodeclick="onClick" v-model="tree.children"></FolderTree> -->
-      <div class="h-full" v-if="iframe" :style="{ 'background-color': '#09161e' }">
+      <!-- <div class="h-full" v-if="iframe" :style="{ 'background-color': '#09161e' }">
         <iframe :src="unitWebURL" ref="iframer" :style="{ height: iframeHeight + 'px' }" class="w-full h-full" frameborder="0"></iframe>
-      </div>
+      </div> -->
 
       <div style="width: 270px; background-color: #09161e;" class="w-full h-full p-3" >
         <keep-alive>
@@ -31,13 +31,14 @@
               @wheel.stop=""
               v-if="current && current.type === 'file'"
               @save="() => {
+                onRefresh()
                 onSave()
               }"
               :key="current.path"
               :path="current.path"
               v-model="current.src"
               @input="() => { isDirty = true; }"
-              @slider="() => { isDirty = true; }"
+              @slide="() => { isDirty = true; onRefresh() }"
               theme="monokai"
               width="100%"
               :height="'calc(100%)'"
@@ -116,6 +117,7 @@ import path from 'path'
 
 export default {
   props: {
+    initTree: {},
     win: {}
   },
   mixins: [
@@ -164,19 +166,18 @@ export default {
     })
   },
   async mounted () {
+    if (this.initTree) {
+      let tree = this.initTree
+      this.load({ tree })
+    } else if (this.win) {
+      this.work = this.$core.getWorkByWin({ win: this.win })
+      this.works = this.$core.works
+      this.arrows = this.$core.arrwos
+      let tree = this.work.tree
+      this.load({ tree })
+    }
     // this.spaceAPI = this.$store.getState()
-    this.work = this.$core.getWorkByWin({ win: this.win })
-    this.works = this.$core.works
-    this.arrows = this.$core.arrwos
 
-    let tree = this.work.tree
-
-    this.load({ tree })
-
-    // setTimeout(() => {
-    //   // let tree = getDefaultTree()
-    //   // this.load({ tree })
-    // }, 1000)
 
     // let tt = 0
     // window.addEventListener('plot', () => {
@@ -294,11 +295,13 @@ export default {
 
       let others = ''
 
-
-
       this.unitWebURL = await makeUnitPreview({ pack: main, others })
 
       this.$root.$emit('compile-workbox', { work: this.work })
+      this.onRefresh()
+    },
+    onRefresh () {
+      this.$root.$emit('refresh-workbox', { work: this.work })
     }
   }
 }

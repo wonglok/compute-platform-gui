@@ -7,13 +7,11 @@
 
 <script>
 import { BoxBufferGeometry, CircleBufferGeometry, Color, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, TextureLoader, Vector3 } from 'three'
-import O3DNode from '../../Core/O3DNode'
+import { O3DNode } from '../../Core/O3DNode'
 import { make } from '../ARTBlockers/art-coder'
 import { loadTexture } from '../../Core/loadTexture'
 export default {
   props: {
-    project: {},
-    work: {}
   },
   mixins: [
     O3DNode
@@ -29,7 +27,7 @@ export default {
     }
   },
   async mounted () {
-    let scale = 1
+    let scale = 1.5
     let boxDepth = 0.333 * scale
     let boxWidth = 40 * scale
     let boxHeight = 40 * scale
@@ -59,13 +57,13 @@ export default {
       baseMesh.layers.enable(1)
 
       this.unitPos = baseMesh.position
-      baseMesh.position.copy(this.work.position)
+      // baseMesh.position.copy(this.work.position)
 
-      this.$watch('unitPos', () => {
-        this.work.position.x = baseMesh.position.x
-        this.work.position.y = baseMesh.position.y
-        this.work.position.z = baseMesh.position.z
-      }, { deep: true })
+      // this.$watch('unitPos', () => {
+      //   this.work.position.x = baseMesh.position.x
+      //   this.work.position.y = baseMesh.position.y
+      //   this.work.position.z = baseMesh.position.z
+      // }, { deep: true })
 
       if (this.ctx.ammo) {
         this.ctx.ammo.addSimpleMesh({ mesh: baseMesh, mass: 1, flags: { isOp: true, isWorld: true } })
@@ -228,12 +226,12 @@ export default {
 
     // makeButton({ corner: 'tl', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
     // if (!this.work.isGenesis) {
-    makeButton({ corner: 'tr', color: '#ffffff', baseMesh, icon: require('./icon/close.png') })
+    // makeButton({ corner: 'tr', color: '#ffffff', baseMesh, icon: require('./icon/close.png') })
     // }
 
-    makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon: require('./icon/gear-black.png') })
-    makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
-    makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/add-bg.png') })
+    // makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon: require('./icon/gear-black.png') })
+    // makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
+    // makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/add-bg.png') })
     // makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
 
     makeScreen({ baseMesh })

@@ -175,7 +175,7 @@ void main (void) {
   vec4 dataOutput = pos;
   vec4 defaultPosition = pos;
 
-  /* INSERT_BLOCKERS */
+  /* INSERT_REMIX_CODE */
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(dataOutput);
   vPos = pos.xyz;

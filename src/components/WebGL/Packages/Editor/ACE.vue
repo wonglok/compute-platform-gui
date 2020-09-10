@@ -204,8 +204,8 @@ export default {
           //   this.editor.session.replace({ start, end }, this.current.color.hex.replace('#', '0x').toLowerCase())
           //   this.$emit('slide', editor.getValue())
           // }
-        } else if ( text && text.trim() && !isNaN(Number(text))) {
-          console.log('isNum', range)
+        } else if (text && text.trim() && !isNaN(Number(text))) {
+          // console.log('isNum', range)
           this.widget.display = true
           this.widget.type = 'number'
 
@@ -214,6 +214,8 @@ export default {
           let range = editor.selection.getRange()
           let { start, end } = range
           let lastText = text
+
+          this.$emit('slide', editor.getValue())
           this.onChangeNumber = () => {
             let newText = Number(this.current.number).toFixed(2)
             end.column = start.column + lastText.length

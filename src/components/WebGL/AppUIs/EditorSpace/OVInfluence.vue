@@ -8,7 +8,7 @@
       What do you want to animate?
     </div>
     <div class="flex justify-around max-w-4xl mx-auto">
-      <div class="w-1/4 flex flex-col justify-center items-center">
+      <!-- <div class="w-1/4 flex flex-col justify-center items-center">
         <div class="text-center mb-12">立方體群 <br/> Cube Cluster</div>
         <div>
           <img src="./img/cube-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'cube-distribution')" alt="">
@@ -20,7 +20,7 @@
         <div>
           <img src="./img/plane-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'plane-distribution')" alt="">
         </div>
-      </div>
+      </div> -->
 
       <div class="w-1/4 flex flex-col justify-center items-center">
         <div class="text-center mb-12">動感 <br/> Motion</div>

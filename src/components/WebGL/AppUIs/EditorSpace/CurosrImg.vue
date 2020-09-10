@@ -24,7 +24,7 @@ export default {
       })
       this.o3d.add(mesh)
     } else {
-      let depth = 0.5
+      let depth = 0.5 * 0.333
       let curveness = 36
       let width = 10
       let geoFrame = new CylinderBufferGeometry(width, width, depth, curveness)

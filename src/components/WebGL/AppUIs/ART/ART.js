@@ -191,7 +191,7 @@ varying vec2 vUv;`,
       ${config.fragmentMain}
     `
 
-    let blockersToken = `/* INSERT_BLOCKERS */`
+    let blockersToken = `/* INSERT_REMIX_CODE */`
     vertexShader = vertexShader.replace(blockersToken, config.blockers.vertexCode)
     fragmentShader = fragmentShader.replace(blockersToken, config.blockers.fragmentCode)
 

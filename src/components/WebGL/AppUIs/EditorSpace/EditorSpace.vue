@@ -29,6 +29,12 @@
         </WorkBox>
       </O3D>
 
+      <!-- <O3D v-if="camera">
+        <PreviewPlane :core="core">
+          <PreviewTextureProvider :core="core"></PreviewTextureProvider>
+        </PreviewPlane>
+      </O3D> -->
+
       <O3D v-for="arrow in core.arrows" :key="arrow._id">
         <WBArrow :key="arrow._id" :core="core" :arrows="core.arrows" :arrow="arrow">
         </WBArrow>
@@ -39,10 +45,20 @@
       <div @click="onClickToucher" class="absolute top-0 left-0 full" ref="toucher"></div>
     </div>
 
+    <div class=" absolute top-0 right-0 flex">
+      <div class="p-3">
+        <img src="./icon/add.svg" @click="onClickAdd" class="w-10 h-10" alt="">
+      </div>
+      <div class="p-3">
+        <img src="./icon/gear.svg" @click="onClickGear" class="w-10 h-10" alt="">
+      </div>
+    </div>
+
     <div v-if="core">
       <EditBox v-for="win in core.wins" :key="win._id + '-wins'" :wins="core.wins" v-show="win.show" :win="win" :offset="offset" class="win-area">
         <EditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'editor'"></EditorUnit>
-        <!-- <PipelineController :win="win" :wins="wins" v-if="win.appName === 'project'"></PipelineController> -->
+        <!-- <EditorUnit :initTree="core.engineCodeTree" :key="win._id" v-if="win.appName === 'edit-pipeline'"></EditorUnit> -->
+        <!-- <EditorFacePipeline :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'face-pipeline'"></EditorFacePipeline> -->
       </EditBox>
     </div>
 
@@ -56,6 +72,8 @@
     <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
       <OVGenesis @choose="onChooseGenesis" @overlay="overlay = $event"></OVGenesis>
     </div>
+
+    <!-- <component v-show="false" v-if="dynamo" ref="dynamo" :is="dynamo"></component> -->
 
     <!-- <div ref="drag-area" class="age-drag-area age-layer full"></div> -->
   </div>
@@ -72,13 +90,15 @@ import { RayPlay } from '../../Core/RayPlay'
 import { Dragger } from './Dragger'
 import { AmmoPhysics } from './AmmoPhysics'
 import { getID, getScreen } from '../../Core/O3DNode'
-import { AppCore } from '../../Packages/FSCompiler/Core'
+import { AppCore, Shell } from '../../Packages/FSCompiler/Core'
 export default {
   mixins: [
     RenderRoot
   ],
   data () {
     return {
+      dynamo: false,
+      shell: false,
       rayplay: false,
       isTouch: 'ontouchstart' in window,
       screen: false,
@@ -148,6 +168,12 @@ export default {
   created () {
   },
   methods: {
+    onClickAdd () {
+      this.overlay = 'genesis'
+    },
+    onClickGear () {
+      this.core.openPipelineSystem()
+    },
     onChooseInfluence (chosen) {
       this.core.onSetCurrentWorkType({ type: chosen })
       this.overlay = false
@@ -222,6 +248,8 @@ export default {
         // console.log($event)
         this.core.onAddArrow({ workTo: $event.work })
         this.mouseMode = ''
+      } else {
+        this.core.provideWorkWin({ work: $event.work })
       }
     },
     onEditWork ({ work }) {
@@ -356,8 +384,15 @@ export default {
     this.setupGraphics()
     this.setupDOM()
 
-    this.core = new AppCore()
+    this.core = new AppCore({ onLoop: this.onLoop })
     Vue.prototype.$core = this.core
+
+    // run demo
+    this.core.addDemoOps()
+    this.overlay = ''
+
+    this.shell = new Shell({ core: this.core, vm: this })
+
     this.$root.escs = this.$root.escs || []
     window.addEventListener('keydown', (ev) => {
       if (!this.isComponentActive) {
@@ -371,9 +406,6 @@ export default {
       }
     })
 
-    // run demo
-    this.core.addDemoOps()
-    this.overlay = ''
   },
   beforeDestroy () {
     this.isComponentActive = false

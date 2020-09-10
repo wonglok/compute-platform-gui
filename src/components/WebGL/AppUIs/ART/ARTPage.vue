@@ -17,8 +17,8 @@
         <span class="cursor-pointer" @click="settings = 'attributes'; panel = 'attributes'; now.attr = art.config.extraAttrs[0]">Attributes</span>
         <span class="px-1">/</span>
         <span class="cursor-pointer" @click="settings = 'uniforms'; panel = 'uniforms'; now.uniform = art.config.extraUniforms[0]">Uniforms</span>
-        <span class="px-1">/</span>
-        <span class="cursor-pointer" @click="settings = 'blockers'; panel = 'blockers';">Blockers</span>
+        <!-- <span class="px-1">/</span>
+        <span class="cursor-pointer" @click="settings = 'blockers'; panel = 'blockers';">Blockers</span> -->
       </div>
 
       <div v-if="settings === 'core'" class="p-3 border-b border-black flex items-center" style="height: calc(50px);">
@@ -45,9 +45,9 @@
         </span>
       </div>
 
-      <div v-if="settings === 'blockers'" class="p-3 flex items-center" style="height: calc(100% - 50px);">
+      <!-- <div v-if="settings === 'blockers'" class="p-3 flex items-center" style="height: calc(100% - 50px);">
         <ARTBlockers :art="art" v-if="art" :current="art.config.blockers" @change="onChangeCode($event)"></ARTBlockers>
-      </div>
+      </div> -->
 
       <div v-if="panel === 'uniforms'" class="" style="height: calc(100% - 50px * 2);">
         <div v-if="art && now.uniform" :key="now.uniform.name" class="p-3">
@@ -195,11 +195,11 @@ export default {
       attrs.push(this.art.getNewAttr())
       this.flush()
     },
-    onChangeCode (event) {
-      this.art.config.blockers.vertexCode = event.vertexCode
-      this.art.config.blockers.fragmentCode = event.fragmentCode
-      this.flush()
-    },
+    // onChangeCode (event) {
+    //   this.art.config.blockers.vertexCode = event.vertexCode
+    //   this.art.config.blockers.fragmentCode = event.fragmentCode
+    //   this.flush()
+    // },
     setup () {
       this.coreCodes = [
         {

@@ -1,4 +1,4 @@
-import * as Shader from './shader.js'
+import * as Shaders from './Shaders.js'
 let glsl = (strings, ...args) => {
 
   let res = ''
@@ -15,14 +15,17 @@ let glsl = (strings, ...args) => {
 
 export class Pipeline {
   constructor (box) {
-    let { onLoop, onClean, deps } = box
+    let { onLoop, onClean, deps, Shaders } = box
+    this.Shaders = Shaders
     this.camera = box.camera
     this.box = box
     this.onClean = onClean
     this.onLoop = onLoop
     this.deps = deps
 
-    let { Object3D } = this.deps.THREE
+    let { Object3D, Color } = this.deps.THREE
+    this.box.scene.background = new Color('#000000')
+
     this.o3d = new Object3D()
 
     this.out = {
@@ -114,8 +117,8 @@ out.w = 1;`
       fragmentBlockersCode: ``,
       varyingsStr: glsl`varying highp vec3 vPos;
 varying vec2 vUv;`,
-      vertexMain: Shader.vert.starter, // require('raw-loader!./glsl/shield.glsl').default,
-      fragmentMain: Shader.frag.main // require('raw-loader!./frag/main.glsl').default
+      vertexMain: this.Shaders.starter.v,
+      fragmentMain: this.Shaders.starter.f
     }
   }
   set config (v) {
@@ -175,6 +178,10 @@ varying vec2 vUv;`,
       ${uniformStr}
       ${config.varyingsStr}
 
+      ${config.vertexLib || ''}
+      ${Shaders.lib.ball}
+      ${Shaders.lib.rotate}
+
       ${config.vertexMain}
     `
 
@@ -184,10 +191,15 @@ varying vec2 vUv;`,
       ${uniformStr}
       ${config.varyingsStr}
 
+      ${config.fragLib || ''}
+
+      ${Shaders.lib.ball}
+      ${Shaders.lib.rotate}
+
       ${config.fragmentMain}
     `
 
-    let blockersToken = `/* INSERT_BLOCKERS */`
+    let blockersToken = `/* INSERT_REMIX_CODE */`
     vertexShader = vertexShader.replace(blockersToken, this.box.vertexCode || '')
     fragmentShader = fragmentShader.replace(blockersToken, this.box.fragmentCode || '')
 

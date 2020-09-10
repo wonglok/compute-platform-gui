@@ -154,6 +154,19 @@ export const getDefaultTree = () => {
   return JSON.parse(JSON.stringify(flatToTree(getDefaultList())))
 }
 
+
+export const makeListFresh = (v) => {
+  let result = JSON.parse(JSON.stringify(v))
+  result.forEach(e => {
+    e._id = getID()
+  })
+  return result
+}
+
+export const getFreshTreeByRawList = (v) => {
+  return JSON.parse(JSON.stringify(flatToTree(makeListFresh(v))))
+}
+
 export const getNewFileObject = ({ path }) => {
   return {
     _id: getID(),

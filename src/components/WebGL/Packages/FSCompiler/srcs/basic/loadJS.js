@@ -35,6 +35,7 @@ async function importAll (r) {
 }
 
 // importAll(require.context('~/components/Pages', true, /\.vue$/, 'sync'), 'sync')
+importAll(require.context('!raw-loader!./src/', true, /\.vue$/, 'sync'), 'sync')
 importAll(require.context('!raw-loader!./src/', true, /\.js$/, 'sync'), 'sync')
 importAll(require.context('!raw-loader!./src/', true, /\.glsl$/, 'sync'), 'sync')
 importAll(require.context('!raw-loader!./src/', true, /\.vert$/, 'sync'), 'sync')

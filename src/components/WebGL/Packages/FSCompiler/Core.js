@@ -1,14 +1,175 @@
 import * as UI from '../../AppUIs/EditorSpace/ageUI'
+import Vue from 'vue'
 import { getID } from '../../Core/O3DNode'
 import { getDefaultTree, makeMonitor, treeToFlat } from './FSCompiler'
 import { EventDispatcher } from 'three/build/three.module'
 
+export class Shell {
+  constructor ({ core, vm }) {
+    this.core = core
+    this.vm = vm
+  }
+}
+
+// export class RunBox {
+//   constructor ({ onMasterLoop }) {
+//     this.onMasterLoop = onMasterLoop
+
+//     this.isAborted = false
+//     this.tasks = []
+//     this.resizeTasks = []
+//     this.cleanTasks = []
+//     this.onLoop = (fnc) => {
+//       this.tasks.push(fnc)
+//     }
+
+//     this.onResize = (fnc) => {
+//       fnc()
+//       this.resizeTasks.push(fnc)
+//     }
+
+//     let intv = 0
+//     let internalResize = () => {
+//       clearTimeout(intv)
+//       intv = setTimeout(() => {
+//         this.resizeTasks.forEach(e => e())
+//       }, 16.8888)
+//     }
+
+//     window.addEventListener('resize', () => {
+//       internalResize()
+//     })
+
+//     this.goCleanUp = () => {
+//       this.isAborted = true
+//       try {
+//         this.cleanTasks.forEach(e => e())
+//       } catch (e) {
+//         console.error(e)
+//       }
+//     }
+
+//     this.onMasterLoop(() => {
+//       this.runLoop()
+//     })
+//   }
+//   runLoop () {
+//     if (isAborted) {
+//       return
+//     }
+
+//     try {
+//       this.tasks.forEach(e => e())
+//     } catch (e) {
+//       console.error(e)
+//     }
+//   }
+// }
+
+// export class CoreShell {
+//   constructor ({ core, vm }) {
+//     this.core = core
+//     this.vm = vm
+
+//     this.last = {
+//       scriptCode: ''
+//     }
+
+//     console.log(core.engineCodeTree)
+
+//     let vueCode = this.getVueCode()
+
+//     this.vm.dynamo = this.makeNewInstance({ vueCode })
+
+//     this.vm.$root.$on('refresh-shell', () => {
+//       let vueCode = this.getVueCode()
+//       let { scriptCode } = this.processVueCode({ vueCode })
+//       if (scriptCode !== this.last.scriptCode) {
+//         this.vm.dynamo = this.makeNewInstance({ vueCode })
+//       } else {
+//         this.onRefresh({ vueCode })
+//       }
+//       this.last.scriptCode = scriptCode
+//     })
+//   }
+//   getVueCode () {
+//     let vueCode = this.core.engineCodeTree.children[0].src
+//     return vueCode
+//   }
+//   compileTemplate ({ templateCode }) {
+//     let templateRenderFnc = Vue.compile(templateCode)
+//     return templateRenderFnc.render
+//   }
+//   processVueCode ({ vueCode }) {
+//     let templateCode = vueCode.match(/<template>([\S\s]*?)<\/template>/gi)
+//     templateCode = templateCode[0]
+//     templateCode = templateCode.replace(/^<template>/, '')
+//     templateCode = templateCode.replace(/<\/template>$/, '')
+
+//     let styleCode = vueCode.match(/<style([\S\s]*?)<\/style>/gi)
+//     let styleHTML = styleCode[0]
+
+//     let scriptCode = vueCode.match(/<script>([\S\s]*?)<\/script>/gi)
+//     scriptCode = scriptCode[0]
+//     scriptCode = scriptCode.replace(/^<script>/, '')
+//     scriptCode = scriptCode.replace(/<\/script>$/, '')
+
+//     return {
+//       templateCode,
+//       styleHTML,
+//       scriptCode
+//     }
+//   }
+
+//   onRefresh ({ vueCode }) {
+//     let { templateCode } = this.processVueCode({ vueCode })
+//     if (this.vm.$refs.dynamo) {
+//       this.vm.$refs.dynamo.$options.render = this.compileTemplate({ templateCode })
+//       this.vm.$refs.dynamo.$forceUpdate()
+//     }
+//   }
+
+//   getConfig ({ vueCode }) {
+//     let { scriptCode } = this.processVueCode({ vueCode })
+//     scriptCode = scriptCode.replace('export default ', 'return ')
+//     let fnc = new Function(scriptCode)
+//     let config = fnc()
+//     return config
+//   }
+
+//   makeNewInstance ({ vueCode }) {
+//     let config = this.getConfig({ vueCode })
+//     let { templateCode } = this.processVueCode({ vueCode })
+
+//     let newObj = {
+//       ...config,
+//       mixins: [require('../../Core/RenderRoot.js').RenderRoot],
+//       render: this.compileTemplate({ templateCode })
+//     }
+
+//     return newObj
+//   }
+
+//   // provideTexture () {
+//   //   let dpi = window.devicePixelRatio || 1
+//   //   this.renderTarget = new WebGLRenderTarget(340 * dpi, 340 * dpi)
+//   //   this.runBox = new RunBox({ onMasterLoop: this.core.onMasterLoop })
+//   // }
+
+//
+// }
+
 export class AppCore extends EventDispatcher {
-  constructor () {
+  constructor ({ onLoop }) {
     super()
+    this.onMasterLoop = onLoop
     this.wins = []
     this.works = []
     this.arrows = []
+
+    this.textures = []
+
+    this.engineCodeTree = getDefaultTree()
 
     this.trashedWorks = []
 
@@ -30,11 +191,36 @@ export class AppCore extends EventDispatcher {
       'faces'
     ]
   }
-  async makeMonitorByWork ({ work }) {
-    let main = {
-      name: work._id,
-      list: treeToFlat(work.tree)
+  upsertTexture () {
+
+  }
+  async openPipelineSystem () {
+    let create = () => {
+      let win = UI.getWin({ title: 'Pipeline System', appName: 'edit-pipeline' }, {}, { type: 'root-pipeline', _id: getID() })
+      this.openWin({ win })
+      return win
     }
+
+    let win = this.wins.find(e => e.data.type === 'root-pipeline')
+    if (!win) {
+      win = create()
+      console.log('create')
+    } else {
+      this.showWin({ win })
+      console.log('show')
+    }
+
+    let wins = this.wins
+    UI.focusApp({ wins, win })
+    win.show = true
+  }
+
+  async makeMonitorByCore () {
+    let main = {
+      name: 'Pipeline',
+      list: treeToFlat(this.engineCodeTree)
+    }
+
     let code = await makeMonitor({ pack: main })
     try {
       let simpleFnc = new Function(`
@@ -53,6 +239,32 @@ export class AppCore extends EventDispatcher {
       return false
     }
   }
+
+  async makeMonitorByWork ({ work }) {
+    let main = {
+      name: 'Pipeline',
+      list: treeToFlat(work.tree)
+    }
+
+    let code = await makeMonitor({ pack: main })
+    try {
+      let simpleFnc = new Function(`
+        let exports = {};
+        let module = {};
+        function newFunc () {
+          ${code}
+        }
+        new newFunc()
+        return exports
+      `)
+      let obj = simpleFnc()
+      return obj
+    } catch (e) {
+      console.log(e)
+      return false
+    }
+  }
+
   refresh () {
     window.dispatchEvent(new Event('plot-curve'))
     setTimeout(() => {
@@ -80,9 +292,11 @@ export class AppCore extends EventDispatcher {
       tree: getDefaultTree(),
       position: { x: position.x, y: position.y + this.initAirGapForBlock, z: position.z },
     }
+
     if (this.genesisTypes.includes(this.current.workType)) {
       newItem.isGenesis = true
     }
+
     this.works.push(newItem)
     this.refresh()
     return newItem
@@ -144,6 +358,26 @@ export class AppCore extends EventDispatcher {
   provideWorkWin ({ work }) {
     let create = () => {
       let win = UI.getWin({ title: work._id, appName: 'editor' }, {}, { type: 'work', _id: work._id })
+      this.openWin({ win })
+      return win
+    }
+
+    let win = this.findWinByWork({ work })
+    if (!win) {
+      win = create()
+      console.log('create')
+    } else {
+      this.showWin({ win })
+      console.log('show')
+    }
+
+    let wins = this.wins
+    UI.focusApp({ wins, win })
+    win.show = true
+  }
+  provideFacePipelineWin ({ work }) {
+    let create = () => {
+      let win = UI.getWin({ title: work._id, appName: 'face-pipeline' }, {}, { type: 'work', _id: work._id })
       this.openWin({ win })
       return win
     }
@@ -238,8 +472,9 @@ export class AppCore extends EventDispatcher {
     // )
 
     this.current.workType = 'mesh'
-    this.createWorkAtPos({ position: { x: -110, y: 0, z: 0 } })
-    this.provideWorkWin({ work: this.works[0] })
+    // this.createWorkAtPos({ position: { x: -110 * 0.0, y: 0, z: 0 } })
+    // this.provideWorkWin({ work: this.works[0] })
+    // this.provideFacePipelineWin({ work: this.works[0] })
 
     this.refresh()
   }

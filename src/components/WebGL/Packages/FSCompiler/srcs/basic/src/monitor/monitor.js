@@ -1,10 +1,12 @@
 // import boxV from './shader/box.vert'
 // import boxF from './shader/box.frag'
 
-import { Pipeline } from '../spec/Pipeline.js'
+import { Pipeline } from '../spec.js'
+import * as Shaders from '../spec/Shaders.js'
 
 export const use = async (box) => {
 
+  box.Shaders = Shaders
   let pipe = new Pipeline(box)
 
   let o3d = pipe.out.o3d

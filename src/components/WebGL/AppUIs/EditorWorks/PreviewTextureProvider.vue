@@ -14,12 +14,11 @@ export default {
     O3DNode
   ],
   props: {
-    work: {}
   },
   async mounted () {
     let core = this.ctx.core
     let dpi = window.devicePixelRatio || 1
-    this.renderTarget = new WebGLRenderTarget(256 * dpi, 256 * dpi)
+    this.renderTarget = new WebGLRenderTarget(340 * dpi, 340 * dpi)
 
     let miniBox = false
     let compileCode = async () => {
@@ -34,23 +33,15 @@ export default {
         THREE
       }
 
-      let Monitor = await core.makeMonitorByWork({ work: this.work })
-
+      let Monitor = await core.makeMonitorByCore()
       Monitor.use(miniBox)
     }
 
     compileCode()
 
-    this.$root.$on('compile-workbox', ({ work }) => {
-      if (work._id === this.work._id) {
-        compileCode()
-      }
+    this.$root.$on('compile-pipeline', () => {
+      compileCode()
     })
-    // this.$root.$on('refresh-workbox', ({ work }) => {
-    //   if (work._id === this.work._id) {
-    //     compileCode()
-    //   }
-    // })
 
     this.onLoop(() => {
       if (this.isDestroyed) {
@@ -63,7 +54,9 @@ export default {
 
       let orig = this.ctx.renderer.getRenderTarget()
       this.ctx.renderer.setRenderTarget(this.renderTarget)
+
       this.ctx.renderer.render(miniBox.scene, miniBox.camera)
+
       this.$parent.$emit('texture', this.renderTarget.texture)
       this.ctx.renderer.setRenderTarget(orig)
     })
@@ -71,7 +64,6 @@ export default {
     this.onClean(() => {
       this.$parent.$emit('texture', false)
     })
-
   }
 }
 </script>

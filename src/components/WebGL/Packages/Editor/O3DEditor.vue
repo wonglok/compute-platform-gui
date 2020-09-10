@@ -131,6 +131,7 @@ export default {
         RayPlay,
         ...otherLibs
       }
+
       let fnc = new Function(...['LIBS', ...Object.keys(LIBS), script])
       return fnc(LIBS, ...Object.values(LIBS))
     },
@@ -213,14 +214,17 @@ export default {
         }
       })
     },
+
     getTemplate ({ templateCode = '' }) {
       return `<div class="bg-white w-full h-full">${templateCode}<slot></slot></div>`
     },
+
     getRender ({ templateCode }) {
       templateCode = this.getTemplate({ templateCode })
       let templateRenderFnc = Vue.compile(templateCode)
       return templateRenderFnc.render
     },
+
     onChangeTreeCode ({ vueCode }) {
       this.current.vueCode = vueCode
     }
