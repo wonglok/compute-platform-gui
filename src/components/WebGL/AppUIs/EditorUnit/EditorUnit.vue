@@ -1,15 +1,15 @@
 <template>
   <div :horizontal="true" class="full h-full relative overflow-hidden flex flex-col">
-    <div class="flex h-full">
+    <div class="flex h-full w-full">
 
       <!-- <FolderTree class="full" :allowMultiselect="false" @nodeclick="onClick" v-model="tree.children"></FolderTree> -->
-      <div class="h-full" v-if="iframe" :style="{ height: iframeHeight + 'px', 'background-color': '#09161e' }">
-        <iframe :src="unitWebURL" ref="iframer" class="w-full h-full" frameborder="0"></iframe>
+      <div class="h-full" v-if="iframe" :style="{ 'background-color': '#09161e' }">
+        <iframe :src="unitWebURL" ref="iframer" :style="{ height: iframeHeight + 'px' }" class="w-full h-full" frameborder="0"></iframe>
       </div>
 
-      <div style="width: 270px; background-color: #09161e;" class="w-full h-full overflow-scroll scrolling-touch  p-3" >
+      <div style="width: 270px; background-color: #09161e;" class="w-full h-full p-3" >
         <keep-alive>
-          <TreeItem class="select-none" v-if="tree" @add-item="addItem" @add-folder="addFolder" @click-item="clickItem" :item="tree"></TreeItem>
+          <TreeItem class="select-none h-full overflow-scroll scrolling-touch " v-if="tree" @add-item="addItem" @add-folder="addFolder" @click-item="clickItem" :item="tree"></TreeItem>
         </keep-alive>
       </div>
 

@@ -344,7 +344,7 @@ export default {
     //   })
     // },
     setupDOM () {
-      this.$el.addEventListener('wheel', (evt) => {
+      this.$refs.wrapper.addEventListener('wheel', (evt) => {
         evt.preventDefault()
         evt.stopImmediatePropagation()
       })
@@ -427,6 +427,5 @@ export default {
   overflow: hidden;
   background-color: #F5F5F5;
 }
-
 
 </style>

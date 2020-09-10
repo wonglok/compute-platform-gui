@@ -184,13 +184,12 @@ varying vec2 vUv;`,
       ${uniformStr}
       ${config.varyingsStr}
 
-
       ${config.fragmentMain}
     `
 
-    // let blockersToken = `/* INSERT_BLOCKERS */`
-    // vertexShader = vertexShader.replace(blockersToken, config.blockers.vertexCode)
-    // fragmentShader = fragmentShader.replace(blockersToken, config.blockers.fragmentCode)
+    let blockersToken = `/* INSERT_BLOCKERS */`
+    vertexShader = vertexShader.replace(blockersToken, this.box.vertexCode || '')
+    fragmentShader = fragmentShader.replace(blockersToken, this.box.fragmentCode || '')
 
     this.mat = new ShaderMaterial({
       uniforms,
