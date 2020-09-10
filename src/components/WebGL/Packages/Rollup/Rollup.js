@@ -1,20 +1,23 @@
 import { rollup } from 'rollup/dist/rollup.browser'
 import loklok from './loklok'
 
-export async function buildInput ({ pack, mode = 'view' }) {
+export async function buildInput ({ pack, mode = 'iframe' }) {
   let filesMap = {}
   pack.list.forEach((item) => {
     filesMap[item.path] = item.src
   })
 
   // console.log(pack.list)
-  let entry = pack.list.find(e => e.isPackageEntry).path
+  let entry = pack.list.find(e => e.isPreviewEntry).path
 
-  if (mode === 'view') {
+  if (mode === 'iframe') {
     entry = pack.list.find(e => e.isPreviewEntry).path
   }
   if (mode === 'package') {
     entry = pack.list.find(e => e.isPackageEntry).path
+  }
+  if (mode === 'monitor') {
+    entry = pack.list.find(e => e.isMonitorEntry).path
   }
 
   let inputOptions = {
@@ -22,7 +25,7 @@ export async function buildInput ({ pack, mode = 'view' }) {
     plugins: [
       loklok({
         filesMap,
-        include: ['**/*.frag', '**/*.vert'],
+        include: ['**/*.frag', '**/*.vert', '**/*.glsl'],
         exclude: []
       })
     ]
@@ -39,7 +42,6 @@ export async function buildInput ({ pack, mode = 'view' }) {
   let bundle = await rollup(inputOptions)
   const { output } = await bundle.generate(outputOptions);
   // console.log(output[0].code)
-
 
   // for (const chunkOrAsset of output) {
   //   if (chunkOrAsset.type === 'asset') {

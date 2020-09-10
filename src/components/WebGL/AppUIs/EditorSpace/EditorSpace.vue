@@ -355,11 +355,10 @@ export default {
     this.setup()
     this.setupGraphics()
     this.setupDOM()
+
     this.core = new AppCore()
     Vue.prototype.$core = this.core
-
     this.$root.escs = this.$root.escs || []
-
     window.addEventListener('keydown', (ev) => {
       if (!this.isComponentActive) {
         return

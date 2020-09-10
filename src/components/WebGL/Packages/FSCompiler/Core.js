@@ -1,9 +1,7 @@
 import * as UI from '../../AppUIs/EditorSpace/ageUI'
 import { getID } from '../../Core/O3DNode'
-import { getDefaultTree, makeUnitModule, treeToFlat } from './FSCompiler'
+import { getDefaultTree, makeMonitor, treeToFlat } from './FSCompiler'
 import { EventDispatcher } from 'three/build/three.module'
-
-
 
 export class AppCore extends EventDispatcher {
   constructor () {
@@ -18,7 +16,8 @@ export class AppCore extends EventDispatcher {
       workFrom: false,
       workType: false
     }
-    this.initAir = 5
+
+    this.initAirGapForBlock = 5
 
     this.genesisTypes = [
       'points',
@@ -31,12 +30,12 @@ export class AppCore extends EventDispatcher {
       'faces'
     ]
   }
-  async makeModuleByWork ({ work }) {
+  async makeMonitorByWork ({ work }) {
     let main = {
       name: work._id,
       list: treeToFlat(work.tree)
     }
-    let code = await makeUnitModule({ pack: main })
+    let code = await makeMonitor({ pack: main })
     try {
       let simpleFnc = new Function(`
         let exports = {};
@@ -79,7 +78,7 @@ export class AppCore extends EventDispatcher {
       _id: getID(),
       type: this.current.workType,
       tree: getDefaultTree(),
-      position: { x: position.x, y: position.y + this.initAir, z: position.z },
+      position: { x: position.x, y: position.y + this.initAirGapForBlock, z: position.z },
     }
     if (this.genesisTypes.includes(this.current.workType)) {
       newItem.isGenesis = true
@@ -239,7 +238,7 @@ export class AppCore extends EventDispatcher {
     // )
 
     this.current.workType = 'mesh'
-    this.createWorkAtPos({ position: { x: -108, y: 0, z: 0 } })
+    this.createWorkAtPos({ position: { x: -110, y: 0, z: 0 } })
     this.provideWorkWin({ work: this.works[0] })
 
     this.refresh()

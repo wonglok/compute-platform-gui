@@ -1,4 +1,4 @@
-const { EventDispatcher } = require("three/build/three.module")
+import { EventDispatcher } from './EventDispatcher.js'
 
 export class MiniBoxEngine extends EventDispatcher {
   constructor () {
@@ -7,13 +7,13 @@ export class MiniBoxEngine extends EventDispatcher {
     this.tasks = []
     this.resizeTasks = []
     this.cleanTasks = []
-    this.onLoop = (v) => {
-      this.tasks.push(v)
+    this.onLoop = (fnc) => {
+      this.tasks.push(fnc)
     }
 
-    this.onResize = (v) => {
-      v()
-      this.resizeTasks.push(v)
+    this.onResize = (fnc) => {
+      fnc()
+      this.resizeTasks.push(fnc)
     }
 
     let intv = 0

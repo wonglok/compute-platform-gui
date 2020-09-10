@@ -2,7 +2,7 @@ import * as RollMeUp from '../Rollup/Rollup.js'
 // import * as Babel from '@babel/standalone/babel.js'
 // import * as VueCompo from './vue.processor.js'
 // let requireLib = require('!raw-loader!./srcs/require.js').default
-let loadExt = require('!raw-loader!./srcs/loadExt.js').default
+// let loadExt = require('!raw-loader!./srcs/loadExt.js').default
 
 // function getTagContent (str, start, end) {
 //   if (str.indexOf(start) === -1) {
@@ -15,131 +15,9 @@ export const getID = () => {
   return '_' + Math.random().toString(36).substr(2, 9)
 }
 
-// default files
-var DefaultFilesList = [
-  {
-    path: './package.js',
-    isPackageEntry: true,
-    isEntry: true,
-    _id: getID(),
-    type: 'file',
-    src: `export { use } from './package/main.js'`
-  },
-  {
-    path: './iframe.js',
-    _id: getID(),
-    isPreviewEntry: true,
-    isEntry: true,
-    type: 'file',
-    src: require('!raw-loader!./srcs/iframe.js').default
-  },
+let Basic = require('./srcs/basic/loadJS').default
 
-  {
-    path: './package/main.js',
-    _id: getID(),
-    type: 'file',
-    src: require('!raw-loader!./srcs/main.js').default
-  },
-  {
-    path: './package/shader/box.vert',
-    _id: getID(),
-    type: 'file',
-    src: `uniform float time;
-varying vec3 v_pos;
-void main(void) {
-  vec3 nPos = position;
-  nPos.x += sin(nPos.y * 0.1 + time * 10.0) * 10.0;
-
-  v_pos = vec3(nPos.x, nPos.y, nPos.z);
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(nPos, 1.0);
-}
-`
-  },
-  {
-    path: './package/shader/box.frag',
-    _id: getID(),
-    type: 'file',
-    src: `varying vec3 v_pos;
-
-void main (void) {
-  gl_FragColor = vec4(normalize(v_pos.xyz) + 0.3, 1.0);
-}
-`
-  },
-  {
-    path: './iframe/localForage.js',
-    _id: getID(),
-    type: 'file',
-    src: require('!raw-loader!./srcs/localforage.js').default
-  },
-  {
-    path: './iframe/VisualEngine.js',
-    _id: getID(),
-    type: 'file',
-    src: require('!raw-loader!./srcs/VisualEngine.js').default
-  },
-  {
-    path: './iframe/util.js',
-    _id: getID(),
-    type: 'file',
-    src: `
-${loadExt}
-
-export const load = (urls) => {
-  return new Promise((resolve) => {
-    new loadExt(urls, () => {
-      resolve()
-    })
-  })
-}
-
-import localForage from './localForage.js'
-
-const store = localForage.createInstance({
-  driver: localForage.INDEXEDDB,
-  name: "ScriptProvider"
-});
-
-// console.log(store)
-
-export const loadFile = (url) => {
-  return new Promise((resolve) => {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        resolve(this.responseText)
-      }
-    };
-
-    xhttp.open("GET", url, true);
-    xhttp.send();
-  })
-}
-
-export const js2url = ({ js }) => {
-  let appScriptBlob = new Blob([js], { type: 'text/javascript' })
-  let appScriptURL = URL.createObjectURL(appScriptBlob)
-  return appScriptURL
-}
-
-export const provideURL = async (url) => {
-  let js = await store.getItem(url)
-  if (!js) {
-    let text = await loadFile(url)
-    await store.setItem(url, text)
-    js = text
-  }
-  return js2url({ js })
-}
-
-export const singleCachedImport = async (url) => {
-  url = await provideURL(url)
-  let MOD = await import(url)
-  return MOD
-}
-`
-  },
-]
+let DefaultFilesList = Basic
 
 var path = require('path')
 DefaultFilesList.forEach(f => {
@@ -292,14 +170,6 @@ export const getNewFolderObject = ({ path }) => {
   return {
     _id: getID(),
     children: [
-      // {
-      //   _id: getID(),
-      //   children: [],
-      //   name: 'new.js',
-      //   type: 'file',
-      //   path:  path + '/new-folder' + '/new.js',
-      //   src: `${path + '/new-folder'}\nsome new code`
-      // }
     ],
     name,
     type: 'folder',
@@ -333,16 +203,49 @@ export const js2url = ({ js }) => {
   return appScriptURL
 }
 
-export const makeUnitPreview = async ({ pack, others = '' }) => {
-  if (!pack) {
-    pack = {
-      name: 'main',
-      list: getDefaultList()
-    }
-    console.log('You missed pack')
-  }
+// export const injectToMain = async ({ flat, work, works, arrows }) => {
+//   let project = {
+//     _id: getID(),
+//     children: [],
+//     name: 'project.js',
+//     type: 'file',
+//     path:  './project.json',
+//     src: JSON.stringify({
+//       work,
+//       works,
+//       arrows
+//     }, null, '  ')
+//   }
 
-  let code = await RollMeUp.buildInput({ pack, mode: 'view' })
+//   flat.push(project)
+
+//   return flat
+// }
+
+export const makeProjectSpecs = async ({ work }) => {
+  // if (!pack) {
+  //   console.log('You missed pack')
+  // }
+  let pack = pack = {
+    name: work._id,
+    list: treeToFlat(work.tree)
+  }
+  let code = await RollMeUp.buildInput({ pack, mode: 'core' })
+
+  return code
+}
+
+export const makeUnitPreview = async ({ pack, others = '' }) => {
+  // if (!pack) {
+  //   pack = {
+  //     name: 'main',
+  //     list: getDefaultList()
+  //   }
+  //   console.log('You missed pack')
+  // }
+
+  let code = await RollMeUp.buildInput({ pack, mode: 'iframe' })
+
   let mainTag = js2tag({ js: code })
 
   let HTML = html + ''
@@ -358,29 +261,16 @@ export const makeUnitPreview = async ({ pack, others = '' }) => {
   return htmlURL
 }
 
+export const makeMonitor = async ({ pack }) => {
+  // if (!pack) {
+  //   pack = {
+  //     name: 'makeMonitor',
+  //     list: getDefaultList()
+  //   }
+  //   console.log('You missed pack')
+  // }
 
-export const makeUnitModule = async ({ pack }) => {
-  if (!pack) {
-    pack = {
-      name: 'makeUnitModule',
-      list: getDefaultList()
-    }
-    console.log('You missed pack')
-  }
-
-  let code = await RollMeUp.buildInput({ pack, mode: 'package' })
-
-  // let mainTag = js2tag({ js: code })
-
-  // let HTML = html + ''
-  // let appTag = `<div id="app"></div>`
-  // HTML = HTML.replace(`${appTag}`,`${appTag}
-  //   ${mainTag}
-  // `)
-
-  // let blob = new Blob([HTML], { type: 'text/html' })
-  // let htmlURL = URL.createObjectURL(blob)
+  let code = await RollMeUp.buildInput({ pack, mode: 'monitor' })
 
   return code
 }
-

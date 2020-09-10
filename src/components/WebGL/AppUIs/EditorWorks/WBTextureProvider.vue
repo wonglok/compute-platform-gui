@@ -7,7 +7,7 @@
 import { PerspectiveCamera, Scene, Texture, WebGLRenderTarget } from 'three'
 import { O3DNode } from '../../Core/O3DNode'
 import * as THREE from 'three'
-import { MiniBoxEngine } from './MiniBoxEngine'
+import { MiniBoxEngine } from '../../Packages/FSCompiler/srcs/basic/src/monitor/MiniBoxEngine'
 
 export default {
   mixins: [
@@ -19,7 +19,7 @@ export default {
   async mounted () {
     let core = this.ctx.core
     let dpi = window.devicePixelRatio || 1
-    this.renderTarget = new WebGLRenderTarget(128 * dpi, 128 * dpi)
+    this.renderTarget = new WebGLRenderTarget(200 * dpi, 200 * dpi)
 
     let miniBox = false
     let compileCode = async () => {
@@ -28,25 +28,15 @@ export default {
       }
 
       miniBox = new MiniBoxEngine()
-
       miniBox.scene = new Scene()
       miniBox.camera = new PerspectiveCamera( 75, 1, 0.1, 1000 );
-      miniBox.camera.position.z = 50
-
-      let MyModule = await core.makeModuleByWork({ work: this.work })
-      let deps = {
+      miniBox.deps = {
         THREE
       }
 
-      MyModule.use({
-        ...deps,
-        bus: miniBox,
-        onLoop: miniBox.onLoop,
-        onResize: miniBox.onResize,
-        onClean: miniBox.onClean,
-        scene: miniBox.scene,
-        cachedImport: async (...v) => console.log(v)
-      })
+      let Monitor = await core.makeMonitorByWork({ work: this.work })
+
+      Monitor.use(miniBox)
     }
 
     compileCode()

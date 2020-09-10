@@ -202,9 +202,9 @@ export default {
           this.$emit('preview', { work: this.work })
         })
         this.ctx.rayplay.hover(screen, (v) => {
-          mat.emissive = new Color('#323232')
+          baseMesh.material.color = new Color('#bababa').offsetHSL(0, 0, -0.1)
         }, () => {
-          mat.emissive = new Color('#000000')
+          baseMesh.material.color = new Color('#bababa')
         })
 
         this.onClean(() => {
