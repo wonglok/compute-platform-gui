@@ -35,10 +35,22 @@ export default {
       let matScreenBase = new MeshBasicMaterial({ side: DoubleSide, color: 0xffffff, transparent: true })
       let matFrame = new MeshBasicMaterial({ color: 0xbababa })
 
-      new TextureLoader().load(require('./img/add-bg.png'), (tex) => {
-        matScreen.map = tex
-        matScreen.needsUpdate = true
-      })
+      if (this.cursor.direction === 'in') {
+        new TextureLoader().load(require('./icon/box-target.svg'), (tex) => {
+          matScreen.map = tex
+          matScreen.needsUpdate = true
+        })
+      } else if (this.cursor.direction === 'out') {
+        new TextureLoader().load(require('./icon/box-target.svg'), (tex) => {
+          matScreen.map = tex
+          matScreen.needsUpdate = true
+        })
+      } else if (this.cursor.direction === 'genesis') {
+        new TextureLoader().load(require('./icon/box-genesis.svg'), (tex) => {
+          matScreen.map = tex
+          matScreen.needsUpdate = true
+        })
+      }
 
       let screen = new Mesh(geoScreen, matScreen)
       let frame = new Mesh(geoFrame, matFrame)

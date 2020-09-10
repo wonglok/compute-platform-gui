@@ -12,7 +12,6 @@ import { make } from '../ARTBlockers/art-coder'
 import { loadTexture } from '../../Core/loadTexture'
 export default {
   props: {
-    project: {},
     work: {}
   },
   mixins: [
@@ -30,7 +29,7 @@ export default {
   },
   async mounted () {
     let scale = 1
-    let boxDepth = 0.333 * scale
+    let boxDepth = 2 * scale
     let boxWidth = 40 * scale
     let boxHeight = 40 * scale
 
@@ -57,6 +56,7 @@ export default {
       let baseMesh = new Mesh(geo, mat)
       baseMesh.name = 'base-mesh'
       baseMesh.layers.enable(1)
+      baseMesh.layers.enable(2)
 
       this.unitPos = baseMesh.position
       baseMesh.position.copy(this.work.position)
@@ -65,10 +65,11 @@ export default {
         this.work.position.x = baseMesh.position.x
         this.work.position.y = baseMesh.position.y
         this.work.position.z = baseMesh.position.z
+        window.dispatchEvent(new Event('plot-curve'))
       }, { deep: true })
 
       if (this.ctx.ammo) {
-        this.ctx.ammo.addSimpleMesh({ mesh: baseMesh, mass: 1, flags: { isOp: true, isWorld: true } })
+        this.ctx.ammo.addSimpleMesh({ mesh: baseMesh, mass: 1, flags: { isWorkBox: true, isWorld: true } })
         this.onClean(() => {
           this.ctx.ammo.removeMesh({ mesh: baseMesh })
         })
@@ -94,12 +95,12 @@ export default {
           }
         })
 
-        this.onLoop(() => {
-          window.dispatchEvent(new Event('plot-curve'))
-        })
+        // this.onLoop(() => {
+        //   window.dispatchEvent(new Event('plot-curve'))
+        // })
 
         this.onClean(() => {
-          baseMesh.userData.canRun = false
+          // baseMesh.userData.canRun = false
           this.ctx.panner.remove(baseMesh)
         })
       }
@@ -120,8 +121,7 @@ export default {
       }
       let btn = new Mesh(geo, mat)
       btn.name = corner
-      btn.layers.enableAll()
-      btn.layers.disable(1)
+      btn.layers.enable(2)
 
       btn.rotation.x = Math.PI * -0.5
       btn.position.y += boxDepth * 0.5 + 3 / 4
@@ -183,13 +183,13 @@ export default {
       let mat = new MeshStandardMaterial({ color: new Color('#cccccc') })
       let screen = new Mesh(geo, mat)
       screen.name = 'preview'
-      screen.layers.enableAll()
-      screen.layers.disable(1)
+      screen.layers.enable(2)
+      // screen.layers.disable(1)
 
       screen.userData.hoverCursor = 'grab'
 
       screen.rotation.x = Math.PI * -0.5
-      screen.position.y += boxDepth * 0.5 + 1 / 4
+      screen.position.y += boxDepth * 0.5 + 0.3
 
       this.onClean(() => {
         geo.dispose()
@@ -201,10 +201,16 @@ export default {
           console.log(v.object.name)
           this.$emit('preview', { work: this.work })
         })
+
+        let onColor = new Color('#bababa').offsetHSL(0, 0, -0.3)
+        let onOff = new Color('#bababa')
+
         this.ctx.rayplay.hover(screen, (v) => {
-          baseMesh.material.color = new Color('#bababa').offsetHSL(0, 0, -0.1)
-        }, () => {
-          baseMesh.material.color = new Color('#bababa')
+          baseMesh.material.color = onColor
+          baseMesh.material.needsUpdate = true
+        }, (v) => {
+          baseMesh.material.color = onOff
+          baseMesh.material.needsUpdate = true
         })
 
         this.onClean(() => {
@@ -232,9 +238,9 @@ export default {
     // }
 
     makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon: require('./icon/gear-black.png') })
-    makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
-    makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/add-bg.png') })
-    // makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
+    makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/box-out.svg') })
+    makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/box-in.svg') })
+    // makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
 
     makeScreen({ baseMesh })
   }

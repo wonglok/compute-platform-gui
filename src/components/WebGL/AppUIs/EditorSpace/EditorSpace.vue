@@ -35,8 +35,8 @@
         </PreviewPlane>
       </O3D> -->
 
-      <O3D v-for="arrow in core.arrows" :key="arrow._id">
-        <WBArrow :key="arrow._id" :core="core" :arrows="core.arrows" :arrow="arrow">
+      <O3D v-for="arrow in core.arrows" :key="arrow._id + 'arrow-o3d' + arrow.from + arrow.to">
+        <WBArrow :key="arrow._id + 'arrow' + arrow.from + arrow.to" :core="core" :arrows="core.arrows" :arrow="arrow">
         </WBArrow>
       </O3D>
     </O3D>
@@ -46,17 +46,19 @@
     </div>
 
     <div class=" absolute top-0 right-0 flex">
-      <div class="p-3">
+      <!-- <div class="p-3">
         <img src="./icon/add.svg" @click="onClickAdd" class="w-10 h-10" alt="">
       </div>
       <div class="p-3">
         <img src="./icon/gear.svg" @click="onClickGear" class="w-10 h-10" alt="">
-      </div>
+      </div> -->
     </div>
 
     <div v-if="core">
       <EditBox v-for="win in core.wins" :key="win._id + '-wins'" :wins="core.wins" v-show="win.show" :win="win" :offset="offset" class="win-area">
         <EditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'editor'"></EditorUnit>
+        <PropsEditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'props-editor'"></PropsEditorUnit>
+
         <!-- <EditorUnit :initTree="core.engineCodeTree" :key="win._id" v-if="win.appName === 'edit-pipeline'"></EditorUnit> -->
         <!-- <EditorFacePipeline :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'face-pipeline'"></EditorFacePipeline> -->
       </EditBox>
@@ -117,6 +119,7 @@ export default {
         type: 'img',
         position: new Vector3(),
         img: '',
+        direction: 'in',
         enable: false
       }
       // iframe: 'about:blank'
@@ -130,15 +133,8 @@ export default {
         this.cursor.enableImg = false
         this.$forceUpdate()
       }
-      if (this.mouseMode === '') {
-        let idx = this.$root.escs.findIndex(e => e === restore)
-        if (idx !== -1) {
-          this.$root.escs.splice(idx, 1)
-        }
-        this.cursor.enableArrow = false
-        this.cursor.enableImg = false
-        this.$forceUpdate()
-      } else if (this.mouseMode === 'connect') {
+      /*
+      else if (this.mouseMode === 'connect') {
         this.cursor.type = 'img'
         this.cursor.img = `${require('./img/network.png')}`
         this.cursor.enableImg = true
@@ -154,9 +150,38 @@ export default {
         this.$root.escs = this.$root.escs || []
         this.$root.escs.push(restore)
         this.$forceUpdate()
+      }
+      */
+      if (this.mouseMode === '') {
+        let idx = this.$root.escs.findIndex(e => e === restore)
+        if (idx !== -1) {
+          this.$root.escs.splice(idx, 1)
+        }
+        this.cursor.enableArrow = false
+        this.cursor.enableImg = false
+        this.$forceUpdate()
+      } else if (this.mouseMode === 'box-out') {
+        this.cursor.img = `${require('./icon/box-target.svg')}`
+        this.cursor.type = 'block'
+        this.cursor.enableImg = true
+        this.cursor.enableArrow = true
+        this.cursor.direction = 'out'
+        this.$root.escs = this.$root.escs || []
+        this.$root.escs.push(restore)
+        this.$forceUpdate()
+      } else if (this.mouseMode === 'box-in') {
+        this.cursor.img = `${require('./icon/box-target.svg')}`
+        this.cursor.type = 'block'
+        this.cursor.direction = 'in'
+        this.cursor.enableImg = true
+        this.cursor.enableArrow = true
+        this.$root.escs = this.$root.escs || []
+        this.$root.escs.push(restore)
+        this.$forceUpdate()
       } else if (this.mouseMode === 'genesis') {
         this.cursor.img = `${require('./img/add.png')}`
         this.cursor.type = 'block'
+        this.cursor.direction = 'genesis'
         this.cursor.enableImg = true
         this.cursor.enableArrow = false
         this.$root.escs = this.$root.escs || []
@@ -166,6 +191,9 @@ export default {
     }
   },
   created () {
+    window.addEventListener('plot-curve', () => {
+      this.$forceUpdate()
+    })
   },
   methods: {
     onClickAdd () {
@@ -175,9 +203,9 @@ export default {
       this.core.openPipelineSystem()
     },
     onChooseInfluence (chosen) {
-      this.core.onSetCurrentWorkType({ type: chosen })
-      this.overlay = false
-      this.mouseMode = 'influence'
+      // this.core.onSetCurrentWorkType({ type: chosen })
+      // this.overlay = false
+      // this.mouseMode = 'influence'
     },
     onChooseGenesis (chosen) {
       this.core.onSetCurrentWorkType({ type: chosen })
@@ -185,7 +213,28 @@ export default {
       this.overlay = false
     },
     onClickFloor (ev) {
-      if (this.mouseMode === 'influence') {
+      // if (this.mouseMode === 'influence') {
+      //   let work = this.core.createWorkAtPos({
+      //     direction: 'out',
+      //     position: {
+      //       x: ev.event.point.x,
+      //       y: 0,
+      //       z: ev.event.point.z
+      //     }
+      //   })
+
+      //   this.core.onAddArrow({ direction: 'out', workTo: work })
+      //   this.mouseMode = ''
+      // } else
+
+      /*
+      else if (this.mouseMode === 'connect') {
+        // console.log('click-floor', ev)
+        this.mouseMode = ''
+      }
+      */
+
+      if (this.mouseMode === 'box-in') {
         let work = this.core.createWorkAtPos({
           position: {
             x: ev.event.point.x,
@@ -194,11 +243,23 @@ export default {
           }
         })
 
-        this.core.onAddArrow({ workTo: work })
-        this.mouseMode = ''
-      } else if (this.mouseMode === 'connect') {
-        // console.log('click-floor', ev)
-        this.mouseMode = ''
+        setTimeout(() => {
+          this.core.onAddArrow({ direction: 'in', workTo: work })
+          this.mouseMode = ''
+        }, 10)
+      } else if (this.mouseMode === 'box-out') {
+        let work = this.core.createWorkAtPos({
+          position: {
+            x: ev.event.point.x,
+            y: 0,
+            z: ev.event.point.z
+          }
+        })
+
+        setTimeout(() => {
+          this.core.onAddArrow({ direction: 'out', workTo: work })
+          this.mouseMode = ''
+        }, 10)
       } else if (this.mouseMode === 'genesis') {
         let work = this.core.createWorkAtPos({
           position: {
@@ -225,14 +286,14 @@ export default {
     },
     onClickBR ({ work }) {
       this.core.onSetCurrentWorkFrom({ work })
-      this.mouseMode = 'connect'
+      this.mouseMode = 'box-out'
     },
     onClickBR3 ({ work }) {
-      this.core.removeLinksOfWork({ work })
+      // this.core.removeLinksOfWork({ work })
     },
     onClickBR2 ({ work }) {
       this.core.onSetCurrentWorkFrom({ work })
-      this.overlay = 'influence'
+      this.mouseMode = 'box-in'
     },
     onClickToucher () {
 
@@ -244,12 +305,16 @@ export default {
       this.onEditWork($event)
     },
     onClickPreview ($event) {
-      if (this.mouseMode === 'connect') {
-        // console.log($event)
-        this.core.onAddArrow({ workTo: $event.work })
+      if (this.mouseMode === 'box-out') {
+        this.core.onAddArrow({ direction: 'out', workTo: $event.work })
         this.mouseMode = ''
+        this.core.refresh()
+      } else if (this.mouseMode === 'box-in') {
+        this.core.onAddArrow({ direction: 'in', workTo: $event.work })
+        this.mouseMode = ''
+        this.core.refresh()
       } else {
-        this.core.provideWorkWin({ work: $event.work })
+        this.core.providePropsWin({ work: $event.work })
       }
     },
     onEditWork ({ work }) {
@@ -294,6 +359,7 @@ export default {
         camera: this.camera,
         onClean: this.onClean
       })
+      this.rayplay.setLayer(2)
 
       this.camera.position.y = 100
       this.camera.position.z = 0

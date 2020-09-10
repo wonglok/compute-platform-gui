@@ -7,6 +7,7 @@ import { BufferGeometry, CatmullRomCurve3, CircleBufferGeometry, Color, Curve, L
 import { O3DNode } from '../../Core/O3DNode'
 export default {
   props: {
+    arrows: {},
     arrow: {},
     core: {}
   },
@@ -41,15 +42,24 @@ export default {
     this.o3d.add(cancelBall)
 
     if (this.ctx.rayplay) {
-      let getArrow = () => JSON.parse(JSON.stringify(this.arrow))
-      this.ctx.rayplay.add(cancelBall, () => {
-        this.core.removeArrow({ arrow: getArrow() })
-      })
-      this.ctx.rayplay.hover(cancelBall, () => {
-        cancelBall.material.opacity = 1
-      }, () => {
-        cancelBall.material.opacity = 0.08
-      })
+      let setup = () => {
+        this.ctx.rayplay.remove(cancelBall)
+        let getArrow = () => JSON.parse(JSON.stringify(this.arrow))
+        this.ctx.rayplay.add(cancelBall, () => {
+          this.$forceUpdate()
+          this.$root.$forceUpdate()
+          this.core.removeArrow({ arrow: getArrow() })
+        })
+        this.ctx.rayplay.hover(cancelBall, () => {
+          cancelBall.material.opacity = 1
+        }, () => {
+          cancelBall.material.opacity = 0.08
+        })
+      }
+      setup()
+      this.$watch('arrow', () => {
+        setup()
+      }, { deep: true })
     }
 
     let ball = new Mesh(new CircleBufferGeometry(5 / 2, 10), new MeshBasicMaterial({ color: 0xffaa00 }))

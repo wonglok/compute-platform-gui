@@ -269,10 +269,10 @@ export class AppCore extends EventDispatcher {
     window.dispatchEvent(new Event('plot-curve'))
     setTimeout(() => {
       window.dispatchEvent(new Event('plot-curve'))
-    }, 50)
+    }, 150)
     setTimeout(() => {
       window.dispatchEvent(new Event('plot-curve'))
-    }, 100)
+    }, 200)
   }
   getCurrentWorkFrom () {
     return this.works.find(e => e._id === this.current.workFrom._id)
@@ -315,7 +315,7 @@ export class AppCore extends EventDispatcher {
   onSetCurrentWorkType ({ type }) {
     this.current.workType = type
   }
-  onAddArrow ({ workTo }) {
+  onAddArrow ({ direction, workTo }) {
     // console.log(workTo, this.current)
     let hasFound = this.arrows.find(e => {
       return e.from === this.current.workFrom._id && e.to === workTo._id
@@ -323,11 +323,19 @@ export class AppCore extends EventDispatcher {
     })
 
     if (!hasFound) {
-      this.arrows.push({
-        _id: getID(),
-        from: this.current.workFrom._id,
-        to: workTo._id
-      })
+      if (direction === 'out') {
+        this.arrows.push({
+          _id: getID(),
+          from: this.current.workFrom._id,
+          to: workTo._id
+        })
+      } else if (direction === 'in') {
+        this.arrows.push({
+          _id: getID(),
+          to: this.current.workFrom._id,
+          from: workTo._id
+        })
+      }
     } else {
       console.log('already added link')
     }
@@ -357,7 +365,7 @@ export class AppCore extends EventDispatcher {
   }
   provideWorkWin ({ work }) {
     let create = () => {
-      let win = UI.getWin({ title: work._id, appName: 'editor' }, {}, { type: 'work', _id: work._id })
+      let win = UI.getWin({ title: `Core: ${work._id} (${work.type})`, appName: 'editor' }, {}, { type: 'work', _id: work._id })
       this.openWin({ win })
       return win
     }
@@ -375,9 +383,9 @@ export class AppCore extends EventDispatcher {
     UI.focusApp({ wins, win })
     win.show = true
   }
-  provideFacePipelineWin ({ work }) {
+  providePropsWin ({ work }) {
     let create = () => {
-      let win = UI.getWin({ title: work._id, appName: 'face-pipeline' }, {}, { type: 'work', _id: work._id })
+      let win = UI.getWin({ title: `Props: ${work._id} (${work.type})`, appName: 'props-editor' }, {}, { type: 'work', _id: work._id })
       this.openWin({ win })
       return win
     }
@@ -395,6 +403,7 @@ export class AppCore extends EventDispatcher {
     UI.focusApp({ wins, win })
     win.show = true
   }
+
   canDelete () {
     let keepMinimumOpen = 1
     if (this.works.length > keepMinimumOpen) {
@@ -472,7 +481,8 @@ export class AppCore extends EventDispatcher {
     // )
 
     this.current.workType = 'mesh'
-    // this.createWorkAtPos({ position: { x: -110 * 0.0, y: 0, z: 0 } })
+    this.createWorkAtPos({ position: { x: -110 * 0.0, y: 0, z: 0 } })
+
     // this.provideWorkWin({ work: this.works[0] })
     // this.provideFacePipelineWin({ work: this.works[0] })
 

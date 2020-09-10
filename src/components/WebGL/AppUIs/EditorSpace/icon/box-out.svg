@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group 15</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-Copy-2" transform="translate(-190.000000, -490.000000)">
+            <g id="Group-15" transform="translate(190.000000, 490.000000)">
+                <rect id="Rectangle-Copy" fill="#FFFFFF" x="0" y="0" width="64" height="64" rx="32"></rect>
+                <g id="Group" transform="translate(13.176471, 15.058824)" fill="#000000">
+                    <path d="M21.9607843,4.70588235 L1.56862745,4.70588235 L1.56862745,32.9411765 L32.9411765,32.9411765 L32.9411765,15.6862745 L34.5098039,15.6862745 L34.5098039,34.5098039 L0,34.5098039 L0,3.1372549 L21.9607843,3.1372549 L21.9607843,4.70588235 Z M37.6470588,12.5490196 L36.0784314,12.5490196 L36.0784314,2.67764706 L17.8101961,20.947451 L16.6996078,19.8368627 L34.9694118,1.56862745 L25.0980392,1.56862745 L25.0980392,-2.7864421e-15 L37.6470588,-2.7864421e-15 L37.6470588,12.5490196 L37.6470588,12.5490196 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

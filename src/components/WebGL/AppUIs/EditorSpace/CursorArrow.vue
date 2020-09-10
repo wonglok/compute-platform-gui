@@ -52,8 +52,13 @@ export default {
         return
       }
 
-      pt1.set(from.position.x, from.position.y, from.position.z)
-      pt2.set(to.position.x, to.position.y, to.position.z)
+      if (this.cursor.direction === 'in') {
+        pt2.set(from.position.x, from.position.y, from.position.z)
+        pt1.set(to.position.x, to.position.y, to.position.z)
+      } else if (this.cursor.direction === 'out') {
+        pt1.set(from.position.x, from.position.y, from.position.z)
+        pt2.set(to.position.x, to.position.y, to.position.z)
+      }
 
       var points = curve.getPoints(2);
       var geometry = new BufferGeometry().setFromPoints(points);

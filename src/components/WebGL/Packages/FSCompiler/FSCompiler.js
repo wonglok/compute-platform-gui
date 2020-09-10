@@ -1,15 +1,4 @@
 import * as RollMeUp from '../Rollup/Rollup.js'
-// import * as Babel from '@babel/standalone/babel.js'
-// import * as VueCompo from './vue.processor.js'
-// let requireLib = require('!raw-loader!./srcs/require.js').default
-// let loadExt = require('!raw-loader!./srcs/loadExt.js').default
-
-// function getTagContent (str, start, end) {
-//   if (str.indexOf(start) === -1) {
-//     return false
-//   }
-//   return str.slice(str.indexOf(start) + start.length, str.indexOf(end))
-// }
 
 export const getID = () => {
   return '_' + Math.random().toString(36).substr(2, 9)

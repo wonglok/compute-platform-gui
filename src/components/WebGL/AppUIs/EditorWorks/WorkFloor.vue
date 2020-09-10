@@ -17,6 +17,7 @@ export default {
     let mat = new MeshBasicMaterial({ color: 0xeeeeee, wireframe: false, transparent: true, opacity: 0.5 })
     let mesh = new Mesh(geo, mat)
     mesh.position.y = -1
+    mesh.layers.enable(2)
     this.o3d.add(mesh)
 
     this.$watch('mouseMode', () => {
@@ -32,6 +33,7 @@ export default {
     if (this.ctx.ammo) {
       this.ctx.ammo.addSimpleMesh({ mesh, mass: 0, flags: { isFloor: true, isWorld: true } })
     }
+
     if (this.ctx.rayplay) {
       this.ctx.rayplay.add(mesh, (ev) => {
         this.$emit('click-floor', ev)
