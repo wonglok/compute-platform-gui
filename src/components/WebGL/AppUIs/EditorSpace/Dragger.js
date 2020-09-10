@@ -45,8 +45,8 @@ export class Dragger {
     this.onClean = onClean
 
     this.objects = []
-    this.mouse = new Vector2()
-    this.raycaster = new Raycaster()
+    // this.mouse = new Vector2()
+    // this.raycaster = new Raycaster()
     this.group = new Group()
     this.o3d.add(this.group)
     this.enableSelection = false

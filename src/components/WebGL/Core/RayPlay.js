@@ -41,17 +41,17 @@ export class RayPlay {
       // v.frustumCulled = false
       v.userData = v.userData || {}
       v.userData.clicker = handler
-      if (!this.activeTargets.includes(v)) {
-        this.activeTargets.push(v)
-      }
+      // if (!this.activeTargets.map(e => e.uuid).includes(v.uuid)) {
+      this.activeTargets.push(v)
+      // }
       // console.log(this.activeTargets)
     }
     this.move = (v, handler = () => {}) => {
       v.userData = v.userData || {}
       v.userData.moveFnc = handler
-      if (!this.activeTargets.includes(v)) {
-        this.activeTargets.push(v)
-      }
+      // if (!this.activeTargets.map(e => e.uuid).includes(v.uuid)) {
+      this.activeTargets.push(v)
+      // }
     }
 
     this.hover = (v, enter = () => {}, leave = () => {}) => {
@@ -59,9 +59,9 @@ export class RayPlay {
       v.userData = v.userData || {}
       v.userData.enterHoverFnc = enter
       v.userData.leaveHoverFnc = leave
-      if (!this.activeTargets.includes(v)) {
-        this.activeTargets.push(v)
-      }
+      // if (!this.activeTargets.map(e => e.uuid).includes(v.uuid)) {
+      this.activeTargets.push(v)
+      // }
       // console.log(this.activeTargets)
     }
 
@@ -87,10 +87,13 @@ export class RayPlay {
 
         let hovered = []
         // console.log(tryhover)
+
+        // console.log(tryhover.length)
         this.activeTargets.forEach((obj) => {
           tryhover.forEach(hover => {
             if (hover.object.uuid === obj.uuid) {
               let userData = obj.userData
+
               if (userData.moveFnc) {
                 userData.moveFnc({
                   ray: hover,
@@ -115,7 +118,7 @@ export class RayPlay {
         })
 
         this.activeTargets.forEach((obj) => {
-          if (!hovered.includes(obj)) {
+          if (!hovered.map(e => e.uuid).includes(obj.uuid)) {
             let userData = obj.userData
 
             if (userData.leaveHoverFnc) {

@@ -286,6 +286,7 @@ export class AppCore extends EventDispatcher {
     this.refresh()
   }
   createWorkAtPos ({ position }) {
+    console.log(this.current.workType)
     let newItem = {
       _id: getID(),
       type: this.current.workType,
@@ -293,9 +294,9 @@ export class AppCore extends EventDispatcher {
       position: { x: position.x, y: position.y + this.initAirGapForBlock, z: position.z },
     }
 
-    if (this.genesisTypes.includes(this.current.workType)) {
-      newItem.isGenesis = true
-    }
+    // if (this.genesisTypes.includes(this.current.workType)) {
+    //   newItem.isGenesis = true
+    // }
 
     this.works.push(newItem)
     this.refresh()
@@ -480,8 +481,8 @@ export class AppCore extends EventDispatcher {
     //   ]
     // )
 
-    this.current.workType = 'mesh'
-    this.createWorkAtPos({ position: { x: -110 * 0.0, y: 0, z: 0 } })
+    // this.current.workType = 'mesh'
+    // this.createWorkAtPos({ position: { x: -110 * 0.0, y: 0, z: 0 } })
 
     // this.provideWorkWin({ work: this.works[0] })
     // this.provideFacePipelineWin({ work: this.works[0] })

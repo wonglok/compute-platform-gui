@@ -56,7 +56,7 @@ export default {
       let baseMesh = new Mesh(geo, mat)
       baseMesh.name = 'base-mesh'
       baseMesh.layers.enable(1)
-      baseMesh.layers.enable(2)
+      // baseMesh.layers.enable(2)
 
       this.unitPos = baseMesh.position
       baseMesh.position.copy(this.work.position)
@@ -76,11 +76,11 @@ export default {
       }
 
       if (this.ctx.panner) {
-        this.ctx.panner.setLayer(1)
         let zero = new Vector3(0, 0, 0)
         let lerpRotation = new Vector3(0, 0, 0)
 
         baseMesh.userData.canRun = true
+        // baseMesh.layers.enable(1)
 
         this.ctx.panner.add(baseMesh, {
           onDrag: () => {
@@ -121,7 +121,7 @@ export default {
       }
       let btn = new Mesh(geo, mat)
       btn.name = corner
-      btn.layers.enable(2)
+      // btn.layers.enable(2)
 
       btn.rotation.x = Math.PI * -0.5
       btn.position.y += boxDepth * 0.5 + 3 / 4
@@ -196,27 +196,25 @@ export default {
         mat.dispose()
       })
 
-      if (this.ctx.rayplay) {
-        this.ctx.rayplay.add(screen, (v) => {
-          console.log(v.object.name)
-          this.$emit('preview', { work: this.work })
-        })
+      this.ctx.rayplay.add(screen, (v) => {
+        console.log(v.object.name)
+        this.$emit('preview', { work: this.work })
+      })
 
-        let onColor = new Color('#bababa').offsetHSL(0, 0, -0.3)
-        let onOff = new Color('#bababa')
+      let onColor = new Color('#bababa').offsetHSL(0, 0, -0.3)
+      let onOff = new Color('#bababa')
 
-        this.ctx.rayplay.hover(screen, (v) => {
-          baseMesh.material.color = onColor
-          baseMesh.material.needsUpdate = true
-        }, (v) => {
-          baseMesh.material.color = onOff
-          baseMesh.material.needsUpdate = true
-        })
+      this.ctx.rayplay.hover(screen, (v) => {
+        baseMesh.material.color = onColor
+        baseMesh.material.needsUpdate = true
+      }, (v) => {
+        baseMesh.material.color = onOff
+        baseMesh.material.needsUpdate = true
+      })
 
-        this.onClean(() => {
-          this.ctx.rayplay.remove(screen)
-        })
-      }
+      this.onClean(() => {
+        this.ctx.rayplay.remove(screen)
+      })
 
       this.$on('texture', (texture) => {
         mat.map = texture
@@ -243,6 +241,8 @@ export default {
     // makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
 
     makeScreen({ baseMesh })
+
+    this.ctx.core.refresh()
   }
 }
 </script>

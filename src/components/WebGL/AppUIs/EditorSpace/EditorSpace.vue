@@ -23,8 +23,8 @@
     <O3D v-if="core && ammo">
       <WorkFloor :mouseMode="mouseMode" @move-point="onMove($event)" @click-floor="onClickFloor" @delta="onPan($event)"></WorkFloor>
 
-      <O3D v-for="work in core.works" :key="work._id" >
-        <WorkBox :key="work._id" :core="core" :works="core.works" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
+      <O3D v-for="work in core.works" :key="work._id">
+        <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
           <WBTextureProvider :key="work._id" :work="work"></WBTextureProvider>
         </WorkBox>
       </O3D>
@@ -67,7 +67,7 @@
     <CurosrImg v-if="!isTouch && cursor.enableImg" :cursor="cursor"></CurosrImg>
     <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
 
-    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'influence'">
+    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-in' || overlay === 'box-out'">
       <OVInfluence @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVInfluence>
     </div>
 
@@ -203,9 +203,27 @@ export default {
       this.core.openPipelineSystem()
     },
     onChooseInfluence (chosen) {
-      // this.core.onSetCurrentWorkType({ type: chosen })
-      // this.overlay = false
-      // this.mouseMode = 'influence'
+      this.core.onSetCurrentWorkType({ type: chosen })
+
+      let work = this.core.createWorkAtPos({
+        position: {
+          x: this.cursor.position.x,
+          y: 0,
+          z: this.cursor.position.z
+        }
+      })
+
+      setTimeout(() => {
+        if (this.mouseMode === 'box-in') {
+          this.core.onAddArrow({ direction: 'in', workTo: work })
+        } else if (this.mouseMode === 'box-out') {
+          this.core.onAddArrow({ direction: 'out', workTo: work })
+        }
+        this.mouseMode = ''
+      }, 10)
+
+      // this.mouseMode = this.overlay
+      this.overlay = false
     },
     onChooseGenesis (chosen) {
       this.core.onSetCurrentWorkType({ type: chosen })
@@ -235,31 +253,34 @@ export default {
       */
 
       if (this.mouseMode === 'box-in') {
-        let work = this.core.createWorkAtPos({
-          position: {
-            x: ev.event.point.x,
-            y: 0,
-            z: ev.event.point.z
-          }
-        })
+        this.overlay = 'box-in'
+        // let work = this.core.createWorkAtPos({
+        //   position: {
+        //     x: ev.event.point.x,
+        //     y: 0,
+        //     z: ev.event.point.z
+        //   }
+        // })
 
-        setTimeout(() => {
-          this.core.onAddArrow({ direction: 'in', workTo: work })
-          this.mouseMode = ''
-        }, 10)
+        // setTimeout(() => {
+        //   this.core.onAddArrow({ direction: 'in', workTo: work })
+        //   this.mouseMode = ''
+        // }, 10)
       } else if (this.mouseMode === 'box-out') {
-        let work = this.core.createWorkAtPos({
-          position: {
-            x: ev.event.point.x,
-            y: 0,
-            z: ev.event.point.z
-          }
-        })
+        this.overlay = 'box-out'
 
-        setTimeout(() => {
-          this.core.onAddArrow({ direction: 'out', workTo: work })
-          this.mouseMode = ''
-        }, 10)
+        // let work = this.core.createWorkAtPos({
+        //   position: {
+        //     x: ev.event.point.x,
+        //     y: 0,
+        //     z: ev.event.point.z
+        //   }
+        // })
+
+        // setTimeout(() => {
+        //   this.core.onAddArrow({ direction: 'out', workTo: work })
+        //   this.mouseMode = ''
+        // }, 10)
       } else if (this.mouseMode === 'genesis') {
         let work = this.core.createWorkAtPos({
           position: {
@@ -287,6 +308,8 @@ export default {
     onClickBR ({ work }) {
       this.core.onSetCurrentWorkFrom({ work })
       this.mouseMode = 'box-out'
+
+      // this.overlay = 'box-out'
     },
     onClickBR3 ({ work }) {
       // this.core.removeLinksOfWork({ work })
@@ -294,6 +317,8 @@ export default {
     onClickBR2 ({ work }) {
       this.core.onSetCurrentWorkFrom({ work })
       this.mouseMode = 'box-in'
+
+      // this.overlay = 'box-in'
     },
     onClickToucher () {
 
@@ -306,10 +331,14 @@ export default {
     },
     onClickPreview ($event) {
       if (this.mouseMode === 'box-out') {
+        // this.overlay = 'box-out'
+
         this.core.onAddArrow({ direction: 'out', workTo: $event.work })
         this.mouseMode = ''
         this.core.refresh()
       } else if (this.mouseMode === 'box-in') {
+        // this.overlay = 'box-in'
+
         this.core.onAddArrow({ direction: 'in', workTo: $event.work })
         this.mouseMode = ''
         this.core.refresh()
@@ -359,7 +388,7 @@ export default {
         camera: this.camera,
         onClean: this.onClean
       })
-      this.rayplay.setLayer(2)
+      // this.rayplay.setLayer(2)
 
       this.camera.position.y = 100
       this.camera.position.z = 0
@@ -385,6 +414,7 @@ export default {
         camera: this.camera,
         onClean: this.onClean
       })
+      this.panner.setLayer(1)
     },
     onPan (delta) {
       this.camera.position.x -= delta.x
