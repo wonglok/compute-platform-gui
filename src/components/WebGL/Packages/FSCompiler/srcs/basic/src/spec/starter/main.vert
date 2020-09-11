@@ -66,8 +66,8 @@ void main (void) {
 
   float gapper = 1.5;
 
-  pos.x *= 0.14;
-  pos.y *= 0.14;
+  pos.x *= 0.1;
+  pos.y *= 0.1;
 
   pos.x += d3X * gapper;
   pos.y += d3Y * gapper;

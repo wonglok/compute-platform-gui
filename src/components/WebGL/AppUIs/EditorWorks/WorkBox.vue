@@ -69,10 +69,10 @@ export default {
       }, { deep: true })
 
       if (this.ctx.ammo) {
-        this.ctx.ammo.addSimpleMesh({ mesh: baseMesh, mass: 1, flags: { isWorkBox: true, isWorld: true } })
         this.onClean(() => {
           this.ctx.ammo.removeMesh({ mesh: baseMesh })
         })
+        this.ctx.ammo.addSimpleMesh({ mesh: baseMesh, mass: 1, flags: { isWorkBox: true, isWorld: true } })
       }
 
       if (this.ctx.panner) {
@@ -100,7 +100,7 @@ export default {
         // })
 
         this.onClean(() => {
-          // baseMesh.userData.canRun = false
+          baseMesh.userData.canRun = false
           this.ctx.panner.remove(baseMesh)
         })
       }
@@ -136,6 +136,12 @@ export default {
       if (corner === 'tr') {
         btn.position.x = boxWidth * 0.5
         btn.position.z = boxHeight * -0.5
+
+        this.ctx.rayplay.hover(btn, (v) => {
+          btn.material.opacity = 1.0
+        }, () => {
+          btn.material.opacity = 0.08
+        })
       }
 
       if (corner === 'bl') {
@@ -162,11 +168,13 @@ export default {
         console.log(v.object.name)
         this.$emit(corner, { work: this.work })
       })
+      this.onClean(() => {
+        this.ctx.rayplay.remove(btn)
+      })
 
       this.onClean(() => {
         geo.dispose()
         mat.dispose()
-        this.ctx.rayplay.remove(btn)
       })
 
       baseMesh.add(btn)

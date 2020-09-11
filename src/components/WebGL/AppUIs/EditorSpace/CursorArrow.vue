@@ -70,7 +70,7 @@ export default {
     let i = 0
     this.onLoop(() => {
       curve.getPoint((i % 100) / 100, ball.position)
-      i += 1 / 60 * 100.0 * 0.553
+      i += 1 / 60 * 100.0 * 1.
 
       plot()
     })

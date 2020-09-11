@@ -33,13 +33,19 @@ export default {
         THREE
       }
 
-      let Monitor = await core.makeMonitorByCore()
+      let currentWork = core.getCurrentWork()
+
+      if (!currentWork) {
+        return
+      }
+
+      let Monitor = await core.makeMonitorByWork({ work: currentWork })
       Monitor.use(miniBox)
     }
 
     compileCode()
 
-    this.$root.$on('compile-pipeline', () => {
+    this.$root.$on('compile-workbox', () => {
       compileCode()
     })
 

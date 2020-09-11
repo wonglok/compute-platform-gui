@@ -7,9 +7,9 @@ import { BufferGeometry, CatmullRomCurve3, CircleBufferGeometry, Color, Curve, L
 import { O3DNode } from '../../Core/O3DNode'
 export default {
   props: {
-    arrows: {},
+    core: {},
     arrow: {},
-    core: {}
+    arrowID: {}
   },
   mixins: [
     O3DNode
@@ -21,6 +21,11 @@ export default {
   },
   beforeDestroy () {
     this.isValid = false
+  },
+  methods: {
+    getArrow () {
+      return this.arrow
+    }
   },
   mounted () {
     var materialDash = new LineDashedMaterial({
@@ -34,32 +39,23 @@ export default {
     let cancelBall = new Mesh(new CircleBufferGeometry(5, 12), new MeshBasicMaterial({ transparent: true, opacity: 0.3, color: 0xffffff }))
     cancelBall.geometry.rotateX(Math.PI * -0.5)
     cancelBall.position.y += 10
-    cancelBall.layers.enableAll()
-    cancelBall.layers.disable(1)
 
     cancelBall.material.map = new TextureLoader().load(require('./icon/close.png'))
 
     this.o3d.add(cancelBall)
 
     if (this.ctx.rayplay) {
-      let setup = () => {
+      this.onClean(() => {
         this.ctx.rayplay.remove(cancelBall)
-        let getArrow = () => JSON.parse(JSON.stringify(this.arrow))
-        this.ctx.rayplay.add(cancelBall, () => {
-          this.$forceUpdate()
-          this.$root.$forceUpdate()
-          this.core.removeArrow({ arrow: getArrow() })
-        })
-        this.ctx.rayplay.hover(cancelBall, () => {
-          cancelBall.material.opacity = 1
-        }, () => {
-          cancelBall.material.opacity = 0.08
-        })
-      }
-      setup()
-      this.$watch('arrow', () => {
-        setup()
-      }, { deep: true })
+      })
+      this.ctx.rayplay.add(cancelBall, () => {
+        this.core.removeArrow({ arrow: this.getArrow() })
+      })
+      this.ctx.rayplay.hover(cancelBall, () => {
+        cancelBall.material.opacity = 1
+      }, () => {
+        cancelBall.material.opacity = 0.08
+      })
     }
 
     let ball = new Mesh(new CircleBufferGeometry(5 / 2, 10), new MeshBasicMaterial({ color: 0xffaa00 }))

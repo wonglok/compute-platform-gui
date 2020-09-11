@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import { BoxBufferGeometry, CircleBufferGeometry, Color, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, TextureLoader, Vector3 } from 'three'
-import { O3DNode } from '../../Core/O3DNode'
+import { BoxBufferGeometry, CircleBufferGeometry, Color, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, TextureLoader, Vector3, Sprite, SpriteMaterial, Projector, Raycaster, Camera, Ray } from 'three'
+import { getScreen, O3DNode, visibleHeightAtZDepthForCamYAxis, visibleWidthAtZDepthForCamYAxis } from '../../Core/O3DNode'
 import { make } from '../ARTBlockers/art-coder'
 import { loadTexture } from '../../Core/loadTexture'
 export default {
@@ -29,8 +29,8 @@ export default {
   async mounted () {
     let scale = 1.5
     let boxDepth = 0.333 * scale
-    let boxWidth = 40 * scale
-    let boxHeight = 40 * scale
+    let boxWidth = 50 * scale
+    let boxHeight = 50 * scale
 
     let gap = 2 * scale
 
@@ -56,7 +56,7 @@ export default {
       baseMesh.name = 'base-mesh'
       baseMesh.layers.enable(1)
 
-      this.unitPos = baseMesh.position
+      // this.unitPos = baseMesh.position
       // baseMesh.position.copy(this.work.position)
 
       // this.$watch('unitPos', () => {
@@ -109,88 +109,99 @@ export default {
       return baseMesh
     }
 
-    let makeButton = async ({ corner, color = '#0000ff', baseMesh, icon }) => {
-      let geo = new CircleBufferGeometry(btnW, 24)
-      let mat = new MeshBasicMaterial({ color: new Color(color), transparent: true })
-      if (icon) {
-        let texture = new TextureLoader().load(icon)
-        mat.map = texture
-      }
-      let btn = new Mesh(geo, mat)
-      btn.name = corner
-      btn.layers.enableAll()
-      btn.layers.disable(1)
+    // let makeButton = async ({ corner, color = '#0000ff', baseMesh, icon }) => {
+    //   let geo = new CircleBufferGeometry(btnW, 24)
+    //   let mat = new MeshBasicMaterial({ color: new Color(color), transparent: true })
+    //   if (icon) {
+    //     let texture = new TextureLoader().load(icon)
+    //     mat.map = texture
+    //   }
+    //   let btn = new Mesh(geo, mat)
+    //   btn.name = corner
+    //   btn.layers.enableAll()
+    //   btn.layers.disable(1)
 
-      btn.rotation.x = Math.PI * -0.5
-      btn.position.y += boxDepth * 0.5 + 3 / 4
+    //   btn.rotation.x = Math.PI * -0.5
+    //   btn.position.y += boxDepth * 0.5 + 3 / 4
 
-      // console.log(corner)
+    //   // console.log(corner)
 
-      if (corner === 'tl') {
-        btn.position.x = boxWidth * -0.5
-        btn.position.z = boxHeight * -0.5
-      }
+    //   if (corner === 'tl') {
+    //     btn.position.x = boxWidth * -0.5
+    //     btn.position.z = boxHeight * -0.5
+    //   }
 
-      if (corner === 'tr') {
-        btn.position.x = boxWidth * 0.5
-        btn.position.z = boxHeight * -0.5
-      }
+    //   if (corner === 'tr') {
+    //     btn.position.x = boxWidth * 0.5
+    //     btn.position.z = boxHeight * -0.5
+    //   }
 
-      if (corner === 'bl') {
-        btn.position.x = boxWidth * -0.5
-        btn.position.z = boxHeight * 0.5
-      }
+    //   if (corner === 'bl') {
+    //     btn.position.x = boxWidth * -0.5
+    //     btn.position.z = boxHeight * 0.5
+    //   }
 
-      if (corner === 'br') {
-        btn.position.x = boxWidth * 0.5
-        btn.position.z = boxHeight * 0.5
-      }
+    //   if (corner === 'br') {
+    //     btn.position.x = boxWidth * 0.5
+    //     btn.position.z = boxHeight * 0.5
+    //   }
 
-      if (corner === 'br2') {
-        btn.position.x = boxWidth * 0.5 - btnW * 2 - gap * 0.5
-        btn.position.z = boxHeight * 0.5
-      }
+    //   if (corner === 'br2') {
+    //     btn.position.x = boxWidth * 0.5 - btnW * 2 - gap * 0.5
+    //     btn.position.z = boxHeight * 0.5
+    //   }
 
-      if (corner === 'br3') {
-        btn.position.x = boxWidth * 0.5 - btnW * 4 - gap * 1
-        btn.position.z = boxHeight * 0.5
-      }
+    //   if (corner === 'br3') {
+    //     btn.position.x = boxWidth * 0.5 - btnW * 4 - gap * 1
+    //     btn.position.z = boxHeight * 0.5
+    //   }
 
-      this.ctx.rayplay.add(btn, (v) => {
-        console.log(v.object.name)
-        this.$emit(corner, { work: this.work })
-      })
+    //   this.ctx.rayplay.add(btn, (v) => {
+    //     console.log(v.object.name)
+    //     this.$emit(corner, { work: this.work })
+    //   })
 
-      this.onClean(() => {
-        geo.dispose()
-        mat.dispose()
-        this.ctx.rayplay.remove(btn)
-      })
+    //   this.onClean(() => {
+    //     geo.dispose()
+    //     mat.dispose()
+    //     this.ctx.rayplay.remove(btn)
+    //   })
 
-      baseMesh.add(btn)
+    //   baseMesh.add(btn)
 
-      this.onClean(() => {
-        baseMesh.remove(btn)
-      })
+    //   this.onClean(() => {
+    //     baseMesh.remove(btn)
+    //   })
 
-      return btn
-    }
+    //   return btn
+    // }
+
+
 
     let makeScreen = async ({ baseMesh }) => {
-      let geo = new PlaneBufferGeometry(boxW, boxH)
-      let mat = new MeshStandardMaterial({ color: new Color('#cccccc') })
-      let screen = new Mesh(geo, mat)
+      // let geo = new PlaneBufferGeometry(boxW, boxH)
+      let mat = new SpriteMaterial({ color: new Color('#cccccc') })
+      let screen = new Sprite(mat)
       screen.name = 'preview'
       screen.layers.enableAll()
       screen.layers.disable(1)
 
+      screen.scale.x = boxW
+      screen.scale.y = boxH
       screen.userData.hoverCursor = 'grab'
 
       screen.rotation.x = Math.PI * -0.5
       screen.position.y += boxDepth * 0.5 + 1 / 4
 
+      this.onLoop(() => {
+        let height = visibleHeightAtZDepthForCamYAxis({ camera: this.ctx.camera, depth: this.ctx.camera.position.y  })
+        let width = visibleWidthAtZDepthForCamYAxis({ camera: this.ctx.camera, depth: this.ctx.camera.position.y })
+        baseMesh.position.x = width * -0.25 + this.ctx.camera.position.x + boxWidth * 0.5
+        baseMesh.position.z = height * -0.25 + this.ctx.camera.position.z + boxHeight * 0.5
+      })
+
       this.onClean(() => {
-        geo.dispose()
+        // geo.dispose()
         mat.dispose()
       })
 

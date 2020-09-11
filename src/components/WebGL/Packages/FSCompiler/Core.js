@@ -169,11 +169,13 @@ export class AppCore extends EventDispatcher {
 
     this.textures = []
 
-    this.engineCodeTree = getDefaultTree()
+
+    // this.engineCodeTree = getDefaultTree()
 
     this.trashedWorks = []
 
     this.current = {
+      workIDForPreview: false,
       workFrom: false,
       workType: false
     }
@@ -191,54 +193,36 @@ export class AppCore extends EventDispatcher {
       'faces'
     ]
   }
-  upsertTexture () {
-
-  }
-  async openPipelineSystem () {
-    let create = () => {
-      let win = UI.getWin({ title: 'Pipeline System', appName: 'edit-pipeline' }, {}, { type: 'root-pipeline', _id: getID() })
-      this.openWin({ win })
-      return win
-    }
-
-    let win = this.wins.find(e => e.data.type === 'root-pipeline')
-    if (!win) {
-      win = create()
-      console.log('create')
+  getCurrentWork () {
+    let win = this.wins[this.wins.length - 1]
+    if (win) {
+      return this.getWorkByWin({ win })
     } else {
-      this.showWin({ win })
-      console.log('show')
-    }
-
-    let wins = this.wins
-    UI.focusApp({ wins, win })
-    win.show = true
-  }
-
-  async makeMonitorByCore () {
-    let main = {
-      name: 'Pipeline',
-      list: treeToFlat(this.engineCodeTree)
-    }
-
-    let code = await makeMonitor({ pack: main })
-    try {
-      let simpleFnc = new Function(`
-        let exports = {};
-        let module = {};
-        function newFunc () {
-          ${code}
-        }
-        new newFunc()
-        return exports
-      `)
-      let obj = simpleFnc()
-      return obj
-    } catch (e) {
-      console.log(e)
       return false
     }
+    // return this.works.find(e => e._id === this.current.workIDForPreview)
   }
+
+  // async openPipelineSystem () {
+  //   let create = () => {
+  //     let win = UI.getWin({ title: 'Pipeline System', appName: 'edit-pipeline' }, {}, { type: 'root-pipeline', _id: getID() })
+  //     this.openWin({ win })
+  //     return win
+  //   }
+
+  //   let win = this.wins.find(e => e.data.type === 'root-pipeline')
+  //   if (!win) {
+  //     win = create()
+  //     console.log('create')
+  //   } else {
+  //     this.showWin({ win })
+  //     console.log('show')
+  //   }
+
+  //   let wins = this.wins
+  //   UI.focusApp({ wins, win })
+  //   win.show = true
+  // }
 
   async makeMonitorByWork ({ work }) {
     let main = {
@@ -275,15 +259,31 @@ export class AppCore extends EventDispatcher {
     }, 200)
   }
   getCurrentWorkFrom () {
-    return this.works.find(e => e._id === this.current.workFrom._id)
+    return this.works.find(e => e._id === this.current.workFrom)
+  }
+  removeArrowByID ({ arrowID }) {
+    let idx = this.arrows.findIndex(a => a._id === arrowID)
+    // console.log(idx, arrow)
+    if (idx !== -1) {
+      this.arrows.splice(idx, 1)
+      this.arrows = JSON.parse(JSON.stringify(this.arrows))
+      this.refresh()
+    } else {
+      console.log('cant find id', arrowID)
+      return false
+    }
   }
   removeArrow ({ arrow }) {
     let idx = this.arrows.findIndex(a => a._id === arrow._id)
-    console.log(idx, arrow)
+    // console.log(idx, arrow)
     if (idx !== -1) {
       this.arrows.splice(idx, 1)
+      this.arrows = JSON.parse(JSON.stringify(this.arrows))
+      this.refresh()
+    } else {
+      console.log('cant find id', arrow._id)
+      return false
     }
-    this.refresh()
   }
   createWorkAtPos ({ position }) {
     console.log(this.current.workType)
@@ -307,11 +307,12 @@ export class AppCore extends EventDispatcher {
     arrowsToBeRemoved.forEach((arrow) => {
       let idx = this.arrows.findIndex(a => a === arrow)
       this.arrows.splice(idx, 1)
+      this.refresh()
     })
     this.refresh()
   }
   onSetCurrentWorkFrom ({ work }) {
-    this.current.workFrom = work
+    this.current.workFrom = work._id
   }
   onSetCurrentWorkType ({ type }) {
     this.current.workType = type
@@ -319,21 +320,24 @@ export class AppCore extends EventDispatcher {
   onAddArrow ({ direction, workTo }) {
     // console.log(workTo, this.current)
     let hasFound = this.arrows.find(e => {
-      return e.from === this.current.workFrom._id && e.to === workTo._id
-      || e.to === this.current.workFrom._id && e.from === workTo._id
+      return e.from === this.current.workFrom && e.to === workTo._id
+      || e.to === this.current.workFrom && e.from === workTo._id
     })
 
     if (!hasFound) {
       if (direction === 'out') {
         this.arrows.push({
           _id: getID(),
-          from: this.current.workFrom._id,
+          r: Math.random(),
+          from: this.current.workFrom,
           to: workTo._id
         })
       } else if (direction === 'in') {
         this.arrows.push({
           _id: getID(),
-          to: this.current.workFrom._id,
+          r: Math.random(),
+
+          to: this.current.workFrom,
           from: workTo._id
         })
       }
@@ -422,6 +426,7 @@ export class AppCore extends EventDispatcher {
     if (win) {
       this.removeWin({ win })
     }
+    this.refresh()
   }
   moveWorkToTrash ({ work }) {
     this.removeLinksOfWork({ work })
@@ -433,6 +438,7 @@ export class AppCore extends EventDispatcher {
       this.removeWin({ win })
     }
     this.trashedWorks.push(work)
+    this.refresh()
   }
   restoreWork ({ work }) {
     let idx = this.trashedWorks.indexOf(work)
@@ -440,6 +446,7 @@ export class AppCore extends EventDispatcher {
       this.trashedWorks.splice(idx, 1)
     }
     this.works.push(work)
+    this.refresh()
   }
   addDemoOps () {
     // this.works.push(

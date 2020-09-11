@@ -29,15 +29,14 @@
         </WorkBox>
       </O3D>
 
-      <!-- <O3D v-if="camera">
+
+      <WBArrow v-for="arrow in core.arrows" :key="arrow._id" :arrow="arrow" :arrowID="arrow._id" :core="core">
+      </WBArrow>
+
+      <O3D v-if="camera">
         <PreviewPlane :core="core">
           <PreviewTextureProvider :core="core"></PreviewTextureProvider>
         </PreviewPlane>
-      </O3D> -->
-
-      <O3D v-for="arrow in core.arrows" :key="arrow._id + 'arrow-o3d' + arrow.from + arrow.to">
-        <WBArrow :key="arrow._id + 'arrow' + arrow.from + arrow.to" :core="core" :arrows="core.arrows" :arrow="arrow">
-        </WBArrow>
       </O3D>
     </O3D>
 
@@ -45,7 +44,7 @@
       <div @click="onClickToucher" class="absolute top-0 left-0 full" ref="toucher"></div>
     </div>
 
-    <div class=" absolute top-0 right-0 flex">
+    <div class="absolute top-0 right-0 flex">
       <!-- <div class="p-3">
         <img src="./icon/add.svg" @click="onClickAdd" class="w-10 h-10" alt="">
       </div>
@@ -485,7 +484,7 @@ export default {
 
     // run demo
     this.core.addDemoOps()
-    this.overlay = ''
+    this.overlay = 'genesis'
 
     this.shell = new Shell({ core: this.core, vm: this })
 

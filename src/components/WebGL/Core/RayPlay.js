@@ -66,7 +66,13 @@ export class RayPlay {
     }
 
     this.remove = (v) => {
-      this.activeTargets.splice(this.activeTargets.indexOf(v), 1)
+      let removes = this.activeTargets.filter(e => e.uuid === v.uuid)
+
+      removes.forEach((i) => {
+        let idx = this.activeTargets.findIndex(e => e.uuid === i.uuid)
+        this.activeTargets.splice(idx, 1)
+      })
+      // this.activeTargets.splice(this.activeTargets.indexOf(v), 1)
       // console.log(this.activeTargets)
     }
 

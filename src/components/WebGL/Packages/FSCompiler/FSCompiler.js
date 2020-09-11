@@ -205,24 +205,25 @@ export const js2url = ({ js }) => {
   return appScriptURL
 }
 
-// export const injectToMain = async ({ flat, work, works, arrows }) => {
-//   let project = {
-//     _id: getID(),
-//     children: [],
-//     name: 'project.js',
-//     type: 'file',
-//     path:  './project.json',
-//     src: JSON.stringify({
-//       work,
-//       works,
-//       arrows
-//     }, null, '  ')
-//   }
+export const injectToMain = async ({ flat, work, works, arrows }) => {
+  let project = {
+    _id: getID(),
+    children: [],
+    name: 'project.js',
+    type: 'file',
+    path:  './project.json',
+    readOnly: true,
+    src: JSON.stringify({
+      work,
+      works,
+      arrows
+    }, null, '  ')
+  }
 
-//   flat.push(project)
+  flat.push(project)
 
-//   return flat
-// }
+  return flat
+}
 
 export const makeProjectSpecs = async ({ work }) => {
   // if (!pack) {
