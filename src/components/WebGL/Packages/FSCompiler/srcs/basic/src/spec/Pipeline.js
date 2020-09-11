@@ -15,7 +15,7 @@ let glsl = (strings, ...args) => {
 
 export class Pipeline {
   constructor (box) {
-    let { onLoop, onClean, deps, Shaders } = box
+    let { onLoop, onClean, deps } = box
     this.Shaders = Shaders
     this.camera = box.camera
     this.box = box

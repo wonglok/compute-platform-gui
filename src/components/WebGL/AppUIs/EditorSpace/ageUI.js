@@ -60,7 +60,7 @@ export const getIO = (args) => {
 }
 
 export const getWin = (config = {}, pos = {}, data = {}) => {
-  let width = window.innerWidth - 270 * 1 - 15 - 15
+  let width = window.innerWidth - 270 * 1 - 15 - 15 - 15
   return {
     _id: getID(),
     title: '',

@@ -229,6 +229,7 @@ export const makeProjectSpecs = async ({ work }) => {
   // if (!pack) {
   //   console.log('You missed pack')
   // }
+
   let pack = pack = {
     name: work._id,
     list: treeToFlat(work.tree)
@@ -238,7 +239,7 @@ export const makeProjectSpecs = async ({ work }) => {
   return code
 }
 
-export const makeUnitPreview = async ({ pack, others = '' }) => {
+export const makeUnitPreviewIframe = async ({ pack, others = '' }) => {
   // if (!pack) {
   //   pack = {
   //     name: 'main',

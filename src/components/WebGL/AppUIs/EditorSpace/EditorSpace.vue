@@ -32,12 +32,6 @@
 
       <WBArrow v-for="arrow in core.arrows" :key="arrow._id" :arrow="arrow" :arrowID="arrow._id" :core="core">
       </WBArrow>
-
-      <O3D v-if="camera">
-        <PreviewPlane :core="core">
-          <PreviewTextureProvider :core="core"></PreviewTextureProvider>
-        </PreviewPlane>
-      </O3D>
     </O3D>
 
     <div @click="onClickWrapper" class="absolute top-0 left-0 full" ref="wrapper">
@@ -72,6 +66,15 @@
 
     <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
       <OVGenesis @choose="onChooseGenesis" @overlay="overlay = $event"></OVGenesis>
+    </div>
+
+    <div v-if="core" style="width: 270px; height: 270px; margin: 15px; " class=" absolute top-0 left-0">
+      <GLArtCanvas :rounded="'9px 9px 9px 9px'">
+        <PreviewPlane :visible="core.getCurrentWork()" :core="core">
+          <PreviewTextureProvider :current="core.getCurrentWork()" :core="core"></PreviewTextureProvider>
+        </PreviewPlane>
+        <!-- <GLFlower></GLFlower> -->
+      </GLArtCanvas>
     </div>
 
     <!-- <component v-show="false" v-if="dynamo" ref="dynamo" :is="dynamo"></component> -->

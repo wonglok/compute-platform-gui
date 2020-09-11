@@ -8,16 +8,29 @@ export async function buildInput ({ pack, mode = 'iframe' }) {
   })
 
   // console.log(pack.list)
-  let entry = pack.list.find(e => e.isPreviewEntry).path
+  let entry = false
 
   if (mode === 'iframe') {
-    entry = pack.list.find(e => e.isPreviewEntry).path
+    let item = pack.list.find(e => e.isPreviewEntry)
+    if (item) {
+      entry = item.path
+    }
   }
   if (mode === 'package') {
-    entry = pack.list.find(e => e.isPackageEntry).path
+    let item = pack.list.find(e => e.isPackageEntry)
+    if (item) {
+      entry = item.path
+    }
   }
   if (mode === 'monitor') {
-    entry = pack.list.find(e => e.isMonitorEntry).path
+    let item = pack.list.find(e => e.isMonitorEntry)
+    if (item) {
+      entry = item.path
+    }
+  }
+
+  if (!entry) {
+    throw new Error()
   }
 
   let inputOptions = {

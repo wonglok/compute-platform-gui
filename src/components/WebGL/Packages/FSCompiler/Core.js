@@ -169,7 +169,6 @@ export class AppCore extends EventDispatcher {
 
     this.textures = []
 
-
     // this.engineCodeTree = getDefaultTree()
 
     this.trashedWorks = []
@@ -292,6 +291,9 @@ export class AppCore extends EventDispatcher {
       type: this.current.workType,
       tree: getDefaultTree(),
       position: { x: position.x, y: position.y + this.initAirGapForBlock, z: position.z },
+      data: {
+        settings: []
+      }
     }
 
     // if (this.genesisTypes.includes(this.current.workType)) {

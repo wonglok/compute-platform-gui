@@ -295,7 +295,7 @@ export default {
 
       let others = ''
 
-      this.unitWebURL = await makeUnitPreview({ pack: main, others })
+      // this.unitWebURL = await makeUnitPreviewIframe({ pack: main, others })
 
       this.$root.$emit('compile-workbox', { work: this.work })
       this.onRefresh()

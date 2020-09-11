@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { BoxBufferGeometry, CircleBufferGeometry, Color, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, TextureLoader, Vector3 } from 'three'
+import { BoxBufferGeometry, CircleBufferGeometry, Color, DoubleSide, ExtrudeBufferGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, RepeatWrapping, Shape, ShapeBufferGeometry, TextureLoader, Vector2, Vector3 } from 'three'
 import O3DNode from '../../Core/O3DNode'
 import { make } from '../ARTBlockers/art-coder'
 import { loadTexture } from '../../Core/loadTexture'
@@ -43,8 +43,43 @@ export default {
     let boxW = boxWidth - gap
     let boxH = boxHeight - gap
 
+    let makeCurved = (width, height, boxDepth) => {
+      var roundedRectShape = new Shape();
+
+      let makeRect = ( ctx, x, y, width, height, radius ) => {
+        ctx.moveTo( x, y + radius );
+        ctx.lineTo( x, y + height - radius );
+        ctx.quadraticCurveTo( x, y + height, x + radius, y + height );
+        ctx.lineTo( x + width - radius, y + height );
+        ctx.quadraticCurveTo( x + width, y + height, x + width, y + height - radius );
+        ctx.lineTo( x + width, y + radius );
+        ctx.quadraticCurveTo( x + width, y, x + width - radius, y );
+        ctx.lineTo( x + radius, y );
+        ctx.quadraticCurveTo( x, y, x, y + radius );
+      }
+
+      makeRect(roundedRectShape, width * -0.5, height * -0.5, width, height, 8)
+
+      let extrudeSettings = {
+        depth: boxDepth,
+        bevelEnabled: true,
+        bevelSegments: 2,
+        steps: 2,
+        bevelSize: 1,
+        bevelThickness: 1
+      }
+      // var geometry = new ExtrudeBufferGeometry(roundedRectShape, extrudeSettings)
+      // geometry.rotateX(Math.PI * -0.5)
+      // geometry.translate(0, 0, -boxDepth)
+      var geometry = new ShapeBufferGeometry(roundedRectShape)
+      geometry.rotateX(Math.PI * -0.5)
+
+      return geometry
+    }
+
     //------
     let makeBaseMesh = () => {
+      // let geo = makeCurved(boxWidth, boxHeight, boxDepth, 1, 1)
       let geo = new BoxBufferGeometry(boxWidth, boxDepth, boxHeight, 1, 1)
       let mat = new MeshStandardMaterial({ color: new Color('#bababa') })
 
@@ -109,6 +144,7 @@ export default {
       this.onClean(() => {
         this.o3d.remove(baseMesh)
       })
+
       return baseMesh
     }
 
@@ -188,7 +224,8 @@ export default {
 
     let makeScreen = async ({ baseMesh }) => {
       let geo = new PlaneBufferGeometry(boxW, boxH)
-      let mat = new MeshStandardMaterial({ color: new Color('#cccccc') })
+      // let geo = makeCurved(boxW, boxH)
+      let mat = new MeshStandardMaterial({ side: DoubleSide, color: new Color('#cccccc') })
       let screen = new Mesh(geo, mat)
       screen.name = 'preview'
       screen.layers.enable(2)
@@ -236,6 +273,39 @@ export default {
       return screen
     }
 
+    let makeRoundedScreen = ({ baseMesh }) => {
+      let roundedGeo = makeCurved(boxWidth, boxHeight, boxDepth)
+      let roundedMat = new MeshStandardMaterial({ color: new Color('#bababa') })
+      let screen = new Mesh(roundedGeo, roundedMat)
+      screen.position.y = boxDepth * 0.5 + 0.3
+
+      this.$on('texture', (texture) => {
+        if (texture) {
+          roundedMat.map = texture
+          // texture.wrapS = texture.wrapT = RepeatWrapping
+          texture.repeat.set(1 / 40, 1 / 40)
+          texture.offset.set(0.5, 0.5)
+        }
+      })
+
+      let onColor = new Color('#bababa').offsetHSL(0, 0, -0.3)
+      let onOff = new Color('#bababa')
+
+      this.ctx.rayplay.hover(screen, (v) => {
+        baseMesh.material.color = onColor
+        baseMesh.material.needsUpdate = true
+      }, (v) => {
+        baseMesh.material.color = onOff
+        baseMesh.material.needsUpdate = true
+      })
+
+      this.onClean(() => {
+        this.ctx.rayplay.remove(screen)
+      })
+
+      baseMesh.add(screen)
+    }
+
     let baseMesh = makeBaseMesh()
 
     // makeButton({ corner: 'tl', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
@@ -247,8 +317,9 @@ export default {
     makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/box-out.svg') })
     makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/box-in.svg') })
     // makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
+    // makeScreen({ baseMesh })
 
-    makeScreen({ baseMesh })
+    makeRoundedScreen({ baseMesh })
 
     this.ctx.core.refresh()
   }

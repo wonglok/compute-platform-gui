@@ -14,11 +14,12 @@ export default {
     O3DNode
   ],
   props: {
+    current: {}
   },
   async mounted () {
     let core = this.ctx.core
     let dpi = window.devicePixelRatio || 1
-    this.renderTarget = new WebGLRenderTarget(340 * dpi, 340 * dpi)
+    this.renderTarget = new WebGLRenderTarget(270 * dpi, 270 * dpi)
 
     let miniBox = false
     let compileCode = async () => {
@@ -34,7 +35,6 @@ export default {
       }
 
       let currentWork = core.getCurrentWork()
-
       if (!currentWork) {
         return
       }
@@ -46,6 +46,10 @@ export default {
     compileCode()
 
     this.$root.$on('compile-workbox', () => {
+      compileCode()
+    })
+
+    this.$watch('current', () => {
       compileCode()
     })
 
