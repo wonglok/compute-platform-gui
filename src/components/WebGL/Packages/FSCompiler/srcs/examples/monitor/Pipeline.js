@@ -34,15 +34,6 @@ export class Pipeline {
 
     this.camera.position.z = 100
     this.config = this.getDefaultConfig()
-
-    this.lastJSON = ''
-    this.onLoop(() => {
-      let json = JSON.stringify(this.box.data.work.data)
-      if (this.lastJSON !== json) {
-        this.lastJSON = json
-        console.log(json)
-      }
-    })
   }
   getNewAttr () {
     return {

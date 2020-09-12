@@ -1,4 +1,5 @@
-import { getID } from '../../FSCompiler'
+import { getID } from '../../../Core/O3DNode'
+import { flatToTree } from '../../../Packages/FSCompiler/FSCompiler'
 
 var path = require('path')
 let exporter = []
@@ -6,12 +7,14 @@ let exporter = []
 async function importAll (r) {
   r.keys().forEach(key => {
     console.log(key)
+
     let config = {
       path: key,
       _id: getID(),
       type: 'file',
       src: r(key).default
     }
+
     if (key === './package.js') {
       config.isEntry = true
       config.isPackageEntry = true
@@ -41,5 +44,18 @@ importAll(require.context('!raw-loader!./src/', true, /\.glsl$/, 'sync'), 'sync'
 importAll(require.context('!raw-loader!./src/', true, /\.vert$/, 'sync'), 'sync')
 importAll(require.context('!raw-loader!./src/', true, /\.frag$/, 'sync'), 'sync')
 
+
+exporter.forEach(f => {
+  var dir = path.dirname(f.path)
+  if (!exporter.map(e => e.path).includes(dir) && dir !== '.') {
+    exporter.push({
+      path: dir,
+      isExpanded: true,
+      type: 'folder'
+    })
+  }
+})
+
+exporter = JSON.parse(JSON.stringify(flatToTree(exporter)))
 
 export default exporter

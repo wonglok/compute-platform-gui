@@ -173,8 +173,10 @@ export default {
       this.work = this.$core.getWorkByWin({ win: this.win })
       this.works = this.$core.works
       this.arrows = this.$core.arrwos
-      let tree = this.work.tree
-      this.load({ tree })
+      let tree = this.work.fileTree
+      if (tree) {
+        this.load({ tree })
+      }
     }
     // this.spaceAPI = this.$store.getState()
 

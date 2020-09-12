@@ -134,6 +134,7 @@ export default {
             lerpRotation.copy(baseMesh.rotation)
             lerpRotation.lerp(zero, 0.2)
             baseMesh.rotation.set(lerpRotation.x, lerpRotation.y, lerpRotation.z)
+            baseMesh.rotation.set(lerpRotation.x, lerpRotation.y, lerpRotation.z)
             this.ctx.ammo.setMeshPosition({ mesh: baseMesh })
           }
         })
@@ -286,7 +287,7 @@ export default {
 
     let makeRoundedScreen = ({ baseMesh, close }) => {
       let roundedGeo = makeCurved(boxW, boxH, boxDepth)
-      let roundedMat = new MeshStandardMaterial({ color: new Color('#cccccc') })
+      let roundedMat = new MeshStandardMaterial({ color: new Color('#ffffff'), transparent: true, opacity: 1 })
       let screen = new Mesh(roundedGeo, roundedMat)
       screen.position.y = boxDepth * 0.5 + 0.15
 
@@ -311,7 +312,7 @@ export default {
         // baseMesh.material.color = onColor
         baseMesh.material.needsUpdate = true
 
-        baseMesh.material.color.set(this.work.color).offsetHSL(0, 0, -0.08)
+        baseMesh.material.color.set(this.work.workBoxFrameColor).offsetHSL(0, 0, -0.08)
 
         // if (this.work.direction === 'out') {
         // } else if (this.work.direction === 'in') {
@@ -324,7 +325,7 @@ export default {
       }, (v) => {
         baseMesh.material.needsUpdate = true
 
-        baseMesh.material.color.set(this.work.color)
+        baseMesh.material.color.set(this.work.workBoxFrameColor)
 
         // if (this.work.direction === 'out') {
         //   baseMesh.material.color.set('#e2bc2e')

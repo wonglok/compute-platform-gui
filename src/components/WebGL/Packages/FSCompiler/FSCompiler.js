@@ -114,9 +114,7 @@ export function treeToFlat (tree) {
 }
 
 // let DefaultFilesTree = flatToTree(DefaultFilesList)
-
 // let Basic = require('./srcs/basic/loadJS').default
-
 // let DefaultFilesList = Basic
 
 // var path = require('path')
@@ -130,7 +128,6 @@ export function treeToFlat (tree) {
 //     })
 //   }
 // })
-
 
 // export const getDefaultList = () => {
 //   let result = JSON.parse(JSON.stringify(DefaultFilesList))
@@ -205,65 +202,64 @@ export const js2url = ({ js }) => {
   return appScriptURL
 }
 
-export const injectToMain = async ({ flat, work, works, arrows }) => {
-  let project = {
-    _id: getID(),
-    children: [],
-    name: 'project.js',
-    type: 'file',
-    path:  './project.json',
-    readOnly: true,
-    src: JSON.stringify({
-      work,
-      works,
-      arrows
-    }, null, '  ')
-  }
+// export const injectToMain = async ({ flat, work, works, arrows }) => {
+//   let project = {
+//     _id: getID(),
+//     children: [],
+//     name: 'project.js',
+//     type: 'file',
+//     path:  './project.json',
+//     readOnly: true,
+//     src: JSON.stringify({
+//       work,
+//       works,
+//       arrows
+//     }, null, '  ')
+//   }
 
-  flat.push(project)
+//   flat.push(project)
 
-  return flat
-}
+//   return flat
+// }
 
-export const makeProjectSpecs = async ({ work }) => {
-  // if (!pack) {
-  //   console.log('You missed pack')
-  // }
+// export const makeProjectSpecs = async ({ work }) => {
+//   // if (!pack) {
+//   //   console.log('You missed pack')
+//   // }
+//   let pack = pack = {
+//     name: work._id,
+//     list: treeToFlat(work.files)
+//   }
+//   let code = await RollMeUp.buildInput({ pack, mode: 'core' })
 
-  let pack = pack = {
-    name: work._id,
-    list: treeToFlat(work.tree)
-  }
-  let code = await RollMeUp.buildInput({ pack, mode: 'core' })
+//   return code
+// }
 
-  return code
-}
+// export const makeUnitPreviewIframe = async ({ pack, others = '' }) => {
+//   // if (!pack) {
+//   //   pack = {
+//   //     name: 'main',
+//   //     list: getDefaultList()
+//   //   }
+//   //   console.log('You missed pack')
+//   // }
 
-export const makeUnitPreviewIframe = async ({ pack, others = '' }) => {
-  // if (!pack) {
-  //   pack = {
-  //     name: 'main',
-  //     list: getDefaultList()
-  //   }
-  //   console.log('You missed pack')
-  // }
+//   let code = await RollMeUp.buildInput({ pack, mode: 'iframe' })
 
-  let code = await RollMeUp.buildInput({ pack, mode: 'iframe' })
+//   let mainTag = js2tag({ js: code })
 
-  let mainTag = js2tag({ js: code })
+//   let HTML = html + ''
+//   let appTag = `<div id="app"></div>`
 
-  let HTML = html + ''
-  let appTag = `<div id="app"></div>`
+//   HTML = HTML.replace(`${appTag}`,`${appTag}
+//     ${js2tag({ js: others })}
+//     ${mainTag}
+//   `)
 
-  HTML = HTML.replace(`${appTag}`,`${appTag}
-    ${js2tag({ js: others })}
-    ${mainTag}
-  `)
-
-  let blob = new Blob([HTML], { type: 'text/html' })
-  let htmlURL = URL.createObjectURL(blob)
-  return htmlURL
-}
+//   let blob = new Blob([HTML], { type: 'text/html' })
+//   let htmlURL = URL.createObjectURL(blob)
+//   return htmlURL
+// }
 
 export const makeMonitor = async ({ pack }) => {
   // if (!pack) {

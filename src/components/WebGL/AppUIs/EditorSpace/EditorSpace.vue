@@ -25,10 +25,12 @@
 
       <O3D v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-          <WBTextureProvider :key="work._id" :work="work"></WBTextureProvider>
+          <WBTextureProvider v-if="core.workTypes.includes(work.type)" :key="work._id" :work="work"></WBTextureProvider>
+          <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider>
+          <!-- <GLFlower></GLFlower> -->
+          <!-- <WBTextureDrawTypeProvider></WBTextureDrawTypeProvider> -->
         </WorkBox>
       </O3D>
-
 
       <WBArrow v-for="arrow in core.arrows" :key="arrow._id" :arrow="arrow" :arrowID="arrow._id" :core="core">
       </WBArrow>
@@ -68,11 +70,11 @@
       <OVGenesis @choose="onChooseGenesis" @overlay="overlay = $event"></OVGenesis>
     </div>
 
-    <div v-if="core" style="width: 270px; height: 270px; margin: 15px; " :class="{ 'pointer-events-none': !core.getCurrentWork() }" class=" absolute top-0 left-0">
-      <GLArtCanvas :suspendRender="!core.getCurrentWork()" :rounded="'9px 9px 9px 9px'">
-        <PreviewPlane :visible="core.getCurrentWork()" :core="core">
+    <div v-if="core" style="width: 270px; height: 270px; margin: 15px; " :class="{ 'pointer-events-none': true }" class=" absolute top-0 left-0">
+      <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
+        <!-- <PreviewPlane :visible="core.getCurrentWork()" :core="core">
           <PreviewTextureProvider :current="core.getCurrentWork()" :core="core"></PreviewTextureProvider>
-        </PreviewPlane>
+        </PreviewPlane> -->
         <!-- <GLFlower></GLFlower> -->
       </GLArtCanvas>
     </div>
@@ -94,7 +96,7 @@ import { RayPlay } from '../../Core/RayPlay'
 import { Dragger } from './Dragger'
 import { AmmoPhysics } from './AmmoPhysics'
 import { getID, getScreen } from '../../Core/O3DNode'
-import { AppCore, Shell } from '../../Packages/FSCompiler/Core'
+import { AppCore } from '../../Packages/FSCompiler/Core'
 export default {
   mixins: [
     RenderRoot
@@ -128,6 +130,11 @@ export default {
     }
   },
   watch: {
+    'core.works' () {
+      if (this.core.works.length === 0) {
+        this.overlay = 'genesis'
+      }
+    },
     mouseMode () {
       let restore = () => {
         this.mouseMode === ''
@@ -507,10 +514,9 @@ export default {
     Vue.prototype.$core = this.core
 
     // run demo
-    this.core.addDemoOps()
-    this.overlay = 'genesis'
+    // this.core.addDemoOps()
 
-    this.shell = new Shell({ core: this.core, vm: this })
+    this.overlay = 'genesis'
 
     this.$root.escs = this.$root.escs || []
     window.addEventListener('keydown', (ev) => {
