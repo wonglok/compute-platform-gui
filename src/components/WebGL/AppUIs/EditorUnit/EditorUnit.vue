@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import { getDefaultTree, addFile, addFolder, treeToFlat, makeUnitPreview, makeUnitModule, injectToMain, flatToTree } from '../../Packages/FSCompiler/FSCompiler.js'
+import { addFile, addFolder, treeToFlat, makeUnitPreview, makeUnitModule, injectToMain, flatToTree } from '../../Packages/FSCompiler/FSCompiler.js'
 import { O3DVue } from '../../Core/O3DVue.js'
 import { traverseDown } from '../../Core/O3DNode.js'
 import TreeItem from './TreeItem'

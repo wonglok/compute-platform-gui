@@ -7,7 +7,7 @@
 import { PerspectiveCamera, Scene, Texture, WebGLRenderTarget } from 'three'
 import { O3DNode } from '../../Core/O3DNode'
 import * as THREE from 'three'
-import { MiniBoxEngine } from '../../Packages/FSCompiler/srcs/basic/src/monitor/MiniBoxEngine'
+// import { MiniBoxEngine } from '../../Packages/FSCompiler/srcs/basic/src/monitor/MiniBoxEngine'
 
 export default {
   mixins: [
@@ -23,24 +23,29 @@ export default {
 
     let miniBox = false
     let compileCode = async () => {
-      if (miniBox) {
-        miniBox.goCleanUp()
-      }
+      // if (miniBox) {
+      //   miniBox.goCleanUp()
+      // }
 
-      miniBox = new MiniBoxEngine()
-      miniBox.scene = new Scene()
-      miniBox.camera = new PerspectiveCamera( 75, 1, 0.1, 1000 );
-      miniBox.deps = {
-        THREE
-      }
+      // miniBox = new MiniBoxEngine()
+      // miniBox.scene = new Scene()
+      // miniBox.camera = new PerspectiveCamera( 75, 1, 0.1, 1000 );
+      // miniBox.deps = {
+      //   THREE
+      // }
 
-      let currentWork = core.getCurrentWork()
-      if (!currentWork) {
-        return
-      }
+      // let currentWork = core.getCurrentWork()
+      // if (!currentWork) {
+      //   return
+      // }
 
-      let Monitor = await core.makeMonitorByWork({ work: currentWork })
-      Monitor.use(miniBox)
+      // miniBox.data = {
+      //   arrows: core.arrows,
+      //   work: currentWork
+      // }
+
+      // let Monitor = await core.makeWorkBoxMonitor({ work: currentWork })
+      // Monitor.use(miniBox)
     }
 
     compileCode()

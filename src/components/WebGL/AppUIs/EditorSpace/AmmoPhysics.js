@@ -1,6 +1,6 @@
 /* global Ammo */
 
-import { EventDispatcher, BoxBufferGeometry, SphereBufferGeometry, DynamicDrawUsage, Clock, IcosahedronBufferGeometry, PlaneBufferGeometry } from "three";
+import { EventDispatcher, BoxBufferGeometry, SphereBufferGeometry, DynamicDrawUsage, Clock, IcosahedronBufferGeometry, PlaneBufferGeometry, BufferGeometry, Vector3, Matrix4 } from "three";
 
 /* eslint-disable */
 function loadExt(files, after) {
@@ -75,6 +75,8 @@ export class AmmoPhysics extends EventDispatcher {
     //
     this.meshIterator = []
     this.meshToBodies = new WeakMap()
+
+    this.bufferGeoCacheMap = new Map()
 
     // BufferGeometry.uuid -> geoUUIDMapShape
     this.geoCache = new Map()
@@ -234,6 +236,89 @@ export class AmmoPhysics extends EventDispatcher {
     } else if (mesh.isMesh) {
       this.onAddMesh({ mesh, mass, shape, flags })
     }
+  }
+
+  async addHullMesh ({ mesh, mass, flags }) {
+    let shape = this.getHullShape({ mesh })
+    if (!shape) {
+      throw new Error('shape is not found')
+    }
+
+    if (mesh.isInstancedMesh) {
+      this.onAddInstancedMesh({ mesh, mass, shape, flags })
+    } else if (mesh.isMesh) {
+      this.onAddMesh({ mesh, mass, shape, flags })
+    }
+  }
+
+  getHullShape ({ mesh }) {
+    let { Ammo } = this
+    let geometry = mesh.geometry
+
+    if (!(geometry instanceof BufferGeometry)) {
+      console.log(geometry)
+      if (!this.bufferGeoCacheMap.has(mesh.geometry.uuid)) {
+        geometry = new BufferGeometry().fromGeometry(geometry)
+        this.bufferGeoCacheMap.set(mesh.geometry.uuid, geometry)
+      } else {
+        geometry = this.bufferGeoCacheMap.get(mesh.geometry.uuid)
+      }
+    }
+
+    let attributes = geometry.attributes
+    let position = attributes.position
+    let array = position.array
+    let matrixWorld = mesh.matrixWorld
+
+    let scale = mesh.scale
+    let rootScale = 1
+    let margin = 0.05
+
+    // console.log(mesh.uuid)
+    let target = new Vector3()
+    geometry.computeBoundingBox()
+    geometry.boundingBox.getCenter(target)
+    let center = new Vector3()
+
+    const originalHull = new Ammo.btConvexHullShape()
+    originalHull.setMargin(margin)
+
+    let inverse = new Matrix4()
+    let transformM4 = new Matrix4()
+
+    transformM4.identity()
+    transformM4.makeTranslation(target.x, target.y, target.z)
+
+    let btVertex = new Ammo.btVector3()
+    const rawVertexData = array
+    let vertex = new Vector3()
+    for (let i = 0; i < rawVertexData.length; i += 3) {
+      transformM4.multiplyMatrices(inverse, matrixWorld)
+      vertex
+        .set(rawVertexData[i], rawVertexData[i + 1], rawVertexData[i + 2])
+        .applyMatrix4(transformM4)
+        .sub(center)
+      btVertex.setValue(vertex.x, vertex.y, vertex.z)
+      originalHull.addPoint(btVertex, i === rawVertexData.length - 3)
+    }
+
+    originalHull.type = 'hull'
+    originalHull.setMargin(margin)
+    originalHull.destroy = () => {
+      for (let res of originalHull.resources || []) {
+        Ammo.destroy(res)
+      }
+      if (originalHull.heightfieldData) {
+        Ammo._free(originalHull.heightfieldData)
+      }
+      Ammo.destroy(originalHull)
+    }
+
+    let localScale = new Ammo.btVector3(rootScale * scale.x, rootScale * scale.y, rootScale * scale.z)
+    originalHull.setLocalScaling(localScale)
+    Ammo.destroy(localScale)
+
+    return originalHull
   }
 
   async removeMesh ({ mesh }) {

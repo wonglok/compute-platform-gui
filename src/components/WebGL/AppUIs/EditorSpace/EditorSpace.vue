@@ -68,8 +68,8 @@
       <OVGenesis @choose="onChooseGenesis" @overlay="overlay = $event"></OVGenesis>
     </div>
 
-    <div v-if="core" style="width: 270px; height: 270px; margin: 15px; " class=" absolute top-0 left-0">
-      <GLArtCanvas :rounded="'9px 9px 9px 9px'">
+    <div v-if="core" style="width: 270px; height: 270px; margin: 15px; " :class="{ 'pointer-events-none': !core.getCurrentWork() }" class=" absolute top-0 left-0">
+      <GLArtCanvas :suspendRender="!core.getCurrentWork()" :rounded="'9px 9px 9px 9px'">
         <PreviewPlane :visible="core.getCurrentWork()" :core="core">
           <PreviewTextureProvider :current="core.getCurrentWork()" :core="core"></PreviewTextureProvider>
         </PreviewPlane>
@@ -172,7 +172,7 @@ export default {
         this.$root.escs.push(restore)
         this.$forceUpdate()
       } else if (this.mouseMode === 'box-in') {
-        this.cursor.img = `${require('./icon/box-target.svg')}`
+        this.cursor.img = `${require('./icon/energy.svg')}`
         this.cursor.type = 'block'
         this.cursor.direction = 'in'
         this.cursor.enableImg = true
@@ -183,7 +183,7 @@ export default {
       } else if (this.mouseMode === 'genesis') {
         this.cursor.img = `${require('./img/add.png')}`
         this.cursor.type = 'block'
-        this.cursor.direction = 'genesis'
+        this.cursor.direction = 'inout'
         this.cursor.enableImg = true
         this.cursor.enableArrow = false
         this.$root.escs = this.$root.escs || []
@@ -199,20 +199,22 @@ export default {
   },
   methods: {
     onClickAdd () {
-      this.overlay = 'genesis'
+      // this.overlay = 'genesis'
     },
     onClickGear () {
-      this.core.openPipelineSystem()
+      // this.core.openPipelineSystem()
     },
     onChooseInfluence (chosen) {
       this.core.onSetCurrentWorkType({ type: chosen })
 
       let work = this.core.createWorkAtPos({
+        type: this.core.current.workType,
         position: {
           x: this.cursor.position.x,
           y: 0,
           z: this.cursor.position.z
-        }
+        },
+        direction: this.cursor.direction
       })
 
       setTimeout(() => {
@@ -229,7 +231,17 @@ export default {
     },
     onChooseGenesis (chosen) {
       this.core.onSetCurrentWorkType({ type: chosen })
-      this.mouseMode = 'genesis'
+      // this.mouseMode = 'genesis'
+
+      let work = this.core.createWorkAtPos({
+        type: this.core.current.workType,
+        position: {
+          x: this.cursor.position.x,
+          y: 0,
+          z: this.cursor.position.z
+        }
+      })
+
       this.overlay = false
     },
     onClickFloor (ev) {
@@ -289,7 +301,15 @@ export default {
             x: ev.event.point.x,
             y: 0,
             z: ev.event.point.z
-          }
+          },
+          type: 'preview',
+          direction: this.cursor.direction
+
+          // position: {
+          //   x: this.cursor.position.x,
+          //   y: 0,
+          //   z: this.cursor.position.z
+          // }
         })
         this.mouseMode = ''
 
@@ -390,6 +410,7 @@ export default {
         camera: this.camera,
         onClean: this.onClean
       })
+
       // this.rayplay.setLayer(2)
 
       this.camera.position.y = 100

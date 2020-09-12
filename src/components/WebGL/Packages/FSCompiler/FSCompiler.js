@@ -4,22 +4,6 @@ export const getID = () => {
   return '_' + Math.random().toString(36).substr(2, 9)
 }
 
-let Basic = require('./srcs/basic/loadJS').default
-
-let DefaultFilesList = Basic
-
-var path = require('path')
-DefaultFilesList.forEach(f => {
-  var dir = path.dirname(f.path)
-  if (!DefaultFilesList.map(e => e.path).includes(dir) && dir !== '.') {
-    DefaultFilesList.push({
-      path: dir,
-      isExpanded: true,
-      type: 'folder'
-    })
-  }
-})
-
 export function flatToTree (files) {
   var path = require('path')
   let cloned = files.slice()
@@ -131,18 +115,34 @@ export function treeToFlat (tree) {
 
 // let DefaultFilesTree = flatToTree(DefaultFilesList)
 
-export const getDefaultList = () => {
-  let result = JSON.parse(JSON.stringify(DefaultFilesList))
-  result.forEach(e => {
-    e._id = getID()
-  })
-  return result
-}
+// let Basic = require('./srcs/basic/loadJS').default
 
-export const getDefaultTree = () => {
-  return JSON.parse(JSON.stringify(flatToTree(getDefaultList())))
-}
+// let DefaultFilesList = Basic
 
+// var path = require('path')
+// DefaultFilesList.forEach(f => {
+//   var dir = path.dirname(f.path)
+//   if (!DefaultFilesList.map(e => e.path).includes(dir) && dir !== '.') {
+//     DefaultFilesList.push({
+//       path: dir,
+//       isExpanded: true,
+//       type: 'folder'
+//     })
+//   }
+// })
+
+
+// export const getDefaultList = () => {
+//   let result = JSON.parse(JSON.stringify(DefaultFilesList))
+//   result.forEach(e => {
+//     e._id = getID()
+//   })
+//   return result
+// }
+
+// export const getDefaultTree = () => {
+//   return JSON.parse(JSON.stringify(flatToTree(getDefaultList())))
+// }
 
 export const makeListFresh = (v) => {
   let result = JSON.parse(JSON.stringify(v))

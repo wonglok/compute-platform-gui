@@ -28,13 +28,38 @@ export default {
     }
   },
   mounted () {
+    var materialIn = new LineDashedMaterial({
+      color: new Color('#a6e22e'),
+      dashSize: 15 / 4,
+      gapSize: 5 / 4
+    })
+
+    var materialOut = new LineDashedMaterial({
+      color: new Color('#e2bc2e'),
+      dashSize: 15 / 4,
+      gapSize: 5 / 4
+    })
+
+    var ballInMat = new MeshBasicMaterial({ color: new Color('#a6e22e') })
+    var ballOutMat = new MeshBasicMaterial({ color: new Color('#e2bc2e') })
+
     var materialDash = new LineDashedMaterial({
       color: 0xffaa00,
       dashSize: 15 / 4,
       gapSize: 5 / 4
     })
 
+    var materialBall = new MeshBasicMaterial({
+      color: 0xffaa00
+    })
+
     var curveO3D = new Line(undefined, materialDash)
+
+    // if (this.arrow.direction === 'out') {
+    //   curveO3D.material = materialOut
+    // } else if (this.arrow.direction === 'in') {
+    //   curveO3D.material = materialIn
+    // }
 
     let cancelBall = new Mesh(new CircleBufferGeometry(5, 12), new MeshBasicMaterial({ transparent: true, opacity: 0.3, color: 0xffffff }))
     cancelBall.geometry.rotateX(Math.PI * -0.5)
@@ -58,9 +83,15 @@ export default {
       })
     }
 
-    let ball = new Mesh(new CircleBufferGeometry(5 / 2, 10), new MeshBasicMaterial({ color: 0xffaa00 }))
+    let ball = new Mesh(new CircleBufferGeometry(5 / 2, 10), materialBall)
     ball.rotateX(Math.PI * -0.5)
     this.o3d.add(ball)
+
+    // if (this.arrow.direction === 'out') {
+    //   ball.material = ballOutMat
+    // } else if (this.arrow.direction === 'in') {
+    //   ball.material = ballInMat
+    // }
 
     let pt1 = new Vector3()
     let pt2 = new Vector3()

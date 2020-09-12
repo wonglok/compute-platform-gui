@@ -1,7 +1,7 @@
 import * as UI from '../../AppUIs/EditorSpace/ageUI'
 import Vue from 'vue'
 import { getID } from '../../Core/O3DNode'
-import { getDefaultTree, makeMonitor, treeToFlat } from './FSCompiler'
+import { makeMonitor, treeToFlat } from './FSCompiler'
 import { EventDispatcher } from 'three/build/three.module'
 
 export class Shell {
@@ -11,60 +11,60 @@ export class Shell {
   }
 }
 
-// export class RunBox {
-//   constructor ({ onMasterLoop }) {
-//     this.onMasterLoop = onMasterLoop
+export class RunBox {
+  constructor ({ onMasterLoop }) {
+    this.onMasterLoop = onMasterLoop
 
-//     this.isAborted = false
-//     this.tasks = []
-//     this.resizeTasks = []
-//     this.cleanTasks = []
-//     this.onLoop = (fnc) => {
-//       this.tasks.push(fnc)
-//     }
+    this.isAborted = false
+    this.tasks = []
+    this.resizeTasks = []
+    this.cleanTasks = []
+    this.onLoop = (fnc) => {
+      this.tasks.push(fnc)
+    }
 
-//     this.onResize = (fnc) => {
-//       fnc()
-//       this.resizeTasks.push(fnc)
-//     }
+    this.onResize = (fnc) => {
+      fnc()
+      this.resizeTasks.push(fnc)
+    }
 
-//     let intv = 0
-//     let internalResize = () => {
-//       clearTimeout(intv)
-//       intv = setTimeout(() => {
-//         this.resizeTasks.forEach(e => e())
-//       }, 16.8888)
-//     }
+    let intv = 0
+    let internalResize = () => {
+      clearTimeout(intv)
+      intv = setTimeout(() => {
+        this.resizeTasks.forEach(e => e())
+      }, 16.8888)
+    }
 
-//     window.addEventListener('resize', () => {
-//       internalResize()
-//     })
+    window.addEventListener('resize', () => {
+      internalResize()
+    })
 
-//     this.goCleanUp = () => {
-//       this.isAborted = true
-//       try {
-//         this.cleanTasks.forEach(e => e())
-//       } catch (e) {
-//         console.error(e)
-//       }
-//     }
+    this.goCleanUp = () => {
+      this.isAborted = true
+      try {
+        this.cleanTasks.forEach(e => e())
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
-//     this.onMasterLoop(() => {
-//       this.runLoop()
-//     })
-//   }
-//   runLoop () {
-//     if (isAborted) {
-//       return
-//     }
+    this.onMasterLoop(() => {
+      this.runLoop()
+    })
+  }
+  runLoop () {
+    if (this.isAborted) {
+      return
+    }
 
-//     try {
-//       this.tasks.forEach(e => e())
-//     } catch (e) {
-//       console.error(e)
-//     }
-//   }
-// }
+    try {
+      this.tasks.forEach(e => e())
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}
 
 // export class CoreShell {
 //   constructor ({ core, vm }) {
@@ -223,7 +223,7 @@ export class AppCore extends EventDispatcher {
   //   win.show = true
   // }
 
-  async makeMonitorByWork ({ work }) {
+  async makeWorkBoxMonitor ({ work }) {
     let main = {
       name: 'Pipeline',
       list: treeToFlat(work.tree)
@@ -260,18 +260,20 @@ export class AppCore extends EventDispatcher {
   getCurrentWorkFrom () {
     return this.works.find(e => e._id === this.current.workFrom)
   }
-  removeArrowByID ({ arrowID }) {
-    let idx = this.arrows.findIndex(a => a._id === arrowID)
-    // console.log(idx, arrow)
-    if (idx !== -1) {
-      this.arrows.splice(idx, 1)
-      this.arrows = JSON.parse(JSON.stringify(this.arrows))
-      this.refresh()
-    } else {
-      console.log('cant find id', arrowID)
-      return false
-    }
-  }
+
+  // removeArrowByID ({ arrowID }) {
+  //   let idx = this.arrows.findIndex(a => a._id === arrowID)
+  //   // console.log(idx, arrow)
+  //   if (idx !== -1) {
+  //     this.arrows.splice(idx, 1)
+  //     this.arrows = JSON.parse(JSON.stringify(this.arrows))
+  //     this.refresh()
+  //   } else {
+  //     console.log('cant find id', arrowID)
+  //     return false
+  //   }
+  // }
+
   removeArrow ({ arrow }) {
     let idx = this.arrows.findIndex(a => a._id === arrow._id)
     // console.log(idx, arrow)
@@ -284,12 +286,13 @@ export class AppCore extends EventDispatcher {
       return false
     }
   }
-  createWorkAtPos ({ position }) {
-    console.log(this.current.workType)
+
+  createWorkAtPos ({ position, color = '#bababa', type = this.current.workType }) {
     let newItem = {
       _id: getID(),
-      type: this.current.workType,
-      tree: getDefaultTree(),
+      type: type,
+      color: color,
+      // tree: getDefaultTree(),
       position: { x: position.x, y: position.y + this.initAirGapForBlock, z: position.z },
       data: {
         settings: []
@@ -331,6 +334,7 @@ export class AppCore extends EventDispatcher {
         this.arrows.push({
           _id: getID(),
           r: Math.random(),
+          direction: direction,
           from: this.current.workFrom,
           to: workTo._id
         })
@@ -338,7 +342,7 @@ export class AppCore extends EventDispatcher {
         this.arrows.push({
           _id: getID(),
           r: Math.random(),
-
+          direction: direction,
           to: this.current.workFrom,
           from: workTo._id
         })

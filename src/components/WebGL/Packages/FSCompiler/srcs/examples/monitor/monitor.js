@@ -1,7 +1,7 @@
 // import boxV from './shader/box.vert'
 // import boxF from './shader/box.frag'
 
-import { Pipeline } from '../spec.js'
+import { Pipeline } from './Pipeline.js'
 // import * as Shaders from '../spec/Shaders.js'
 
 export const use = async (box) => {

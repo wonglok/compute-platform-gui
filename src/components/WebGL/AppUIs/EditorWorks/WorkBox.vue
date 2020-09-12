@@ -40,13 +40,13 @@ export default {
 
     let btnW = 10 / 4 * scale * 1.5
 
-    let boxW = boxWidth - gap
-    let boxH = boxHeight - gap
+    let boxW = boxWidth - gap * 0.75
+    let boxH = boxHeight - gap * 0.75
 
-    let makeCurved = (width, height, boxDepth) => {
+    let makeCurved = (width, height, boxDepth, type = 'flat') => {
       var roundedRectShape = new Shape();
 
-      let makeRect = ( ctx, x, y, width, height, radius ) => {
+      let makeRect = (ctx, x, y, width, height, radius) => {
         ctx.moveTo( x, y + radius );
         ctx.lineTo( x, y + height - radius );
         ctx.quadraticCurveTo( x, y + height, x + radius, y + height );
@@ -58,29 +58,35 @@ export default {
         ctx.quadraticCurveTo( x, y, x, y + radius );
       }
 
-      makeRect(roundedRectShape, width * -0.5, height * -0.5, width, height, 8)
+      makeRect(roundedRectShape, width * -0.5, height * -0.5, width, height, width * 0.175)
 
-      let extrudeSettings = {
-        depth: boxDepth,
-        bevelEnabled: true,
-        bevelSegments: 2,
-        steps: 2,
-        bevelSize: 1,
-        bevelThickness: 1
+      if (type === 'flat') {
+        let geometry = new ShapeBufferGeometry(roundedRectShape)
+        geometry.rotateX(Math.PI * -0.5)
+
+        return geometry
+      } else if (type === 'extrude') {
+        let extrudeSettings = {
+          depth: boxDepth * 0.2,
+          bevelEnabled: true,
+          bevelSegments: 3,
+          steps: 3,
+          bevelSize: 1,
+          bevelThickness: 1
+        }
+
+        let geometry = new ExtrudeBufferGeometry(roundedRectShape, extrudeSettings)
+        geometry.rotateX(Math.PI * -0.5)
+        geometry.translate(0, -boxDepth * 0.2, 0)
+
+        return geometry
       }
-      // var geometry = new ExtrudeBufferGeometry(roundedRectShape, extrudeSettings)
-      // geometry.rotateX(Math.PI * -0.5)
-      // geometry.translate(0, 0, -boxDepth)
-      var geometry = new ShapeBufferGeometry(roundedRectShape)
-      geometry.rotateX(Math.PI * -0.5)
-
-      return geometry
     }
 
     //------
     let makeBaseMesh = () => {
-      // let geo = makeCurved(boxWidth, boxHeight, boxDepth, 1, 1)
-      let geo = new BoxBufferGeometry(boxWidth, boxDepth, boxHeight, 1, 1)
+      let geo = makeCurved(boxWidth, boxHeight, boxDepth, 'extrude')
+      // let geo = new BoxBufferGeometry(boxWidth, boxDepth, boxHeight, 1, 1)
       let mat = new MeshStandardMaterial({ color: new Color('#bababa') })
 
       this.onClean(() => {
@@ -107,7 +113,9 @@ export default {
         this.onClean(() => {
           this.ctx.ammo.removeMesh({ mesh: baseMesh })
         })
-        this.ctx.ammo.addSimpleMesh({ mesh: baseMesh, mass: 1, flags: { isWorkBox: true, isWorld: true } })
+        //
+        // this.ctx.ammo.addSimpleMesh({ mesh: baseMesh, mass: 1, flags: { isWorkBox: true, isWorld: true } })
+        this.ctx.ammo.addHullMesh({ mesh: baseMesh, mass: 1, flags: { isWorkBox: true, isWorld: true } })
       }
 
       if (this.ctx.panner) {
@@ -157,6 +165,8 @@ export default {
       }
       let btn = new Mesh(geo, mat)
       btn.name = corner
+
+      btn.userData.hoverCursor = 'pointer'
       // btn.layers.enable(2)
 
       btn.rotation.x = Math.PI * -0.5
@@ -165,8 +175,10 @@ export default {
       // console.log(corner)
 
       if (corner === 'tl') {
-        btn.position.x = boxWidth * -0.5
-        btn.position.z = boxHeight * -0.5
+        btn.position.x = boxWidth * -0.5 + btnW * 0.5
+        btn.position.z = boxHeight * -0.5 + btnW * 0.5
+
+
       }
 
       if (corner === 'tr') {
@@ -176,27 +188,27 @@ export default {
         this.ctx.rayplay.hover(btn, (v) => {
           btn.material.opacity = 1.0
         }, () => {
-          btn.material.opacity = 0.08
+          btn.material.opacity = 0.25
         })
       }
 
       if (corner === 'bl') {
-        btn.position.x = boxWidth * -0.5
+        btn.position.x = boxWidth * -0.5 + btnW
         btn.position.z = boxHeight * 0.5
       }
 
       if (corner === 'br') {
-        btn.position.x = boxWidth * 0.5
+        btn.position.x = boxWidth * 0.5 - btnW
         btn.position.z = boxHeight * 0.5
       }
 
       if (corner === 'br2') {
-        btn.position.x = boxWidth * 0.5 - btnW * 2 - gap * 0.5
+        btn.position.x = boxWidth * 0.5 - btnW * 2 - gap * 0.5 - btnW
         btn.position.z = boxHeight * 0.5
       }
 
       if (corner === 'br3') {
-        btn.position.x = boxWidth * 0.5 - btnW * 4 - gap * 1
+        btn.position.x = boxWidth * 0.5 - btnW * 4 - gap * 1 - btnW
         btn.position.z = boxHeight * 0.5
       }
 
@@ -222,62 +234,61 @@ export default {
       return btn
     }
 
-    let makeScreen = async ({ baseMesh }) => {
-      let geo = new PlaneBufferGeometry(boxW, boxH)
-      // let geo = makeCurved(boxW, boxH)
-      let mat = new MeshStandardMaterial({ side: DoubleSide, color: new Color('#cccccc') })
-      let screen = new Mesh(geo, mat)
-      screen.name = 'preview'
-      screen.layers.enable(2)
-      // screen.layers.disable(1)
+    // let makeScreen = async ({ baseMesh }) => {
+    //   let geo = new PlaneBufferGeometry(boxW, boxH)
+    //   let mat = new MeshStandardMaterial({ side: DoubleSide, color: new Color('#cccccc') })
+    //   let screen = new Mesh(geo, mat)
+    //   screen.name = 'preview'
+    //   screen.layers.enable(2)
+    //   // screen.layers.disable(1)
 
-      screen.userData.hoverCursor = 'grab'
+    //   screen.userData.hoverCursor = 'grab'
 
-      screen.rotation.x = Math.PI * -0.5
-      screen.position.y += boxDepth * 0.5 + 0.3
+    //   screen.rotation.x = Math.PI * -0.5
+    //   screen.position.y += boxDepth * 0.5 + 0.3
 
-      this.onClean(() => {
-        geo.dispose()
-        mat.dispose()
-      })
+    //   this.onClean(() => {
+    //     geo.dispose()
+    //     mat.dispose()
+    //   })
 
-      this.ctx.rayplay.add(screen, (v) => {
-        console.log(v.object.name)
-        this.$emit('preview', { work: this.work })
-      })
+    //   this.ctx.rayplay.add(screen, (v) => {
+    //     console.log(v.object.name)
+    //     this.$emit('preview', { work: this.work })
+    //   })
 
-      let onColor = new Color('#bababa').offsetHSL(0, 0, -0.3)
-      let onOff = new Color('#bababa')
+    //   let onColor = new Color('#bababa').offsetHSL(0, 0, -0.3)
+    //   let onOff = new Color('#bababa')
 
-      this.ctx.rayplay.hover(screen, (v) => {
-        baseMesh.material.color = onColor
-        baseMesh.material.needsUpdate = true
-      }, (v) => {
-        baseMesh.material.color = onOff
-        baseMesh.material.needsUpdate = true
-      })
+    //   this.ctx.rayplay.hover(screen, (v) => {
+    //     baseMesh.material.color = onColor
+    //     baseMesh.material.needsUpdate = true
+    //   }, (v) => {
+    //     baseMesh.material.color = onOff
+    //     baseMesh.material.needsUpdate = true
+    //   })
 
-      this.onClean(() => {
-        this.ctx.rayplay.remove(screen)
-      })
+    //   this.onClean(() => {
+    //     this.ctx.rayplay.remove(screen)
+    //   })
 
-      this.$on('texture', (texture) => {
-        mat.map = texture
-      })
+    //   this.$on('texture', (texture) => {
+    //     mat.map = texture
+    //   })
 
-      baseMesh.add(screen)
-      this.onClean(() => {
-        baseMesh.remove(screen)
-      })
+    //   baseMesh.add(screen)
+    //   this.onClean(() => {
+    //     baseMesh.remove(screen)
+    //   })
 
-      return screen
-    }
+    //   return screen
+    // }
 
-    let makeRoundedScreen = ({ baseMesh }) => {
-      let roundedGeo = makeCurved(boxWidth, boxHeight, boxDepth)
-      let roundedMat = new MeshStandardMaterial({ color: new Color('#bababa') })
+    let makeRoundedScreen = ({ baseMesh, close }) => {
+      let roundedGeo = makeCurved(boxW, boxH, boxDepth)
+      let roundedMat = new MeshStandardMaterial({ color: new Color('#cccccc') })
       let screen = new Mesh(roundedGeo, roundedMat)
-      screen.position.y = boxDepth * 0.5 + 0.3
+      screen.position.y = boxDepth * 0.5 + 0.15
 
       this.$on('texture', (texture) => {
         if (texture) {
@@ -288,15 +299,43 @@ export default {
         }
       })
 
-      let onColor = new Color('#bababa').offsetHSL(0, 0, -0.3)
-      let onOff = new Color('#bababa')
+      // let onColor = new Color('#bababa').offsetHSL(0, 0, 0.14)
+      // let offColor = new Color('#bababa')
+
+      this.ctx.rayplay.add(screen, (v) => {
+        console.log(v.object.name)
+        this.$emit('preview', { work: this.work })
+      })
 
       this.ctx.rayplay.hover(screen, (v) => {
-        baseMesh.material.color = onColor
+        // baseMesh.material.color = onColor
         baseMesh.material.needsUpdate = true
+
+        baseMesh.material.color.set(this.work.color).offsetHSL(0, 0, -0.08)
+
+        // if (this.work.direction === 'out') {
+        // } else if (this.work.direction === 'in') {
+        //   baseMesh.material.color.set('#a6e22e').offsetHSL(0, 0, -0.08)
+        // } else if (this.work.direction === 'inout') {
+        //   baseMesh.material.color.set('#bababa').offsetHSL(0, 0, -0.08)
+        // }
+
+        // close.material.opacity = 1
       }, (v) => {
-        baseMesh.material.color = onOff
         baseMesh.material.needsUpdate = true
+
+        baseMesh.material.color.set(this.work.color)
+
+        // if (this.work.direction === 'out') {
+        //   baseMesh.material.color.set('#e2bc2e')
+        // } else if (this.work.direction === 'in') {
+        //   baseMesh.material.color.set('#a6e22e')
+        // } else if (this.work.direction === 'inout') {
+        //   baseMesh.material.color.set('#bababa')
+        // }
+
+        // baseMesh.material.color = offColor
+        // close.material.opacity = 0.08
       })
 
       this.onClean(() => {
@@ -308,18 +347,21 @@ export default {
 
     let baseMesh = makeBaseMesh()
 
-    // makeButton({ corner: 'tl', color: '#ffffff', baseMesh, icon: require('./icon/unlink.png') })
+    // if (this.work.direction === 'out' || this.work.direction === 'in') {
+    //   makeButton({ corner: 'tl', color: '#ffffff', baseMesh })
+    // }
     // if (!this.work.isGenesis) {
-    makeButton({ corner: 'tr', color: '#ffffff', baseMesh, icon: require('./icon/close.png') })
+    let close = await makeButton({ corner: 'tr', color: '#ffffff', baseMesh, icon: require('./icon/close.png') })
     // }
 
     makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon: require('./icon/gear-black.png') })
     makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/box-out.svg') })
-    makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/box-in.svg') })
+    makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/energy.svg') })
+
     // makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
     // makeScreen({ baseMesh })
 
-    makeRoundedScreen({ baseMesh })
+    makeRoundedScreen({ baseMesh, close: close })
 
     this.ctx.core.refresh()
   }

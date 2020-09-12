@@ -12,15 +12,15 @@ async function importAll (r) {
       type: 'file',
       src: r(key).default
     }
-    if (key === './spec.js') {
+    if (key === './package.js') {
       config.isEntry = true
       config.isPackageEntry = true
     }
 
-    if (key === './iframe.js') {
-      config.isEntry = true
-      config.isPreviewEntry = true
-    }
+    // if (key === './iframe.js') {
+    //   config.isEntry = true
+    //   config.isPreviewEntry = true
+    // }
 
     if (key === './monitor.js') {
       config.isEntry = true

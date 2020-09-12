@@ -79,11 +79,12 @@ export const RenderRoot = {
       lazyTasks: []
     }
   },
-  // watch: {
-  //   canRun () {
-  //     console.log(this.canRun, this.renderer.domElement.getBoundingClientRect().top)
-  //   }
-  // },
+  watch: {
+    suspendRender () {
+      console.log('suspendRender', this.suspendRender);
+      //, this.renderer.domElement.getBoundingClientRect().top)
+    }
+  },
   methods: {
     handleLoop () {
       let rAFID = 0
