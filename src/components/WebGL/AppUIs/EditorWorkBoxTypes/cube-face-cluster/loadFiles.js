@@ -15,9 +15,14 @@ async function importAll (r) {
       src: r(key).default
     }
 
-    if (key === './package.js') {
+    if (key === './work.js') {
       config.isEntry = true
       config.isPackageEntry = true
+    }
+
+    if (key === './monitor/Pipeline.js') {
+      config.isPipeline = true
+      config.src = require('!raw-loader!../CodeShared/Pipeline.js').default
     }
 
     // if (key === './iframe.js') {

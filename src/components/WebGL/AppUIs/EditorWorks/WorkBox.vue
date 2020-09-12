@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- @texture = rtt -->
-    <slot @texture="texture = $event; $emit('texture', texture)"></slot>
+    <slot @texture="$emit('texture', $event)"></slot>
   </div>
 </template>
 
@@ -19,7 +19,6 @@ export default {
   ],
   data () {
     return {
-      texture: false,
       unitPos: {
         x: 0,
         y: 0,
@@ -287,18 +286,20 @@ export default {
 
     let makeRoundedScreen = ({ baseMesh, close }) => {
       let roundedGeo = makeCurved(boxW, boxH, boxDepth)
-      let roundedMat = new MeshStandardMaterial({ color: new Color('#ffffff'), transparent: true, opacity: 1 })
+      let roundedMat = new MeshStandardMaterial({ transparent: true })
       let screen = new Mesh(roundedGeo, roundedMat)
       screen.position.y = boxDepth * 0.5 + 0.15
 
-      this.$on('texture', (texture) => {
-        if (texture) {
+      this.$on('texture', ({ texture }) => {
+        if (texture && roundedMat.map !== texture) {
           roundedMat.map = texture
           // texture.wrapS = texture.wrapT = RepeatWrapping
           texture.repeat.set(1 / 40, 1 / 40)
           texture.offset.set(0.5, 0.5)
         }
       })
+
+      //workBoxScreenColor
 
       // let onColor = new Color('#bababa').offsetHSL(0, 0, 0.14)
       // let offColor = new Color('#bababa')
@@ -311,7 +312,6 @@ export default {
       this.ctx.rayplay.hover(screen, (v) => {
         // baseMesh.material.color = onColor
         baseMesh.material.needsUpdate = true
-
         baseMesh.material.color.set(this.work.workBoxFrameColor).offsetHSL(0, 0, -0.08)
 
         // if (this.work.direction === 'out') {
@@ -324,7 +324,6 @@ export default {
         // close.material.opacity = 1
       }, (v) => {
         baseMesh.material.needsUpdate = true
-
         baseMesh.material.color.set(this.work.workBoxFrameColor)
 
         // if (this.work.direction === 'out') {
@@ -348,16 +347,34 @@ export default {
 
     let baseMesh = makeBaseMesh()
 
-    // if (this.work.direction === 'out' || this.work.direction === 'in') {
-    //   makeButton({ corner: 'tl', color: '#ffffff', baseMesh })
-    // }
-    // if (!this.work.isGenesis) {
-    let close = await makeButton({ corner: 'tr', color: '#ffffff', baseMesh, icon: require('./icon/close.png') })
-    // }
+    if (this.work.buttons.tl) {
+      makeButton({ corner: 'tl', color: '#ffffff', baseMesh })
+    }
 
-    makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon: require('./icon/gear-black.png') })
-    makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon: require('./icon/box-out.svg') })
-    makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon: require('./icon/energy.svg') })
+    if (this.work.buttons.tr) {
+      let icon =  require('./icon/close.png')
+      makeButton({ corner: 'tr', color: '#ffffff', baseMesh, icon })
+    }
+
+    if (this.work.buttons.bl) {
+      let icon = require('./icon/gear-black.png')
+      makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon })
+    }
+
+    if (this.work.buttons.br) {
+      let icon = require('./icon/box-out.svg')
+      if (this.work.buttons.br.icon) {
+        icon = this.work.buttons.br.icon
+      }
+      makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon })
+    }
+    if (this.work.buttons.br2) {
+      let icon = require('./icon/box-out.svg')
+      if (this.work.buttons.br2.icon) {
+        icon = this.work.buttons.br2.icon
+      }
+      makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon })
+    }
 
     // makeButton({ corner: 'br3', color: '#ffffff', baseMesh, icon: require('./icon/network.png') })
     // makeScreen({ baseMesh })

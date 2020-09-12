@@ -36,17 +36,17 @@ export default {
       let matFrame = new MeshBasicMaterial({ color: 0xbababa })
 
       if (this.cursor.direction === 'in') {
-        new TextureLoader().load(require('./icon/energy.svg'), (tex) => {
+        new TextureLoader().load(require('./icon/circle-in.svg'), (tex) => {
           matScreen.map = tex
           matScreen.needsUpdate = true
         })
       } else if (this.cursor.direction === 'out') {
-        new TextureLoader().load(require('./icon/box-out.svg'), (tex) => {
+        new TextureLoader().load(require('./icon/circle-out.svg'), (tex) => {
           matScreen.map = tex
           matScreen.needsUpdate = true
         })
       } else if (this.cursor.direction === 'inout') {
-        new TextureLoader().load(require('./icon/box-genesis.svg'), (tex) => {
+        new TextureLoader().load(require('./icon/box-target.svg'), (tex) => {
           matScreen.map = tex
           matScreen.needsUpdate = true
         })

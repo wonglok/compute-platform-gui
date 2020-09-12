@@ -5,7 +5,7 @@ let exporter = []
 
 async function importAll (r) {
   r.keys().forEach(key => {
-    console.log(key)
+    // console.log(key)
     let workBoxType = path.dirname(key).replace('./', '')
     let loadedModule = r(key)
     let config = {
@@ -26,6 +26,6 @@ async function importAll (r) {
 // importAll(require.context('~/components/Pages', true, /\.vue$/, 'sync'), 'sync')
 importAll(require.context('./', true, /export-index\.js$/, 'sync'), 'sync')
 
-console.log(exporter)
+console.log('imported workbox types total:', exporter.length)
 
 export default exporter

@@ -24,19 +24,19 @@ export default {
   },
   mounted () {
     var materialIn = new LineDashedMaterial({
-      color: new Color('#a6e22e'),
+      color: new Color('#000000'),
       dashSize: 15 / 4,
       gapSize: 5 / 4
     })
 
     var materialOut = new LineDashedMaterial({
-      color: new Color('#e2bc2e'),
+      color: new Color('#000000'),
       dashSize: 15 / 4,
       gapSize: 5 / 4
     })
 
-    var ballInMat = new MeshBasicMaterial({ color: new Color('#a6e22e') })
-    var ballOutMat = new MeshBasicMaterial({ color: new Color('#e2bc2e') })
+    var ballInMat = new MeshBasicMaterial({ color: new Color('#000000') })
+    var ballOutMat = new MeshBasicMaterial({ color: new Color('#000000') })
 
     var curveO3D = new Line(undefined, materialOut)
 

@@ -261,16 +261,30 @@ export const js2url = ({ js }) => {
 //   return htmlURL
 // }
 
-export const makeMonitor = async ({ pack }) => {
+export const makeMonitorCode = async ({ pack }) => {
   // if (!pack) {
   //   pack = {
-  //     name: 'makeMonitor',
+  //     name: 'codebase',
   //     list: getDefaultList()
   //   }
   //   console.log('You missed pack')
   // }
 
   let code = await RollMeUp.buildInput({ pack, mode: 'monitor' })
+
+  return code
+}
+
+export const makeWorkCode = async ({ pack }) => {
+  // if (!pack) {
+  //   pack = {
+  //     name: 'codebase',
+  //     list: getDefaultList()
+  //   }
+  //   console.log('You missed pack')
+  // }
+
+  let code = await RollMeUp.buildInput({ pack, mode: 'package' })
 
   return code
 }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- @texture = rtt -->
-    <slot @texture="texture = $event; $emit('texture', texture)"></slot>
+    <slot @texture="$emit('texture', $event)"></slot>
   </div>
 </template>
 
@@ -32,12 +32,12 @@ export default {
     let mat = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide })
     let plane = new Mesh(geo, mat)
     this.o3d.add(plane)
-    this.$on('texture', (tt) => {
-      if (tt) {
+    this.$on('texture', ({ texture }) => {
+      if (texture) {
         let screen = getScreen({ depth: 0, camera: this.ctx.camera })
         let geo = new PlaneBufferGeometry(screen.width, screen.height, 2, 2)
         plane.geometry = geo
-        mat.map = tt
+        mat.map = texture
         mat.needsUpdate = true
       }
     })

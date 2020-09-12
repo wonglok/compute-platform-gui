@@ -1,12 +1,12 @@
 import * as UI from '../../AppUIs/EditorSpace/ageUI'
 import Vue from 'vue'
 import { getID } from '../../Core/O3DNode'
-import { makeMonitor, treeToFlat } from './FSCompiler'
+import { makeMonitorCode, makeWorkCode, treeToFlat } from './FSCompiler'
 import { EventDispatcher } from 'three/build/three.module'
 // import { EventDispatcher } from './UMD'
 import WorkBoxTypes from '../../AppUIs/EditorWorkBoxTypes/WorkBoxTypes.js'
-
-console.log(JSON.stringify(WorkBoxTypes, null, '  '))
+import { RunCore } from '../../AppUIs/EditorWorks/RunCore.js'
+// console.log(JSON.stringify(WorkBoxTypes, null, '  '))
 
 // export class Shell {
 //   constructor ({ core, vm }) {
@@ -16,16 +16,15 @@ console.log(JSON.stringify(WorkBoxTypes, null, '  '))
 // }
 
 export class AppCore extends EventDispatcher {
-  constructor ({ onLoop }) {
+  constructor ({ onLoop, $root }) {
     super()
+    this.$root = $root
     this.onMasterLoop = onLoop
     this.wins = []
     this.works = []
     this.arrows = []
 
-    this.textures = []
-
-    // this.engineCodeTree = getDefaultTree()
+    this.runCore = new RunCore({ onMasterLoop: this.onMasterLoop, core: this, $root })
 
     this.trashedWorks = []
 
@@ -79,11 +78,36 @@ export class AppCore extends EventDispatcher {
 
   async makeWorkBoxMonitor ({ work }) {
     let main = {
-      name: 'Pipeline',
+      name: 'BoxMonitor',
       list: treeToFlat(work.fileTree)
     }
 
-    let code = await makeMonitor({ pack: main })
+    let code = await makeMonitorCode({ pack: main })
+    try {
+      let simpleFnc = new Function(`
+        let exports = {};
+        let module = {};
+        function newFunc () {
+          ${code}
+        }
+        new newFunc()
+        return exports
+      `)
+      let obj = simpleFnc()
+      return obj
+    } catch (e) {
+      console.log(e)
+      return false
+    }
+  }
+
+  async makeWorkBoxWork ({ work }) {
+    let main = {
+      name: 'BoxWork',
+      list: treeToFlat(work.fileTree)
+    }
+
+    let code = await makeWorkCode({ pack: main })
     try {
       let simpleFnc = new Function(`
         let exports = {};
@@ -251,6 +275,28 @@ export class AppCore extends EventDispatcher {
     UI.focusApp({ wins, win })
     win.show = true
   }
+
+  provideWindowWithAppName ({ work, appName }) {
+    let create = () => {
+      let win = UI.getWin({ title: `Props: ${work._id} (${work.type})`, appName }, {}, { type: 'work', _id: work._id })
+      this.openWin({ win })
+      return win
+    }
+
+    let win = this.findWinByWork({ work })
+    if (!win) {
+      win = create()
+      console.log('create')
+    } else {
+      this.showWin({ win })
+      console.log('show')
+    }
+
+    let wins = this.wins
+    UI.focusApp({ wins, win })
+    win.show = true
+  }
+
   providePropsWin ({ work }) {
     let create = () => {
       let win = UI.getWin({ title: `Props: ${work._id} (${work.type})`, appName: 'props-editor' }, {}, { type: 'work', _id: work._id })

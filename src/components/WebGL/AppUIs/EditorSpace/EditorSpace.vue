@@ -25,8 +25,9 @@
 
       <O3D v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-          <WBTextureProvider v-if="core.workTypes.includes(work.type)" :key="work._id" :work="work"></WBTextureProvider>
-          <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider>
+          <WBTextureProvider :key="work._id" :work="work" v-if="work && core.arrows" :arrows="core.arrows"></WBTextureProvider>
+
+          <!-- <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider> -->
           <!-- <GLFlower></GLFlower> -->
           <!-- <WBTextureDrawTypeProvider></WBTextureDrawTypeProvider> -->
         </WorkBox>
@@ -52,7 +53,8 @@
     <div v-if="core">
       <EditBox v-for="win in core.wins" :key="win._id + '-wins'" :wins="core.wins" v-show="win.show" :win="win" :offset="offset" class="win-area">
         <EditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'editor'"></EditorUnit>
-        <PropsEditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'props-editor'"></PropsEditorUnit>
+        <!-- <PropsEditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'props-editor'"></PropsEditorUnit> -->
+        <component :key="win._id" :win="win" :work="core.getWorkByWin({ win })" :core="core" :wins="core.wins" v-if="Object.keys($options.components).includes(win.appName)" :is="win.appName"></component>
 
         <!-- <EditorUnit :initTree="core.engineCodeTree" :key="win._id" v-if="win.appName === 'edit-pipeline'"></EditorUnit> -->
         <!-- <EditorFacePipeline :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'face-pipeline'"></EditorFacePipeline> -->
@@ -62,19 +64,23 @@
     <CurosrImg v-if="!isTouch && cursor.enableImg" :cursor="cursor"></CurosrImg>
     <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
 
-    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-in' || overlay === 'box-out'">
-      <OVInfluence @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVInfluence>
+    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-out' || overlay === 'box-in'">
+      <OVBoxInOut @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVBoxInOut>
     </div>
 
     <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
       <OVGenesis @choose="onChooseGenesis" @overlay="overlay = $event"></OVGenesis>
     </div>
 
+    <!-- <div class="absolute top-0 left-0 full bg-white" v-if="overlayGUI">
+      <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>
+    </div> -->
+
     <div v-if="core" style="width: 270px; height: 270px; margin: 15px; " :class="{ 'pointer-events-none': true }" class=" absolute top-0 left-0">
       <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
-        <!-- <PreviewPlane :visible="core.getCurrentWork()" :core="core">
-          <PreviewTextureProvider :current="core.getCurrentWork()" :core="core"></PreviewTextureProvider>
-        </PreviewPlane> -->
+        <PreviewPlane :visible="core.getCurrentWork()" :core="core">
+          <WBTextureProvider :size="270" :key="core.getCurrentWork()._id" :arrows="core.arrows" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
+        </PreviewPlane>
         <!-- <GLFlower></GLFlower> -->
       </GLArtCanvas>
     </div>
@@ -103,6 +109,7 @@ export default {
   ],
   data () {
     return {
+      overlayGUI: false,
       dynamo: false,
       shell: false,
       rayplay: false,
@@ -205,6 +212,9 @@ export default {
     })
   },
   methods: {
+    onChooseOverlay (ev) {
+      console.log(ev)
+    },
     onClickAdd () {
       // this.overlay = 'genesis'
     },
@@ -336,7 +346,14 @@ export default {
     },
     onClickBR ({ work }) {
       this.core.onSetCurrentWorkFrom({ work })
-      this.mouseMode = 'box-out'
+      if (work.buttons.br) {
+        this.mouseMode = work.buttons.br.mouseMode
+        if (work.buttons.br.gui) {
+          this.overlayGUI = work.buttons.br.gui
+        }
+      } else {
+        this.mouseMode = ''
+      }
 
       // this.overlay = 'box-out'
     },
@@ -345,7 +362,14 @@ export default {
     },
     onClickBR2 ({ work }) {
       this.core.onSetCurrentWorkFrom({ work })
-      this.mouseMode = 'box-in'
+      if (work.buttons.br2) {
+        this.mouseMode = work.buttons.br2.mouseMode
+      } else {
+        this.mouseMode = ''
+      }
+
+      // this.core.onSetCurrentWorkFrom({ work })
+      // this.mouseMode = 'box-in'
 
       // this.overlay = 'box-in'
     },
@@ -372,7 +396,7 @@ export default {
         this.mouseMode = ''
         this.core.refresh()
       } else {
-        this.core.providePropsWin({ work: $event.work })
+        this.core.provideWindowWithAppName({ work: $event.work, appName: $event.work.gui.settings })
       }
     },
     onEditWork ({ work }) {
@@ -510,7 +534,7 @@ export default {
     this.setupGraphics()
     this.setupDOM()
 
-    this.core = new AppCore({ onLoop: this.onLoop })
+    this.core = new AppCore({ onLoop: this.onLoop, $root: this.$root })
     Vue.prototype.$core = this.core
 
     // run demo

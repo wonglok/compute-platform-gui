@@ -1,11 +1,17 @@
-export class RunBox {
-  constructor ({ onMasterLoop }) {
+import Vue from 'vue'
+
+export class RunCore {
+  constructor ({ onMasterLoop, core, $root }) {
+    let vm = this
+    this.$root = $root
+    this.core = core
     this.onMasterLoop = onMasterLoop
 
     this.isAborted = false
     this.tasks = []
     this.resizeTasks = []
     this.cleanTasks = []
+
     this.onLoop = (fnc) => {
       this.tasks.push(fnc)
     }
@@ -29,6 +35,9 @@ export class RunBox {
 
     this.goCleanUp = () => {
       this.isAborted = true
+      if (this.vue) {
+        this.vue.$destroy()
+      }
       try {
         this.cleanTasks.forEach(e => e())
       } catch (e) {
@@ -39,6 +48,62 @@ export class RunBox {
     this.onMasterLoop(() => {
       this.runLoop()
     })
+
+    let html = v => v[0]
+
+    let makeRunVue = () => {
+      return {
+        props: {
+          runCore: {},
+          work: {},
+          ctx: {}
+        },
+        template: `<div><slot></slot></div>`,
+        beforeDestroy () {
+          this.runCore.readyIDs.delete(this.work._id)
+          console.log('before destroy')
+        },
+        mounted () {
+          // console.log(123)
+
+          this.$root.$on(this.work._id, (event) => {
+            console.log(event)
+          })
+
+          this.runCore.readyIDs.add(this.work._id)
+          console.log('mounted')
+        }
+      }
+    }
+
+    this.vue = new Vue({
+      components: {
+        WorkRunner: makeRunVue()
+      },
+      template: html`
+        <div>
+          <div v-for="work in works" :key="work._id">
+            <WorkRunner :work="work" :runCore="vm" :ctx="ctx"></WorkRunner>
+          </div>
+        </div>
+      `,
+      data () {
+        return {
+          vm: this,
+          readyIDs: new Set([]),
+          ctx: {},
+          works: vm.core.works,
+          arrwos: vm.core.arrows
+        }
+      }
+    })
+
+    this.$root.$on('compile-workbox', (evt) => {
+      this.vue.$emit('compile-workbox', evt)
+    })
+
+    let div = document.createElement('div')
+    this.vue.$mount(div)
   }
   runLoop () {
     if (this.isAborted) {
