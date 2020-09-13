@@ -76,8 +76,8 @@ export default {
       newSprite.textHeight = 1
       newSprite.color = '#ff0000'
       newSprite.padding = 3
-      newSprite.position.y += 4
-      newSprite.position.z += -7.5
+      newSprite.position.y += 10
+      newSprite.position.z += -5
       newSprite.backgroundColor = 'rgba(255,255,255,0.6)'
       newSprite.visible = this.arrow.errorMsg !== ''
 
