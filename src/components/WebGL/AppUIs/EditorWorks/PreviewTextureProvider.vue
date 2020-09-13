@@ -17,15 +17,17 @@ export default {
   props: {
     size: {
       default: 256
-    },
-    mode: {},
-    work: {}
+    }
   },
   async mounted () {
     let core = this.ctx.core
 
     let dpi = window.devicePixelRatio || 1
     this.renderTarget = new WebGLRenderTarget(this.size * dpi, this.size * dpi)
+    this.defaultRender = () => {
+      this.ctx.renderer.setRenderTarget(this.renderTarget)
+      this.ctx.renderer.render(miniBox.userData.scene, miniBox.userData.camera)
+    }
 
     let miniBox = false
     let compileCode = async () => {
@@ -47,8 +49,6 @@ export default {
         renderTarget: this.renderTarget,
         work: this.work,
         onDefaultRender: () => {
-          this.ctx.renderer.setRenderTarget(this.renderTarget)
-          this.ctx.renderer.render(miniBox.userData.scene, miniBox.userData.camera)
         }
       }
 
@@ -96,7 +96,7 @@ export default {
 
       let orig = this.ctx.renderer.getRenderTarget()
 
-      miniBox.userData.onDefaultRender()
+      this.defaultRender()
 
       this.$parent.$emit('texture', {
         enable: true,

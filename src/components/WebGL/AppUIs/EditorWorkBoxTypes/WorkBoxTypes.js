@@ -26,6 +26,6 @@ async function importAll (r) {
 // importAll(require.context('~/components/Pages', true, /\.vue$/, 'sync'), 'sync')
 importAll(require.context('./', true, /export-index\.js$/, 'sync'), 'sync')
 
-console.log('imported workbox types total:', exporter.length)
+console.log('imported workbox types total:', exporter.map(e => e.type).join(', '))
 
 export default exporter

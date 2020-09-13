@@ -20,10 +20,10 @@ async function importAll (r) {
       config.isPackageEntry = true
     }
 
-    if (key === './monitor/Pipeline.js') {
-      config.isPipeline = true
-      config.src = require('!raw-loader!../CodeShared/Pipeline.js').default
-    }
+    // if (key === './monitor/Pipeline.js') {
+    //   config.isPipeline = true
+    //   config.src = require('!raw-loader!../CodeShared/Pipeline.js').default
+    // }
 
     // if (key === './iframe.js') {
     //   config.isEntry = true

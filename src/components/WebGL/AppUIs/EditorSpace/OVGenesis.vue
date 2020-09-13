@@ -23,19 +23,19 @@
         </div>
       </div> -->
 
-      <!-- <div class=" w-1/4  flex flex-col justify-center items-center">
+      <div class=" w-1/4  flex flex-col justify-center items-center">
         <div class="text-center mb-12">網面 Mesh</div>
         <div>
           <img src="./img/faces.svg" class="  cursor-pointer" @click="$emit('choose', 'mesh')" alt="">
         </div>
-      </div> -->
+      </div>
 
-      <div class="w-1/4 flex flex-col justify-center items-center">
+      <!-- <div class="w-1/4 flex flex-col justify-center items-center">
         <div class="text-center mb-12">立方體 平面 矩陣 <br/> Cubic Face Cluster</div>
         <div>
           <img src="./img/cube-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'cube-face-cluster')" alt="">
         </div>
-      </div>
+      </div> -->
 
     </div>
   </div>

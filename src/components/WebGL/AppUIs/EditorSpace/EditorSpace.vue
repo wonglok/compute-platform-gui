@@ -25,7 +25,7 @@
 
       <O3D v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-          <WBTextureProvider :key="work._id" :work="work" v-if="work && core.arrows" :arrows="core.arrows"></WBTextureProvider>
+          <WBTextureProvider :mode="'workbox'" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
 
           <!-- <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider> -->
           <!-- <GLFlower></GLFlower> -->
@@ -76,13 +76,22 @@
       <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>
     </div> -->
 
-    <div v-if="core" style="width: 270px; height: 270px; margin: 15px; " :class="{ 'pointer-events-none': true }" class=" absolute top-0 left-0">
-      <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
-        <PreviewPlane :visible="core.getCurrentWork()" :core="core">
-          <WBTextureProvider :size="270" :key="core.getCurrentWork()._id" :arrows="core.arrows" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
-        </PreviewPlane>
-        <!-- <GLFlower></GLFlower> -->
-      </GLArtCanvas>
+    <div v-if="core" :class="{ 'pointer-events-none': true }" class=" absolute top-0 left-0">
+      <div v-show="core.getCurrentWork()" style="width: 270px; height: 270px; margin: 15px; " >
+        <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
+          <PreviewPlane :visible="core.getCurrentWork()" :core="core">
+            <WBTextureProvider :mode="'workbox'" :size="270" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
+          </PreviewPlane>
+        </GLArtCanvas>
+      </div>
+
+      <div style="width: 270px; height: 270px; margin: 15px; " >
+        <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
+          <PreviewPlane :core="core">
+            <!-- <WBTextureProvider :mode="'preview'" :core="core" :size="270"></WBTextureProvider> -->
+          </PreviewPlane>
+        </GLArtCanvas>
+      </div>
     </div>
 
     <!-- <component v-show="false" v-if="dynamo" ref="dynamo" :is="dynamo"></component> -->
@@ -538,9 +547,7 @@ export default {
     Vue.prototype.$core = this.core
 
     // run demo
-    // this.core.addDemoOps()
-
-    this.overlay = 'genesis'
+    this.core.addDemoOps()
 
     this.$root.escs = this.$root.escs || []
     window.addEventListener('keydown', (ev) => {

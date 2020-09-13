@@ -168,7 +168,7 @@ export class AppCore extends EventDispatcher {
   createWorkAtPos ({ position, type = this.current.workType }) {
     let workTypeConfigFS = WorkBoxTypes.find(e => e.type === type)
     if (!workTypeConfigFS) {
-      throw new Error('cant find workbox type, given', type)
+      throw new Error('cant find workbox type, given: ' + type)
     }
 
     let newItem = {
@@ -357,55 +357,10 @@ export class AppCore extends EventDispatcher {
     this.works.push(work)
     this.refresh()
   }
-  // addDemoOps () {
-  //   // this.works.push(
-  //   //   ...[
-  //   //     {
-  //   //       _id: getID(),
-  //   //       type: 'genesis',
-  //   //       isDrawType: true,
-  //   //       tree: getDefaultTree(),
-  //   //       position: { x: -250 / 4, y: 0, z: 0 },
-  //   //     },
-  //   //     // {
-  //   //     //   _id: getID(),
-  //   //     //   type: 'genesis',
-  //   //     //   tree: getDefaultTree(),
-  //   //     //   position: { x: 0, y: 1, z: -100 / 4 },
-  //   //     // },
-  //   //     // {
-  //   //     //   _id: getID(),
-  //   //     //   type: 'genesis',
-  //   //     //   tree: getDefaultTree(),
-  //   //     //   position: { x: 250 / 4, y: 2, z: 0 },
-  //   //     // }
-  //   //   ]
-  //   // )
+  addDemoOps () {
 
-  //   // this.arrows.push(
-  //   //   ...[
-  //   //     {
-  //   //       _id: getID(),
-  //   //       from: this.works[0]._id,
-  //   //       to: this.works[1]._id,
-  //   //     },
-  //   //     {
-  //   //       _id: getID(),
-  //   //       from: this.works[1]._id,
-  //   //       to: this.works[2]._id,
-  //   //     }
-  //   //   ]
-  //   // )
+  }
 
-  //   // this.current.workType = 'mesh'
-  //   // this.createWorkAtPos({ position: { x: -110 * 0.0, y: 0, z: 0 } })
-
-  //   // this.provideWorkWin({ work: this.works[0] })
-  //   // this.provideFacePipelineWin({ work: this.works[0] })
-
-  //   this.refresh()
-  // }
-  // UI.getWin({ title: 'Editor', appName: 'editor' })
   removeWin ({ win }) {
     let idx = this.wins.findIndex(e => e === win)
     if (idx !== -1) {
