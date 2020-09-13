@@ -3,8 +3,9 @@
 </template>
 
 <script>
-import { BufferGeometry, CatmullRomCurve3, CircleBufferGeometry, Color, Curve, Line, LinearInterpolant, LineBasicMaterial, LineDashedMaterial, Mesh, MeshBasicMaterial, SphereBufferGeometry, TextureLoader, Vector3 } from 'three';
+import { BufferGeometry, CatmullRomCurve3, CircleBufferGeometry, Color, Curve, Line, LinearInterpolant, LineBasicMaterial, LineDashedMaterial, Mesh, MeshBasicMaterial, SphereBufferGeometry, Sprite, SpriteMaterial, TextureLoader, Vector3 } from 'three';
 import { O3DNode } from '../../Core/O3DNode'
+import SpriteText from 'three-spritetext'
 export default {
   props: {
     core: {},
@@ -61,11 +62,30 @@ export default {
     //   curveO3D.material = materialIn
     // }
 
-    let cancelBall = new Mesh(new CircleBufferGeometry(5, 12), new MeshBasicMaterial({ transparent: true, opacity: 0.3, color: 0xffffff }))
+    let cancelBall = new Mesh(new CircleBufferGeometry(5, 24), new MeshBasicMaterial({ transparent: true, opacity: 0.3, color: 0xffffff }))
     cancelBall.geometry.rotateX(Math.PI * -0.5)
     cancelBall.position.y += 10
 
     cancelBall.material.map = new TextureLoader().load(require('./icon/close.png'))
+
+    let newSprite = new SpriteText()
+    cancelBall.add(newSprite)
+
+    let syncError = () => {
+      newSprite.text = this.arrow.errorMsg
+      newSprite.textHeight = 1
+      newSprite.color = '#ff0000'
+      newSprite.padding = 3
+      newSprite.position.y += 4
+      newSprite.position.z += -7.5
+      newSprite.backgroundColor = 'rgba(255,255,255,0.6)'
+      newSprite.visible = this.arrow.errorMsg !== ''
+
+      // cancelBall.material.color = new Color('#ff0000').offsetHSL(0,0,0.35)
+      // cancelBall.material.opacity = 1
+    }
+    syncError()
+    this.$watch('arrow.errorMsg', syncError)
 
     this.o3d.add(cancelBall)
 
@@ -78,8 +98,14 @@ export default {
       })
       this.ctx.rayplay.hover(cancelBall, () => {
         cancelBall.material.opacity = 1
+        newSprite.material.opacity = 1
       }, () => {
-        cancelBall.material.opacity = 0.08
+        if (this.arrow.errorMsg) {
+          cancelBall.material.opacity = 1
+        } else {
+          cancelBall.material.opacity = 0.08
+        }
+        newSprite.material.opacity = 0
       })
     }
 
@@ -126,6 +152,15 @@ export default {
 
       curve.getPointAt(0.5, cancelBall.position)
       cancelBall.position.y += 1
+
+      if (this.arrow.errorMsg) {
+        let time = window.performance.now() * 0.001
+        ball.material.color.setHSL(0, 0.5, 0.5)
+        cancelBall.material.color.setHSL(0,0.5, 0.7 + 0.3 * Math.abs(Math.sin(time)))
+        curveO3D.material.color.setHSL(0, Math.abs(Math.sin(time)), 0.5)
+      } else {
+        curveO3D.material.color.set('#ffaa00')
+      }
 
       curveO3D.computeLineDistances()
     })

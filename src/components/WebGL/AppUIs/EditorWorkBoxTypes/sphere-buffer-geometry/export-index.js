@@ -36,6 +36,10 @@ const buttons = {
     mouseMode: 'box-in'
   },
   br2: false
+  // br2: {
+  //   icon: require('./img/circle-out.svg'),
+  //   mouseMode: 'box-out'
+  // }
 
   // br: {
   //   icon: require('./img/circle-out.svg'),

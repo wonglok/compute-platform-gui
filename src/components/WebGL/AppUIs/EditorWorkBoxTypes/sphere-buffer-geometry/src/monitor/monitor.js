@@ -7,11 +7,11 @@ export const use = async (box) => {
   // let geo = new PlaneBufferGeometry(170, 170, 2, 2)
 
   let geo = new SphereBufferGeometry(60, 36, 36)
-  let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#ffba00'), side: DoubleSide })
+  let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe'), side: DoubleSide })
   let mesh = new Mesh(geo, mat)
 
   camera.position.z = 150
-  scene.background = new Color('#eeeeee')
+  scene.background = new Color('#ffffff')
 
   box.onLoop(() => {
     // mesh.rotation.x += 0.01

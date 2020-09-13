@@ -1,4 +1,4 @@
-import { Clock, EventDispatcher, PerspectiveCamera, Scene } from 'three'
+import { Clock, Color, EventDispatcher, PerspectiveCamera, Scene } from 'three'
 import * as THREE from 'three'
 import Vue from 'vue'
 
@@ -59,6 +59,7 @@ export class RunCore extends EventDispatcher {
     }
 
     this.scene = new Scene()
+    this.scene.background = new Color('#ffffff')
     this.camera = new PerspectiveCamera(75, 1, 0.00001, 100000)
     this.camera.position.z = 150
     this.defaultRender = () => {

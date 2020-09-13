@@ -212,6 +212,8 @@ export class AppCore extends EventDispatcher {
         this.arrows.push({
           _id: getID(),
           r: Math.random(),
+          errorCode: '',
+          errorMsg: '',
           direction: direction,
           from: this.current.workFrom,
           to: workTo._id
@@ -220,6 +222,8 @@ export class AppCore extends EventDispatcher {
         this.arrows.push({
           _id: getID(),
           r: Math.random(),
+          errorCode: '',
+          errorMsg: '',
           direction: direction,
           to: this.current.workFrom,
           from: workTo._id

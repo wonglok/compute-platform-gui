@@ -20,7 +20,7 @@ export const use = async ({ box, work, works, arrows }) => {
   workspaces.set(work._id, self)
 
   let geo = new BoxBufferGeometry(100, 100, 100, 5, 5, 5)
-  let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#ffba00') })
+  let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe') })
   self.mesh = new Mesh(geo, mat)
   box.scene.add(self.mesh)
 
