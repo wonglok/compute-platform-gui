@@ -12,7 +12,7 @@
       <div class="w-1/4 flex flex-col justify-center items-center">
         <div class="text-center mb-12">立方體 平面 矩陣 <br/> Cubic Face Cluster</div>
         <div>
-          <img src="./img/cube-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'buffergeometry')" alt="">
+          <img src="./img/cube-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'sphere-buffer-geometry')" alt="">
         </div>
       </div>
 

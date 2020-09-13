@@ -18,7 +18,6 @@ export default {
     size: {
       default: 256
     },
-    mode: {},
     work: {}
   },
   async mounted () {
@@ -41,20 +40,22 @@ export default {
         THREE
       }
 
-      miniBox.userData = {
+      miniBox = {
+        ...miniBox,
         scene: new Scene(),
         camera: new PerspectiveCamera(75, 1, 0.1, 1000),
         renderTarget: this.renderTarget,
         work: this.work,
         onDefaultRender: () => {
           this.ctx.renderer.setRenderTarget(this.renderTarget)
-          this.ctx.renderer.render(miniBox.userData.scene, miniBox.userData.camera)
+          this.ctx.renderer.render(miniBox.scene, miniBox.camera)
         }
       }
 
       let Monitor = await core.makeWorkBoxMonitor({ work: this.work })
       if (Monitor) {
         Monitor.use(miniBox)
+        console.log(Monitor)
       }
     }
 
@@ -96,7 +97,7 @@ export default {
 
       let orig = this.ctx.renderer.getRenderTarget()
 
-      miniBox.userData.onDefaultRender()
+      miniBox.onDefaultRender()
 
       this.$parent.$emit('texture', {
         enable: true,

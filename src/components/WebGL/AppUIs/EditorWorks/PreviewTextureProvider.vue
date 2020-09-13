@@ -8,7 +8,7 @@ import { PerspectiveCamera, Scene, Texture, WebGLRenderTarget } from 'three'
 import { O3DNode } from '../../Core/O3DNode'
 import * as THREE from 'three'
 import { WBTextureProviderEngine } from './WBTextureProviderEngine'
-// import { MiniBoxEngine } from '../../Packages/FSCompiler/srcs/basic/src/monitor/MiniBoxEngine'
+import { RunCore } from '../../AppUIs/EditorWorks/RunCore.js'
 
 export default {
   mixins: [
@@ -23,95 +23,48 @@ export default {
     let core = this.ctx.core
 
     let dpi = window.devicePixelRatio || 1
-    this.renderTarget = new WebGLRenderTarget(this.size * dpi, this.size * dpi)
-    this.defaultRender = () => {
-      this.ctx.renderer.setRenderTarget(this.renderTarget)
-      this.ctx.renderer.render(miniBox.userData.scene, miniBox.userData.camera)
+    this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, this.size * dpi)
+
+    let setup = () => {
+      if (this.runCore) {
+        this.runCore.goCleanUp()
+      }
+      this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget })
     }
 
-    let miniBox = false
-    let compileCode = async () => {
-      if (miniBox) {
-        miniBox.goCleanUp()
-      }
-      if (this.isDestroyed) {
-        return
-      }
+    let getSignature = () => {
+      return JSON.stringify([
+        core.works.map(e => {
+          return e._id
+        }),
+        core.arrows
+      ])
+    }
 
-      miniBox = new WBTextureProviderEngine({ onMasterLoop: this.onLoop })
-      miniBox.deps = {
-        THREE
-      }
+    this.$root.$on('compile-workbox', () => {
+      this.last = ''
+    })
 
-      miniBox.userData = {
-        scene: new Scene(),
-        camera: new PerspectiveCamera(75, 1, 0.1, 1000),
-        renderTarget: this.renderTarget,
-        work: this.work,
-        onDefaultRender: () => {
+    this.last = ''
+    setInterval(() => {
+      if (this.last === '') {
+        this.last = getSignature()
+        setup()
+      } else {
+        let latest = getSignature()
+        if (this.last !== latest) {
+          this.last = latest
+          setup()
         }
       }
-
-      let Monitor = await core.makeWorkBoxMonitor({ work: this.work })
-      if (Monitor) {
-        Monitor.use(miniBox)
-      }
-    }
-
-    compileCode()
-
-    this.$watch('work', () => {
-      if (this.isDestroyed) {
-        return
-      }
-      compileCode()
-    })
-
-    this.$root.$on('compile-workbox', ({ work }) => {
-      if (this.isDestroyed) {
-        return
-      }
-      if (work._id === this.work._id) {
-        compileCode()
-      }
-    })
-
-    // this.$root.$on('refresh-workbox', ({ work }) => {
-    //   if (work._id === this.work._id) {
-    //     compileCode()
-    //   }
-    // })
+    }, 100)
 
     this.onLoop(() => {
-      if (this.isDestroyed) {
-        this.$parent.$emit('texture', {
-          enable: false
-        })
-        return
-      }
-
-      if (!miniBox) {
-        return
-      }
-
-      let orig = this.ctx.renderer.getRenderTarget()
-
-      this.defaultRender()
-
       this.$parent.$emit('texture', {
         enable: true,
-        texture: this.renderTarget.texture
-      })
-
-      this.ctx.renderer.setRenderTarget(orig)
-    })
-
-    this.onClean(() => {
-      this.$parent.$emit('texture', {
-        enable: false
+        texture: this.displayRenderTarget.texture
       })
     })
-
   }
 }
 </script>

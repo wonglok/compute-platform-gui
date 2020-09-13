@@ -32,12 +32,14 @@ export default {
     let mat = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide })
     let plane = new Mesh(geo, mat)
     this.o3d.add(plane)
+
     this.$on('texture', ({ texture }) => {
-      if (texture) {
+      if (texture && mat.map !== texture) {
         let screen = getScreen({ depth: 0, camera: this.ctx.camera })
         let geo = new PlaneBufferGeometry(screen.width, screen.height, 2, 2)
         plane.geometry = geo
         mat.map = texture
+        console.log(texture)
         mat.needsUpdate = true
       }
     })

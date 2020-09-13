@@ -275,7 +275,7 @@ export const makeMonitorCode = async ({ pack }) => {
   return code
 }
 
-export const makeWorkCode = async ({ pack }) => {
+export const makePackageCode = async ({ pack }) => {
   // if (!pack) {
   //   pack = {
   //     name: 'codebase',

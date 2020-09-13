@@ -25,7 +25,7 @@
 
       <O3D v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-          <WBTextureProvider :mode="'workbox'" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
+          <WBTextureProvider :key="work._id" :work="work" v-if="work"></WBTextureProvider>
 
           <!-- <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider> -->
           <!-- <GLFlower></GLFlower> -->
@@ -77,18 +77,18 @@
     </div> -->
 
     <div v-if="core" :class="{ 'pointer-events-none': true }" class=" absolute top-0 left-0">
-      <div v-show="core.getCurrentWork()" style="width: 270px; height: 270px; margin: 15px; " >
-        <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
-          <PreviewPlane :visible="core.getCurrentWork()" :core="core">
-            <WBTextureProvider :mode="'workbox'" :size="270" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
+      <div style="width: 270px; height: 270px; margin: 15px; " >
+        <GLArtCanvas :suspendRender="!core.getCurrentWork()" :rounded="'9px 9px 9px 9px'">
+          <PreviewPlane v-if="core.getCurrentWork()">
+            <WBTextureProvider :size="270" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
 
       <div style="width: 270px; height: 270px; margin: 15px; " >
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
-          <PreviewPlane :core="core">
-            <!-- <WBTextureProvider :mode="'preview'" :core="core" :size="270"></WBTextureProvider> -->
+          <PreviewPlane>
+            <PreviewTextureProvider :size="270"></PreviewTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>

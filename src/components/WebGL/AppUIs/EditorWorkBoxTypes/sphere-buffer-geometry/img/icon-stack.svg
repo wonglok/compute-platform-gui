@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128px" height="128px" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group 19</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-Copy-2" transform="translate(-723.000000, -709.000000)">
+            <g id="Group-19" transform="translate(723.000000, 709.000000)">
+                <g id="Group-18-Copy" fill="#FFFFFF">
+                    <g id="Group-17-Copy-2">
+                        <rect id="Rectangle-Copy-2" x="0" y="0" width="128" height="128" rx="64"></rect>
+                    </g>
+                </g>
+                <g id="Group" transform="translate(34.000000, 34.000000)" fill="#000000" fill-rule="nonzero">
+                    <path d="M55,25 L55,55 L25,55 L25,25 L55,25 Z M60,20 L20,20 L20,60 L60,60 L60,20 Z M15,15 L15,55 L17.5,55 L17.5,17.5 L55,17.5 L55,15 L15,15 Z M10,10 L10,50 L12.5,50 L12.5,12.5 L50,12.5 L50,10 L10,10 Z M5,5 L5,45 L7.5,45 L7.5,7.5 L45,7.5 L45,5 L5,5 Z M0,0 L0,40 L2.5,40 L2.5,2.5 L40,2.5 L40,0 L0,0 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,16 +1,27 @@
+import { EventDispatcher, PerspectiveCamera, Scene } from 'three'
+import * as THREE from 'three'
 import Vue from 'vue'
 
-export class RunCore {
-  constructor ({ onMasterLoop, core, $root }) {
+export class RunCore extends EventDispatcher {
+  constructor ({ onMasterLoop, core, display, renderer }) {
+    super()
     let vm = this
-    this.$root = $root
     this.core = core
+    this.display = display
+    this.renderer = renderer
     this.onMasterLoop = onMasterLoop
 
     this.isAborted = false
     this.tasks = []
     this.resizeTasks = []
     this.cleanTasks = []
+
+    this.resources = {}
+    this.workspaces = new Map()
+
+    this.deps = {
+      THREE
+    }
 
     this.onLoop = (fnc) => {
       this.tasks.push(fnc)
@@ -45,8 +56,23 @@ export class RunCore {
       }
     }
 
+    this.scene = new Scene()
+    this.camera = new PerspectiveCamera(75, 1, 0.00001, 100000)
+    this.camera.position.z = 150
+    this.defaultRender = () => {
+      let orig = this.renderer.getRenderTarget()
+      this.renderer.setRenderTarget(this.display)
+      if (this.composer) {
+        this.composer.render()
+      } else {
+        this.renderer.render(this.scene, this.camera)
+      }
+      this.renderer.setRenderTarget(orig)
+    }
+
     this.onMasterLoop(() => {
       this.runLoop()
+      this.defaultRender()
     })
 
     let html = v => v[0]
@@ -54,23 +80,16 @@ export class RunCore {
     let makeRunVue = () => {
       return {
         props: {
-          runCore: {},
           work: {},
-          ctx: {}
+          box: {}
         },
         template: `<div><slot></slot></div>`,
         beforeDestroy () {
-          this.runCore.readyIDs.delete(this.work._id)
           console.log('before destroy')
         },
-        mounted () {
-          // console.log(123)
-
-          this.$root.$on(this.work._id, (event) => {
-            console.log(event)
-          })
-
-          this.runCore.readyIDs.add(this.work._id)
+        async mounted () {
+          let Module = await vm.core.makePackageModule({ work: this.work })
+          await Module.use({ box: this.box, work: this.work, arrows: core.arrows, works: core.works })
           console.log('mounted')
         }
       }
@@ -83,23 +102,22 @@ export class RunCore {
       template: html`
         <div>
           <div v-for="work in works" :key="work._id">
-            <WorkRunner :work="work" :runCore="vm" :ctx="ctx"></WorkRunner>
+            <WorkRunner v-if="isReady(work)" :work="work" :box="box"></WorkRunner>
           </div>
         </div>
       `,
+      methods: {
+        isReady () {
+          return true
+        }
+      },
       data () {
         return {
-          vm: this,
-          readyIDs: new Set([]),
-          ctx: {},
+          box: vm,
           works: vm.core.works,
           arrwos: vm.core.arrows
         }
       }
-    })
-
-    this.$root.$on('compile-workbox', (evt) => {
-      this.vue.$emit('compile-workbox', evt)
     })
 
     let div = document.createElement('div')
@@ -117,7 +135,6 @@ export class RunCore {
     }
   }
 }
-
 
 // export class CoreShell {
 //   constructor ({ core, vm }) {

@@ -1,11 +1,10 @@
 import * as UI from '../../AppUIs/EditorSpace/ageUI'
 import Vue from 'vue'
 import { getID } from '../../Core/O3DNode'
-import { makeMonitorCode, makeWorkCode, treeToFlat } from './FSCompiler'
+import { makeMonitorCode, makePackageCode, treeToFlat } from './FSCompiler'
 import { EventDispatcher } from 'three/build/three.module'
 // import { EventDispatcher } from './UMD'
 import WorkBoxTypes from '../../AppUIs/EditorWorkBoxTypes/WorkBoxTypes.js'
-import { RunCore } from '../../AppUIs/EditorWorks/RunCore.js'
 // console.log(JSON.stringify(WorkBoxTypes, null, '  '))
 
 // export class Shell {
@@ -23,8 +22,6 @@ export class AppCore extends EventDispatcher {
     this.wins = []
     this.works = []
     this.arrows = []
-
-    this.runCore = new RunCore({ onMasterLoop: this.onMasterLoop, core: this, $root })
 
     this.trashedWorks = []
 
@@ -101,13 +98,13 @@ export class AppCore extends EventDispatcher {
     }
   }
 
-  async makeWorkBoxWork ({ work }) {
+  async makePackageModule ({ work }) {
     let main = {
-      name: 'BoxWork',
+      name: 'PackageCode',
       list: treeToFlat(work.fileTree)
     }
 
-    let code = await makeWorkCode({ pack: main })
+    let code = await makePackageCode({ pack: main })
     try {
       let simpleFnc = new Function(`
         let exports = {};
