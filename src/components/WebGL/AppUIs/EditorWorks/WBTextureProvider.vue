@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import { PerspectiveCamera, Scene, Texture, WebGLRenderTarget } from 'three'
+import { LinearEncoding, PerspectiveCamera, Scene, Texture, WebGLRenderTarget } from 'three'
 import { O3DNode } from '../../Core/O3DNode'
 import * as THREE from 'three'
 import { WBTextureProviderEngine } from './WBTextureProviderEngine'

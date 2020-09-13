@@ -86,7 +86,7 @@ export default {
     let makeBaseMesh = () => {
       let geo = makeCurved(boxWidth, boxHeight, boxDepth, 'extrude')
       // let geo = new BoxBufferGeometry(boxWidth, boxDepth, boxHeight, 1, 1)
-      let mat = new MeshStandardMaterial({ color: new Color('#bababa') })
+      let mat = new MeshStandardMaterial({ color: new Color('#eeeeee') })
 
       this.onClean(() => {
         geo.dispose()
@@ -286,7 +286,7 @@ export default {
 
     let makeRoundedScreen = ({ baseMesh, close }) => {
       let roundedGeo = makeCurved(boxW, boxH, boxDepth)
-      let roundedMat = new MeshStandardMaterial({ transparent: true })
+      let roundedMat = new MeshBasicMaterial({ transparent: true })
       let screen = new Mesh(roundedGeo, roundedMat)
       screen.position.y = boxDepth * 0.5 + 0.15
 

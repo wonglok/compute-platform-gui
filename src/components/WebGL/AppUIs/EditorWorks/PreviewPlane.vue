@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { BoxBufferGeometry, CircleBufferGeometry, Color, DoubleSide, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, TextureLoader, Vector3 } from 'three'
+import { BoxBufferGeometry, CircleBufferGeometry, Color, DoubleSide, LinearEncoding, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, TextureLoader, Vector3 } from 'three'
 import { getScreen, O3DNode, visibleHeightAtZDepthForCamYAxis, visibleWidthAtZDepthForCamYAxis } from '../../Core/O3DNode'
 import { make } from '../ARTBlockers/art-coder'
 import { loadTexture } from '../../Core/loadTexture'
@@ -39,6 +39,7 @@ export default {
         let geo = new PlaneBufferGeometry(screen.width, screen.height, 2, 2)
         plane.geometry = geo
         mat.map = texture
+        texture.encoding = LinearEncoding
         console.log(texture)
         mat.needsUpdate = true
       }

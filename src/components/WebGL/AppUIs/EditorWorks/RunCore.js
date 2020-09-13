@@ -1,4 +1,4 @@
-import { EventDispatcher, PerspectiveCamera, Scene } from 'three'
+import { Clock, EventDispatcher, PerspectiveCamera, Scene } from 'three'
 import * as THREE from 'three'
 import Vue from 'vue'
 
@@ -10,6 +10,8 @@ export class RunCore extends EventDispatcher {
     this.display = display
     this.renderer = renderer
     this.onMasterLoop = onMasterLoop
+
+    this.clock = new Clock()
 
     this.isAborted = false
     this.tasks = []
@@ -85,7 +87,7 @@ export class RunCore extends EventDispatcher {
         },
         template: `<div><slot></slot></div>`,
         beforeDestroy () {
-          console.log('before destroy')
+          console.log('before destroy workbox runner')
         },
         async mounted () {
           let Module = await vm.core.makePackageModule({ work: this.work })

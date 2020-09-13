@@ -2,6 +2,18 @@ export const use = async ({ box, work, works, arrows }) => {
   let { Color, Mesh, BoxBufferGeometry, MeshBasicMaterial } = box.deps.THREE
   let { workspaces } = box
   let self = {
+    replaceGeo: ({ geometry }) => {
+      self.mesh.geometry = geometry
+      geometry.needsUpdate = true
+    },
+    replaceMaterial: ({ geometry }) => {
+      self.mesh.geometry = geometry
+      geometry.needsUpdate = true
+    },
+    replaceMesh: ({ mesh }) => {
+      box.scene.remove(self.mesh)
+      self.mesh = mesh
+    },
     mesh: false
   }
   workspaces.set(work._id, self)

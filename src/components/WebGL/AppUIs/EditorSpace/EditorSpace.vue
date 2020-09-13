@@ -64,27 +64,11 @@
     <CurosrImg v-if="!isTouch && cursor.enableImg" :cursor="cursor"></CurosrImg>
     <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
 
-    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-out' || overlay === 'box-in'">
-      <OVBoxInOut @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVBoxInOut>
-    </div>
-
-    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
-      <OVGenesis @choose="onChooseGenesis" @overlay="overlay = $event"></OVGenesis>
-    </div>
-
     <!-- <div class="absolute top-0 left-0 full bg-white" v-if="overlayGUI">
       <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>
     </div> -->
 
     <div v-if="core" :class="{ 'pointer-events-none': true }" class=" absolute top-0 left-0">
-      <div style="width: 270px; height: 270px; margin: 15px; " >
-        <GLArtCanvas :suspendRender="!core.getCurrentWork()" :rounded="'9px 9px 9px 9px'">
-          <PreviewPlane v-if="core.getCurrentWork()">
-            <WBTextureProvider :size="270" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
-          </PreviewPlane>
-        </GLArtCanvas>
-      </div>
-
       <div style="width: 270px; height: 270px; margin: 15px; " >
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane>
@@ -92,6 +76,23 @@
           </PreviewPlane>
         </GLArtCanvas>
       </div>
+
+      <div style="width: 270px; height: 270px; margin: 15px; " >
+        <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
+          <PreviewPlane v-if="core.getCurrentWork()">
+            <WBTextureProvider :size="270" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
+          </PreviewPlane>
+        </GLArtCanvas>
+      </div>
+    </div>
+
+
+    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-out' || overlay === 'box-in'">
+      <OVBoxInOut @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVBoxInOut>
+    </div>
+
+    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
+      <OVGenesis @choose="onChooseGenesis" @overlay="overlay = $event"></OVGenesis>
     </div>
 
     <!-- <component v-show="false" v-if="dynamo" ref="dynamo" :is="dynamo"></component> -->

@@ -1,27 +1,30 @@
-export const use = (box) => {
-  if (box && box.userData && box.userData.work && box.userData.work.coverImage) {
-    let { TextureLoader, MeshBasicMaterial, Mesh, PlaneBufferGeometry, Color, DoubleSide } = box.deps.THREE
-    let { scene, camera } = box.userData
-    let texture = new TextureLoader().load(box.userData.work.coverImage)
-    let mat = new MeshBasicMaterial({ map: texture, color: new Color('#ffffff'), side: DoubleSide })
-    let geo = new PlaneBufferGeometry(170, 170, 2, 2)
-    let mesh = new Mesh(geo, mat)
+export const use = async (box) => {
+  // if (box && box.userData && box.userData.work && box.userData.work.coverImage) {
+  let { MeshBasicMaterial, Mesh, SphereBufferGeometry, Color, DoubleSide } = box.deps.THREE
+  let { scene, camera } = box
+  // let texture = new TextureLoader().load(box.userData.work.coverImage)
+  // let mat = new MeshBasicMaterial({ map: texture, color: new Color('#ffffff'), side: DoubleSide })
+  // let geo = new PlaneBufferGeometry(170, 170, 2, 2)
 
-    camera.position.z = 100
-    scene.background = new Color('#ffffff')
+  let geo = new SphereBufferGeometry(60, 36, 36)
+  let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#ffba00'), side: DoubleSide })
+  let mesh = new Mesh(geo, mat)
 
-    box.onLoop(() => {
-      // mesh.rotation.x += 0.01
-      // mesh.rotation.y += 0.01
-    })
+  camera.position.z = 150
+  scene.background = new Color('#eeeeee')
 
-    scene.add(mesh)
-    // console.log(scene)
+  box.onLoop(() => {
+    // mesh.rotation.x += 0.01
+    mesh.rotation.y += 0.01
+  })
 
-    box.onClean(() => {
-      geo.dispose()
-      mat.dispose()
-      console.log('clean up')
-    })
-  }
+  scene.add(mesh)
+  // console.log(scene)
+
+  box.onClean(() => {
+    geo.dispose()
+    mat.dispose()
+    console.log('clean up')
+  })
+  // }
 }
