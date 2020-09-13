@@ -6,15 +6,25 @@ export const use = async ({ box, work, works, arrows }) => {
   }
   workspaces.set(work._id, self)
 
-  let itemA = work
-  let arrowAB = arrows.find(e => e.from === itemA._id)
-  if (arrowAB) {
-    let itemB = works.find(e => e._id === arrowAB.to)
-    let spaceB = workspaces.get(itemB._id)
-    if (spaceB) {
-      spaceB.mesh.geometry = new SphereBufferGeometry(60, 36, 36)
-      spaceB.mesh.geometry.needsUpdate = true
+  let getFirstConnectedItem = ({ work }) => {
+    let itemA = work
+    let arrowAB = arrows.find(e => e.from === itemA._id)
+    if (arrowAB) {
+      let itemB = works.find(e => e._id === arrowAB.to)
+      let spaceB = workspaces.get(itemB._id)
+      if (spaceB) {
+        return spaceB
+      } else {
+        return false
+      }
+    } else {
+      return false
     }
+  }
+
+  let connectedItem = getFirstConnectedItem({ work })
+  if (connectedItem && connectedItem.replaceGeometry) {
+    connectedItem.replaceGeometry({ geometry: new SphereBufferGeometry(60, 36, 36) })
   }
 
   // let geo = new BoxBufferGeometry(100, 100, 100, 5, 5, 5)
