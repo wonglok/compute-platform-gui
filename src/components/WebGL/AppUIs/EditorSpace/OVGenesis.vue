@@ -8,14 +8,15 @@
       What do you want to draw?
     </div>
     <div class="flex justify-around max-w-4xl mx-auto">
-      <!--
-      <div class=" w-1/4  flex flex-col justify-center items-center">
+
+      <!-- <div class=" w-1/4  flex flex-col justify-center items-center">
         <div class="text-center mb-12">點陣 Dots</div>
         <div>
           <img src="./img/dots.svg" class="  cursor-pointer" @click="$emit('choose', 'points')" alt="">
         </div>
-      </div>
+      </div> -->
 
+      <!--
       <div class=" w-1/4  flex flex-col justify-center items-center">
         <div class="text-center mb-12">線 Line</div>
         <div>
@@ -23,6 +24,7 @@
         </div>
       </div> -->
 
+      <!-- -->
       <div class=" w-1/4  flex flex-col justify-center items-center">
         <div class="text-center mb-12">網面 Mesh</div>
         <div>

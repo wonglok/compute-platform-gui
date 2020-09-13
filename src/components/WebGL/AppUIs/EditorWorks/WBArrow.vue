@@ -45,13 +45,13 @@ export default {
     var ballOutMat = new MeshBasicMaterial({ color: new Color('#e2bc2e') })
 
     var materialDash = new LineDashedMaterial({
-      color: 0xffaa00,
+      color: 0xa6e22e,
       dashSize: 15 / 4,
       gapSize: 5 / 4
     })
 
     var materialBall = new MeshBasicMaterial({
-      color: 0xffaa00
+      color: 0xa6e22e
     })
 
     var curveO3D = new Line(undefined, materialDash)
@@ -159,7 +159,7 @@ export default {
         cancelBall.material.color.setHSL(0,0.5, 0.7 + 0.3 * Math.abs(Math.sin(time)))
         curveO3D.material.color.setHSL(0, Math.abs(Math.sin(time)), 0.5)
       } else {
-        curveO3D.material.color.set('#ffaa00')
+        curveO3D.material.color.set('#a6e22e')
       }
 
       curveO3D.computeLineDistances()
