@@ -30,6 +30,11 @@
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="range" min="1" max="1000" step="1" v-model="gui.height" @input="onRefresh"  /></td>
         </tr>
         <tr>
+          <td class="p-3">Depth</td>
+          <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" v-model="gui.depth" @input="onRefresh" /></td>
+          <td class="p-3"><input class=" bg-transparent border-b border-black" type="range" min="1" max="1000" step="1" v-model="gui.depth" @input="onRefresh"  /></td>
+        </tr>
+        <tr>
           <td class="p-3">Segment X</td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" v-model="gui.segmentX" @input="onRefresh" /></td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="range" min="1" max="100" step="1" v-model="gui.segmentX" @input="onRefresh"  /></td>
@@ -38,6 +43,11 @@
           <td class="p-3">Segment Y</td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" v-model="gui.segmentY" @input="onRefresh" /></td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="range" min="1" max="100" step="1" v-model="gui.segmentY" @input="onRefresh"  /></td>
+        </tr>
+        <tr>
+          <td class="p-3">Segment Z</td>
+          <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" v-model="gui.segmentZ" @input="onRefresh" /></td>
+          <td class="p-3"><input class=" bg-transparent border-b border-black" type="range" min="1" max="100" step="1" v-model="gui.segmentZ" @input="onRefresh"  /></td>
         </tr>
       </table>
     </div>
