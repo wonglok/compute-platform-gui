@@ -5,9 +5,9 @@
       請選擇特效
     </div>
     <div class=" text-center text-lg mb-12">
-      Please Choose Effect
+      Please Choose Effect Node
     </div>
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto" v-if="work">
 
       <!-- <div class="w-1/4 flex flex-col justify-center items-center">
         <div class="text-center mb-12">立方體 平面 矩陣 <br/> Cubic Face Cluster</div>
@@ -15,9 +15,38 @@
           <img src="./icon/box-sphere.svg" class="  cursor-pointer" @click="$emit('choose', 'sphere-buffer-geometry')" alt="">
         </div>
       </div> -->
-      <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes">
-        <div>{{ wbType.type }}</div>
+
+      <div v-if="canChoose.includes('draw-type')">
+        <div class="font-sans text-xl  mb-3">
+          Draw Type 畫圖
+        </div>
+        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('draw-type'))">
+          <div>{{ wbType.displayName }}</div>
+        </div>
       </div>
+
+      <div v-if="canChoose.includes('geometry')">
+        <div class="font-sans text-xl mb-3">
+          Geometry 形狀
+        </div>
+        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('geometry'))">
+          <div>{{ wbType.displayName }}</div>
+        </div>
+      </div>
+
+      <div v-if="canChoose.includes('material')">
+        <div class="font-sans text-xl  mb-3">
+          Materials 視覺效果
+        </div>
+        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('material'))">
+          <div>{{ wbType.displayName }}</div>
+        </div>
+      </div>
+
+      <!--
+      <div v-show="canChoose.includes('material')" @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('material'))">
+        <div>{{ wbType.displayName }}</div>
+      </div> -->
 
       <!-- <div class="w-1/4 flex flex-col justify-center items-center">
         <div class="text-center mb-12">球體形狀 <br/> Sphere Shape</div>
@@ -60,11 +89,20 @@
 </template>
 
 <script>
+import { O3DVue } from '../../Core/O3DVue.js'
 import { WorkBoxTypes } from '../../Packages/FSCompiler/Core'
 // import { getLang } from '../../Packages/Languages/index.js'
 export default {
+  mixins: [
+    O3DVue
+  ],
+  props: {
+  },
   data () {
     return {
+      canChoose: [],
+      filterKey: '',
+      work: false,
       wbTypes: WorkBoxTypes.slice()
       // tt: getLang('genesis')
     }
@@ -76,6 +114,24 @@ export default {
       this.$emit('mouse-mode', '')
     }
     this.$root.escs.push(this.cancel)
+
+    this.work = this.ctx.core.getCurrentWorkFrom()
+
+    if (this.ctx.mouseMode === 'box-in') {
+      this.filterKey = 'boxIn'
+    } else if (this.ctx.mouseMode === 'box-out') {
+      this.filterKey = 'boxOut'
+    }
+
+    this.canChoose = this.work.compatability[this.filterKey] || []
+  },
+  methods: {
+    getType (v) {
+      return (item) => {
+        item.tags = item.tags || []
+        return item.tags.includes(v)
+      }
+    }
   },
   beforeDestroy () {
     let idx = this.$root.escs.indexOf(this.cancel)

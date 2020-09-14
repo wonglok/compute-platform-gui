@@ -12,18 +12,18 @@ const io = {
 }
 
 const guiData = {
-  pointSize: 1.379,
+  pointSize: 2.3333,
 
-  twisterX: 0.334,
-  twisterY: 0.344,
-  twisterZ: 0.074,
+  twisterX: 0,
+  twisterY: 0.2,
+  twisterZ: 0.2,
 
-  twisterSpeedX: 0.074,
-  twisterSpeedY: 0.8,
-  twisterSpeedZ: 0.1,
+  twisterSpeedX: 0.0,
+  twisterSpeedY: 0.5,
+  twisterSpeedZ: 0.5,
 
-  offsetModifier: '#9E3131',
-  baseColor: '#323356',
+  offsetModifier: '#DE4168',
+  baseColor: '#2DA0B3',
   time: 0
 }
 
@@ -31,12 +31,20 @@ const compatability = {
   boxIn: [
   ],
   boxOut: [
-    'ballify'
+    'draw-type'
   ]
 }
 
+const displayName = 'Twister Shader Material'
+
+const tags = [
+  'material',
+  'shader-material',
+  'twister-shader-material'
+]
+
 const gui = {
-  settings: 'SphereBuffereGeometryGUI'
+  settings: ''
 }
 
 const buttons = {
@@ -60,6 +68,8 @@ const buttons = {
 }
 
 export {
+  displayName,
+  tags,
   fileTree,
   coverImage,
   workBoxScreenColor,

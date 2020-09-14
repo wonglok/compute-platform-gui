@@ -18,15 +18,23 @@ const guiData = {
 
 const compatability = {
   boxIn: [
+    'geometry',
+    'material'
   ],
   boxOut: [
-    'ballify'
   ]
 }
 
 const gui = {
   settings: 'MeshGUI'
 }
+
+const displayName = 'Points'
+
+const tags = [
+  'draw-type',
+  'points'
+]
 
 const buttons = {
   tl: false,
@@ -45,6 +53,8 @@ const buttons = {
 }
 
 export {
+  displayName,
+  tags,
   fileTree,
   coverImage,
   workBoxScreenColor,

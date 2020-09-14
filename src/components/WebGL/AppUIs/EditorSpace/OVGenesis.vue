@@ -9,20 +9,20 @@
     </div>
     <div class="flex justify-around max-w-4xl mx-auto">
       <div class=" w-1/4  flex flex-col justify-center items-center">
-        <div class="text-center mb-12">點陣 Dots</div>
+        <div class="text-center mb-12">點陣 Points</div>
         <div>
           <img src="./img/dots.svg" class="  cursor-pointer" @click="$emit('choose', 'points')" alt="">
         </div>
       </div>
       <!--  -->
 
-      <!--
+
       <div class=" w-1/4  flex flex-col justify-center items-center">
-        <div class="text-center mb-12">線 Line</div>
+        <div class="text-center mb-12">線段 Line Segments</div>
         <div>
-          <img src="./img/lines.svg" class="  cursor-pointer" @click="$emit('choose', 'linesegments')" alt="">
+          <img src="./img/lines.svg" class="  cursor-pointer" @click="$emit('choose', 'line-segments')" alt="">
         </div>
-      </div> -->
+      </div>
 
       <!-- -->
       <div class=" w-1/4  flex flex-col justify-center items-center">

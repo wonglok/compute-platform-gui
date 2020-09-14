@@ -2,6 +2,7 @@
 import fileTree from './loadFiles.js'
 import coverImage from './img/thumb.svg'
 import { getID } from '../../../Core/O3DNode.js'
+import { EventDispatcher } from 'three'
 
 const workBoxFrameColor = '#bababa'
 const workBoxScreenColor = '#ffffff'
@@ -12,43 +13,38 @@ const io = {
 }
 
 const guiData = {
-  radius: 60,
-  segmentX: 70,
-  segmentY: 70
+  wireframe: true
 }
 
 const compatability = {
   boxIn: [
+    'material',
+    'geometry'
   ],
   boxOut: [
-    'draw-type'
   ]
 }
 
-const displayName = 'Sphere Buffer Geometry'
+const gui = {
+  settings: 'LineSegmentGUI'
+}
+
+const displayName = 'Line Segments'
 
 const tags = [
-  'geometry',
-  'sphere-buffer-geometry'
+  'draw-type',
+  'line-segments'
 ]
-
-const gui = {
-  settings: 'SphereBuffereGeometryGUI'
-}
 
 const buttons = {
   tl: false,
   tr: {},
   bl: {},
   br: {
-    icon: 'circle-out',
-    mouseMode: 'box-out'
+    icon: 'circle-in',
+    mouseMode: 'box-in'
   },
   br2: false
-  // br2: {
-  //   icon: require('./img/circle-out.svg'),
-  //   mouseMode: 'box-out'
-  // }
 
   // br: {
   //   icon: require('./img/circle-out.svg'),

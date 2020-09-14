@@ -1,6 +1,6 @@
 export const use = ({ box, work }) => {
   // if (box && box.userData && box.userData.work && box.userData.work.coverImage) {
-  let { PointsMaterial, Points, PlaneBufferGeometry, Color, DoubleSide } = box.deps.THREE
+  let { MeshBasicMaterial, LineSegments, PlaneBufferGeometry, Color, DoubleSide } = box.deps.THREE
   let { scene, camera } = box
   // let texture = new TextureLoader().load(box.userData.work.coverImage)
   // let mat = new MeshBasicMaterial({ map: texture, color: new Color('#ffffff'), side: DoubleSide })
@@ -13,8 +13,8 @@ export const use = ({ box, work }) => {
   // scene.add(directionaLight)
 
   let geo = new PlaneBufferGeometry(120, 120, 30, 30)
-  let mat = new PointsMaterial({ size: 2, color: new Color('#bebebe') })
-  let mesh = new Points(geo, mat)
+  let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe'), side: DoubleSide })
+  let mesh = new LineSegments(geo, mat)
 
   camera.position.z = 150
   scene.background = new Color('#ffffff')

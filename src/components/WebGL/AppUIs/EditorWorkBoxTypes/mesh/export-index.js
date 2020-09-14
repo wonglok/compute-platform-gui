@@ -13,20 +13,27 @@ const io = {
 }
 
 const guiData = {
-  wireframe: true
 }
 
 const compatability = {
   boxIn: [
+    'geometry',
+    'material'
   ],
   boxOut: [
-    'ballify'
   ]
 }
 
 const gui = {
   settings: 'MeshGUI'
 }
+
+const displayName = 'Mesh'
+
+const tags = [
+  'draw-type',
+  'mesh'
+]
 
 const buttons = {
   tl: false,
@@ -45,6 +52,8 @@ const buttons = {
 }
 
 export {
+  displayName,
+  tags,
   fileTree,
   coverImage,
   workBoxScreenColor,
