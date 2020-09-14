@@ -1,6 +1,6 @@
 export const use = ({ box, work }) => {
   // if (box && box.userData && box.userData.work && box.userData.work.coverImage) {
-  let { MeshBasicMaterial, Mesh, BoxBufferGeometry, Color, DoubleSide } = box.deps.THREE
+  let { MeshBasicMaterial, Points, BoxBufferGeometry, Color, DoubleSide } = box.deps.THREE
   let { scene, camera } = box
   // let texture = new TextureLoader().load(box.userData.work.coverImage)
   // let mat = new MeshBasicMaterial({ map: texture, color: new Color('#ffffff'), side: DoubleSide })
@@ -14,7 +14,7 @@ export const use = ({ box, work }) => {
 
   let geo = new BoxBufferGeometry(100, 100, 100, 24, 24, 24)
   let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe'), side: DoubleSide })
-  let mesh = new Mesh(geo, mat)
+  let mesh = new Points(geo, mat)
 
   camera.position.z = 150
   scene.background = new Color('#ffffff')

@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     async getVueFromWork ({ work }) {
-      new CoreShell({ work, vm: this })
+      new CoreShell({ work, $vm: this })
     }
   },
   mounted () {

@@ -1,11 +1,12 @@
 import { Clock, Color, EventDispatcher, PerspectiveCamera, Scene } from 'three'
 import * as THREE from 'three'
 import Vue from 'vue'
+import { Chrome } from 'vue-color'
 
 export class RunCore extends EventDispatcher {
   constructor ({ onMasterLoop, core, display, renderer }) {
     super()
-    let vm = this
+    let box = this
     this.core = core
     this.display = display
     this.renderer = renderer
@@ -96,12 +97,12 @@ export class RunCore extends EventDispatcher {
         },
         template: `<div><slot></slot></div>`,
         beforeDestroy () {
-          console.log('workbox runner: stop ' + this.work._id)
+          console.log('workbox runner: clean up ' + this.work._id)
         },
         async mounted () {
-          let Module = await vm.core.makePackageModule({ work: this.work })
+          let Module = await box.core.makePackageModule({ work: this.work })
           await Module.use({ box: this.box, work: this.work, arrows: core.arrows, works: core.works })
-          console.log('workbox runner: run ' + this.work._id)
+          console.log('workbox runner: setup ' + this.work._id)
         }
       }
     }
@@ -124,9 +125,9 @@ export class RunCore extends EventDispatcher {
       },
       data () {
         return {
-          box: vm,
-          works: vm.core.works,
-          arrwos: vm.core.arrows
+          box: box,
+          works: box.core.works,
+          arrwos: box.core.arrows
         }
       }
     })
@@ -159,9 +160,9 @@ export class RunCore extends EventDispatcher {
 }
 
 export class CoreShell {
-  constructor ({ work, vm }) {
+  constructor ({ work, $vm }) {
     this.work = work
-    this.vm = vm
+    this.$vm = $vm
 
     this.last = {
       scriptCode: ''
@@ -169,29 +170,28 @@ export class CoreShell {
 
     let vueCode = this.getVueCode()
 
-    this.vm.dynamo = this.makeNewInstance({ vueCode })
+    this.$vm.dynamo = this.makeNewInstance({ vueCode })
 
-    this.vm.$root.$on('refresh-shell', () => {
+    this.$vm.$root.$on('refresh-shell', () => {
       let vueCode = this.getVueCode()
       let { scriptCode } = this.processVueCode({ vueCode })
       if (scriptCode !== this.last.scriptCode) {
-        this.vm.dynamo = this.makeNewInstance({ vueCode })
+        this.$vm.dynamo = this.makeNewInstance({ vueCode })
       } else {
         this.onRefresh({ vueCode })
       }
       this.last.scriptCode = scriptCode
     })
   }
+
   getVueCode () {
     let file = this.work.fileTree.children.find(e => e.path === './gui.vue')
     if (file) {
       return file.src
     }
   }
-  compileTemplate ({ templateCode }) {
-    let templateRenderFnc = Vue.compile(templateCode)
-    return templateRenderFnc.render
-  }
+
+
   processVueCode ({ vueCode }) {
     let templateCode = vueCode.match(/<template>([\S\s]*?)<\/template>/gi)
     templateCode = templateCode[0]
@@ -213,13 +213,18 @@ export class CoreShell {
     }
   }
 
-  onRefresh ({ vueCode }) {
-    let { templateCode } = this.processVueCode({ vueCode })
-    if (this.vm.$refs.dynamo) {
-      this.vm.$refs.dynamo.$options.render = this.compileTemplate({ templateCode })
-      this.vm.$refs.dynamo.$forceUpdate()
-    }
-  }
+  // compileTemplate ({ templateCode }) {
+  //   let templateRenderFnc = Vue.compile(templateCode)
+  //   return templateRenderFnc.render
+  // }
+
+  // onRefresh ({ vueCode }) {
+  //   let { templateCode } = this.processVueCode({ vueCode })
+  //   if (this.$vm.$refs.dynamo) {
+  //     this.$vm.$refs.dynamo.$options.render = this.compileTemplate({ templateCode })
+  //     this.$vm.$refs.dynamo.$forceUpdate()
+  //   }
+  // }
 
   getConfig ({ vueCode }) {
     let { scriptCode } = this.processVueCode({ vueCode })
@@ -234,6 +239,9 @@ export class CoreShell {
     let { templateCode } = this.processVueCode({ vueCode })
     let newObj = {
       ...config,
+      components: {
+        Chrome
+      },
       template: templateCode
       // mixins: [require('../../Core/RenderRoot.js').RenderRoot],
       // render: this.compileTemplate({ templateCode })

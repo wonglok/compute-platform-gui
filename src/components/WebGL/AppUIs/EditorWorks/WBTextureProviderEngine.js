@@ -32,6 +32,7 @@ export class WBTextureProviderEngine extends EventDispatcher {
         console.error(e)
       }
     }
+
     this.runLoop = () => {
       isAborted = true
       try {
@@ -62,7 +63,7 @@ export class WBTextureProviderEngine extends EventDispatcher {
       }
     }
 
-    this.runLoop()
+    // this.runLoop()
     // this.onMasterLoop(() => {
     //   if (isAborted) {
     //     return

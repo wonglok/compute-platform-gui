@@ -303,7 +303,7 @@ export default {
       this.onRefresh()
     },
     onRefresh () {
-      this.$root.$emit('refresh-workbox', { work: this.work })
+      this.$root.$emit('refresh-ui', { work: this.work })
     }
   }
 }

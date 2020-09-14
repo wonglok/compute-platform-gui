@@ -1,3 +1,5 @@
+import { makeMaterial } from '../shared/material.js'
+
 export const use = async ({ box, work, works, arrows }) => {
   let { Color, Mesh, BoxBufferGeometry, SphereBufferGeometry, MeshBasicMaterial } = box.deps.THREE
   let { workspaces } = box
@@ -38,9 +40,11 @@ export const use = async ({ box, work, works, arrows }) => {
   let checkAndRun = () => {
     let { api, arrowAB, arrowBA } = getFirstConnectedItem({ work })
     if (api && api.replaceGeometry) {
-      let gui = work.guiData
 
-      api.replaceGeometry({ geometry: new SphereBufferGeometry(gui.radius, gui.segmentX, gui.segmentY) })
+      let material = makeMaterial({ work, box })
+
+      api.replaceMaterial({ material })
+
       arrowAB.errorCode = ''
       arrowAB.errorMsg = ''
     } else if (api && !api.replaceGeometry) {

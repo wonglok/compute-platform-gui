@@ -2,7 +2,7 @@
   <div class="p-4 full overflow-scroll neu-bg ">
     <div class="rounded-lg neu-sm py-3 px-5 m-3">
       <div class="font-sans text-3xl mb-3">
-        Mesh
+        Points
       </div>
       <div class="text-sm">
         Draw Item
