@@ -19,6 +19,14 @@ export const use = async ({ box, work }) => {
     mesh.rotation.y += 0.01
   })
 
+  box.onRefresh(() => {
+    let gui = work.guiData
+    let geo = new SphereBufferGeometry(gui.radius, gui.segmentX, gui.segmentY)
+    mesh.geometry = geo
+    mesh.geometry.needsUpdate = true
+  })
+  box.runRefresh()
+
   scene.add(mesh)
   // console.log(scene)
 

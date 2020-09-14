@@ -1,13 +1,13 @@
 import { EventDispatcher } from 'three'
 
 export class WBTextureProviderEngine extends EventDispatcher {
-  constructor ({ onMasterLoop }) {
+  constructor () {
     super()
     let isAborted = false
-    this.onMasterLoop = onMasterLoop
     this.tasks = []
     this.resizeTasks = []
     this.cleanTasks = []
+    this.refreshTask = []
     this.onLoop = (fnc) => {
       this.tasks.push(fnc)
     }
@@ -18,6 +18,27 @@ export class WBTextureProviderEngine extends EventDispatcher {
     this.onResize = (fnc) => {
       fnc()
       this.resizeTasks.push(fnc)
+    }
+
+    this.onRefresh = (fnc) => {
+      this.refreshTask.push(fnc)
+    }
+
+    this.runRefresh = () => {
+      isAborted = true
+      try {
+        this.refreshTask.forEach(e => e())
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    this.runLoop = () => {
+      isAborted = true
+      try {
+        this.tasks.forEach(e => e())
+      } catch (e) {
+        console.error(e)
+      }
     }
 
     let intv = 0
@@ -41,16 +62,17 @@ export class WBTextureProviderEngine extends EventDispatcher {
       }
     }
 
-    this.onMasterLoop(() => {
-      if (isAborted) {
-        return
-      }
+    this.runLoop()
+    // this.onMasterLoop(() => {
+    //   if (isAborted) {
+    //     return
+    //   }
 
-      try {
-        this.tasks.forEach(e => e())
-      } catch (e) {
-        console.error(e)
-      }
-    })
+    //   try {
+    //     this.tasks.forEach(e => e())
+    //   } catch (e) {
+    //     console.error(e)
+    //   }
+    // })
   }
 }

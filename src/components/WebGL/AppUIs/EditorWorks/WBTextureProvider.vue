@@ -61,6 +61,14 @@ export default {
 
     compileCode()
 
+    this.$root.$on('refresh-ui', ({ work }) => {
+      if (work._id === this.work._id) {
+        if (miniBox) {
+          miniBox.runRefresh()
+        }
+      }
+    })
+
     this.$watch('work', () => {
       if (this.isDestroyed) {
         return
@@ -94,6 +102,8 @@ export default {
       if (!miniBox) {
         return
       }
+
+      miniBox.runLoop()
 
       let orig = this.ctx.renderer.getRenderTarget()
 

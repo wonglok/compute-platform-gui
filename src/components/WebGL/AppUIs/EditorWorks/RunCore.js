@@ -96,11 +96,12 @@ export class RunCore extends EventDispatcher {
         },
         template: `<div><slot></slot></div>`,
         beforeDestroy () {
-          console.log('before destroy workbox runner')
+          console.log('workbox runner: stop ' + this.work._id)
         },
         async mounted () {
           let Module = await vm.core.makePackageModule({ work: this.work })
           await Module.use({ box: this.box, work: this.work, arrows: core.arrows, works: core.works })
+          console.log('workbox runner: run ' + this.work._id)
         }
       }
     }
