@@ -13,8 +13,8 @@ const io = {
 
 const guiData = {
   radius: 60,
-  segmentX: 32,
-  segmentY: 32
+  segmentX: 70,
+  segmentY: 70
 }
 
 const compatability = {
