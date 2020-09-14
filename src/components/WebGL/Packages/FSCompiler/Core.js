@@ -299,9 +299,9 @@ export class AppCore extends EventDispatcher {
     win.show = true
   }
 
-  provideWindowWithAppName ({ work, appName }) {
+  provideWindowWithAppName ({ work }) {
     let create = () => {
-      let win = UI.getWin({ title: `Props: ${work._id} (${work.type})`, appName }, {}, { type: 'work', _id: work._id })
+      let win = UI.getWin({ title: `Props: ${work._id} (${work.type})`, appName: 'props-editor' }, {}, { type: 'work', _id: work._id })
       this.openWin({ win })
       return win
     }

@@ -86,7 +86,7 @@ export default {
     let makeBaseMesh = () => {
       let geo = makeCurved(boxWidth, boxHeight, boxDepth, 'extrude')
       // let geo = new BoxBufferGeometry(boxWidth, boxDepth, boxHeight, 1, 1)
-      let mat = new MeshStandardMaterial({ color: new Color('#eeeeee') })
+      let mat = new MeshStandardMaterial({ color: new Color('#bababa') })
 
       this.onClean(() => {
         geo.dispose()
