@@ -56,6 +56,7 @@ const buttons = {
     mouseMode: 'box-out'
   },
   br2: false
+
   // br2: {
   //   icon: require('./img/circle-out.svg'),
   //   mouseMode: 'box-out'

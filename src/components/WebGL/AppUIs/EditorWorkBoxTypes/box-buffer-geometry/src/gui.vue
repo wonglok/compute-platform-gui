@@ -1,12 +1,12 @@
 <template>
-  <div class="p-4 full overflow-scroll neu-bg ">
-    <div class="rounded-lg neu-sm py-3 px-5 m-3">
-      <div class="font-sans text-3xl mb-3">
-        SphereBufferGeometry
+  <div class="p-4 full overflow-scroll ">
+    <div class="rounded-lg border py-3 px-5 m-3">
+      <div class="font-sans text-3xl">
+        {{ work.displayName }}
       </div>
     </div>
 
-    <div class="rounded-lg neu-sm py-3 px-5 m-3">
+    <div class="rounded-lg border py-3 px-5 m-3">
       <table>
         <tr>
           <th>

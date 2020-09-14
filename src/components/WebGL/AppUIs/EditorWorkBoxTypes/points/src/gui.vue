@@ -1,8 +1,8 @@
 <template>
-  <div class="p-4 full overflow-scroll neu-bg ">
-    <div class="rounded-lg neu-sm py-3 px-5 m-3">
+  <div class="p-4 full overflow-scroll ">
+    <div class="rounded-lg border py-3 px-5 m-3">
       <div class="font-sans text-3xl mb-3">
-        Points
+        {{ work.displayName }}
       </div>
       <div class="text-sm">
         Draw Item
