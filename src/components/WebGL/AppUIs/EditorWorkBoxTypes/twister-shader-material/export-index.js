@@ -22,8 +22,8 @@ const guiData = {
   twisterSpeedY: 0.5,
   twisterSpeedZ: 0.5,
 
-  offsetModifier: '#DE4168',
-  baseColor: '#2DA0B3',
+  offsetModifier: '#0050FF',
+  baseColor: '#ffffff',
   time: 0
 }
 
