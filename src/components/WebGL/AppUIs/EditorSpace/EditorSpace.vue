@@ -42,9 +42,10 @@
     </div>
 
     <div class="absolute top-0 right-0 flex">
-      <!-- <div class="p-3">
+      <div class="p-3">
         <img src="./icon/add.svg" @click="onClickAdd" class="w-10 h-10" alt="">
       </div>
+      <!--
       <div class="p-3">
         <img src="./icon/gear.svg" @click="onClickGear" class="w-10 h-10" alt="">
       </div> -->
@@ -226,7 +227,7 @@ export default {
       console.log(ev)
     },
     onClickAdd () {
-      // this.overlay = 'genesis'
+      this.overlay = 'genesis'
     },
     onClickGear () {
       // this.core.openPipelineSystem()
@@ -263,9 +264,9 @@ export default {
       let work = this.core.createWorkAtPos({
         type: this.core.current.workType,
         position: {
-          x: this.cursor.position.x,
-          y: 0,
-          z: this.cursor.position.z
+          x: this.camera.position.x + (Math.random() - 0.5) * 20,
+          y: 10,
+          z: this.camera.position.z
         }
       })
 
