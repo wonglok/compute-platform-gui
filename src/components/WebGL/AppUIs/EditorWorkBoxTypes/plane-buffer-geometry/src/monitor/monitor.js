@@ -9,12 +9,12 @@ export const use = async ({ box, work }) => {
   let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe'), side: DoubleSide })
   let mesh = new Mesh(undefined, mat)
 
-  camera.position.z = 150
+  camera.position.z = 50
   scene.background = new Color('#ffffff')
 
   box.onLoop(() => {
     // mesh.rotation.x += 0.01
-    mesh.rotation.y += 0.01
+    mesh.rotation.z += 0.01
   })
 
   box.onRefresh(() => {
