@@ -14,8 +14,8 @@ const io = {
 const guiData = {
   width: 200,
   height: 200,
-  segmentX: 70,
-  segmentY: 70
+  segmentX: 30,
+  segmentY: 30
 }
 
 const compatability = {
