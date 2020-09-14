@@ -40,10 +40,14 @@ void main (void) {
     1.0 - pattern(vec2(vUv * 5.0 + time * 5.0) +  offsetModifier.g * cos(time * 0.15), time),
     1.0 - pattern(vec2(vUv * 5.0 + time * 5.0) +  offsetModifier.b * cos(time * 0.15), time)
   );
-  gl_FragColor = vec4(baseColor * color, color.r);
 
-  // if (length(gl_PointCoord.xy - 0.5) > 0.5) {
-  //   discard;
-  // } else {
-  // }
+  #ifdef USE_POINTS
+    if (length(gl_PointCoord.xy - 0.5) > 0.5) {
+      discard;
+    } else {
+      gl_FragColor = vec4(baseColor * color, color.r);
+    }
+  #else
+    gl_FragColor = vec4(baseColor * color, color.r);
+  #endif
 }

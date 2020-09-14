@@ -2,8 +2,10 @@ import mvs from './m-vertex.glsl'
 import mfs from './m-fragment.glsl'
 export const makeMaterial = ({ box, work }) => {
   let gui = work.guiData
-  let { ShaderMaterial, Color } = box.deps.THREE
+  let { ShaderMaterial, Color, Points } = box.deps.THREE
 
+  let defines = {
+  }
   let uniforms = {
     pointSize: { type: 'f', value: 5.47 },
     twisterX: { type: 'f', value: 0.334 },
@@ -33,6 +35,8 @@ export const makeMaterial = ({ box, work }) => {
   })
 
   let material = new ShaderMaterial({
+    transparent: true,
+    defines,
     uniforms,
     vertexShader: mvs,
     fragmentShader: mfs

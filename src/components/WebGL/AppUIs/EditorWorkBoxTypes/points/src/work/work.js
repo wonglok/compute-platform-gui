@@ -8,6 +8,9 @@ export const use = async ({ box, work, works, arrows }) => {
     },
     replaceMaterial: ({ material }) => {
       api.drawItem.material = material
+      if (material.defines) {
+        material.defines.USE_POINTS = 'true'
+      }
       material.needsUpdate = true
     },
     replaceDrawItem: ({ drawItem }) => {
@@ -17,6 +20,7 @@ export const use = async ({ box, work, works, arrows }) => {
     },
     drawItem: false
   }
+
   workspaces.set(work._id, api)
 
   let geo = new PlaneBufferGeometry(120, 120, 30, 30)

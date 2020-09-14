@@ -12,7 +12,7 @@ export const use = ({ box, work }) => {
   // directionaLight.position.z = 300
   // scene.add(directionaLight)
 
-  let geo = new PlaneBufferGeometry(120, 120, 30, 30)
+  let geo = new PlaneBufferGeometry(120, 120, 12, 12)
   let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe'), side: DoubleSide })
   let mesh = new LineSegments(geo, mat)
 
