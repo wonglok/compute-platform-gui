@@ -37,13 +37,17 @@ export const use = async ({ box, work, works, arrows }) => {
     }
   }
 
+  let cache = {
+
+  }
   let checkAndRun = () => {
     let { api, arrowAB, arrowBA } = getFirstConnectedItem({ work })
     if (api && api.replaceGeometry) {
 
-      let material = makeMaterial({ work, box })
+      cache.material = cache.material || makeMaterial({ work, box })
+      cache.material.needsUpdate = true
 
-      api.replaceMaterial({ material })
+      api.replaceMaterial({ material: cache.material })
 
       arrowAB.errorCode = ''
       arrowAB.errorMsg = ''
@@ -67,9 +71,9 @@ export const use = async ({ box, work, works, arrows }) => {
   }
 
   checkAndRun()
-  box.onRefresh(() => {
-    checkAndRun()
-  })
+  // box.onRefresh(() => {
+  //   checkAndRun()
+  // })
 
   // let geo = new BoxBufferGeometry(100, 100, 100, 5, 5, 5)
   // let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#ffba00') })

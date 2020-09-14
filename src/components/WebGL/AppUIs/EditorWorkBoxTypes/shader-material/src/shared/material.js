@@ -42,11 +42,11 @@ export const makeMaterial = ({ box, work }) => {
     fragmentShader: mfs
   })
 
-  box.onRefresh(() => {
-    material.vertexShader = mvs
-    material.fragmentShader = mfs
-    material.needsUpdate = true
-  })
+  // box.onRefresh(() => {
+  //   material.vertexShader = mvs
+  //   material.fragmentShader = mfs
+  //   material.needsUpdate = true
+  // })
 
   return material
 }

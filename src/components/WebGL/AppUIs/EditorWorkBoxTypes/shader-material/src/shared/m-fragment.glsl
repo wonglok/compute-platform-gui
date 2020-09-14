@@ -36,7 +36,7 @@
 
 void main (void) {
   vec3 color = vec3(
-    1.0 - pattern(vec2(vUv * 5.0 + time * 5.0) +  -offsetModifier.r * cos(time * 0.15), time),
+    1.0 - pattern(vec2(vUv * 5.0 + time * 5.0) +  offsetModifier.r * cos(time * 0.15), time),
     1.0 - pattern(vec2(vUv * 5.0 + time * 5.0) +  offsetModifier.g * cos(time * 0.15), time),
     1.0 - pattern(vec2(vUv * 5.0 + time * 5.0) +  offsetModifier.b * cos(time * 0.15), time)
   );

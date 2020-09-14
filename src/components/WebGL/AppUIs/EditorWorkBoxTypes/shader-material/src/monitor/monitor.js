@@ -20,10 +20,11 @@ export const use = async ({ box, work }) => {
     // mesh.rotation.y += 0.01
   })
 
-  box.onRefresh(() => {
-    mesh.material = makeMaterial({ work, box })
-  })
-  box.runRefresh()
+  // box.onRefresh(() => {
+  //   mesh.material = makeMaterial({ work, box })
+  // })
+
+  // box.runRefresh()
 
   scene.add(mesh)
   // console.log(scene)
