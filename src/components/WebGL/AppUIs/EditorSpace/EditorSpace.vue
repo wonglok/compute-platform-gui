@@ -54,7 +54,7 @@
       <EditBox v-for="win in core.wins" :key="win._id + '-wins'" :wins="core.wins" v-show="win.show" :win="win" :offset="offset" class="win-area">
         <EditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'editor'"></EditorUnit>
         <!-- <PropsEditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'props-editor'"></PropsEditorUnit> -->
-        <component :key="win._id" :win="win" :work="core.getWorkByWin({ win })" :core="core" :wins="core.wins" v-if="Object.keys($options.components).includes(win.appName)" :is="win.appName"></component>
+        <EditWorkBox :key="win._id" :win="win" :work="core.getWorkByWin({ win })" :core="core" :wins="core.wins"></EditWorkBox>
 
         <!-- <EditorUnit :initTree="core.engineCodeTree" :key="win._id" v-if="win.appName === 'edit-pipeline'"></EditorUnit> -->
         <!-- <EditorFacePipeline :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'face-pipeline'"></EditorFacePipeline> -->

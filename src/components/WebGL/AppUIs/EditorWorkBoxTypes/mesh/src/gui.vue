@@ -1,10 +1,15 @@
 <template>
-  <div class="p-4 full overflow-scroll">
-    <div class=" font-sans text-3xl">
-      FaceCluster GUI
+  <div class="p-4 full overflow-scroll neu-bg ">
+    <div class="rounded-lg neu-sm py-3 px-5 m-3">
+      <div class="font-sans text-3xl mb-3">
+        Mesh
+      </div>
+      <div class="text-sm">
+        Draw Item
+      </div>
     </div>
-    <div class=" font-sans text-3xl">
 
+    <!-- <div class=" font-sans text-3xl">
       <div v-for="uniform in gui.extraUniforms" :key="uniform.name">
         <div v-if="uniform.updater === 'slider'">
           <input type="range" min="0" max="10" step="0.0001" v-model="uniform.value">
@@ -15,16 +20,17 @@
           </select>
         </div>
       </div>
-    </div>
-    <pre>{{ gui }}</pre>
+    </div> -->
+
+    <!-- <pre class="">{{ gui }}</pre> -->
+
+
   </div>
 </template>
 
 <script>
-import { enableESC } from '../../WorkBoxGUIMixin'
 export default {
   mixins: [
-    // enableESC
   ],
   props: {
     win: {},

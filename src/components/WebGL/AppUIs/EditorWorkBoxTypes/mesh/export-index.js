@@ -2,6 +2,7 @@
 import fileTree from './loadFiles.js'
 import coverImage from './img/thumb.svg'
 import { getID } from '../../../Core/O3DNode.js'
+import { EventDispatcher } from 'three'
 
 const workBoxFrameColor = '#bababa'
 const workBoxScreenColor = '#ffffff'
@@ -12,7 +13,7 @@ const io = {
 }
 
 const guiData = {
-
+  wireframe: true
 }
 
 const compatability = {
@@ -24,7 +25,7 @@ const compatability = {
 }
 
 const gui = {
-  settings: 'FaceClusterPropsGUI'
+  settings: 'MeshGUI'
 }
 
 const buttons = {
@@ -32,7 +33,7 @@ const buttons = {
   tr: {},
   bl: {},
   br: {
-    icon: require('./img/circle-in.svg'),
+    icon: 'circle-in',
     mouseMode: 'box-in'
   },
   br2: false

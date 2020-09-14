@@ -76,8 +76,8 @@ export default {
       newSprite.textHeight = 1
       newSprite.color = '#ff0000'
       newSprite.padding = 3
-      newSprite.position.y += 10
-      newSprite.position.z += -5
+      newSprite.position.y += 3.5
+      newSprite.position.z += -10
       newSprite.backgroundColor = 'rgba(255,255,255,0.6)'
       newSprite.visible = this.arrow.errorMsg !== ''
 
@@ -158,6 +158,8 @@ export default {
         ball.material.color.setHSL(0, 0.5, 0.5)
         cancelBall.material.color.setHSL(0,0.5, 0.7 + 0.3 * Math.abs(Math.sin(time)))
         curveO3D.material.color.setHSL(0, Math.abs(Math.sin(time)), 0.5)
+
+        curve.getPointAt(0, ball.position)
       } else {
         curveO3D.material.color.set('#a6e22e')
       }
@@ -178,5 +180,4 @@ export default {
 </script>
 
 <style>
-
 </style>

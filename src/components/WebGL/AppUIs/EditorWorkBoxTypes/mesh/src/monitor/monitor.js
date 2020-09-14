@@ -1,4 +1,4 @@
-export const use = (box) => {
+export const use = ({ box, work }) => {
   // if (box && box.userData && box.userData.work && box.userData.work.coverImage) {
   let { MeshBasicMaterial, Mesh, BoxBufferGeometry, Color, DoubleSide } = box.deps.THREE
   let { scene, camera } = box

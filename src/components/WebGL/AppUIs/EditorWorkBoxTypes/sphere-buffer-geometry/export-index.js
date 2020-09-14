@@ -12,7 +12,9 @@ const io = {
 }
 
 const guiData = {
-
+  radius: 60,
+  segmentX: 32,
+  segmentY: 32
 }
 
 const compatability = {
@@ -24,7 +26,7 @@ const compatability = {
 }
 
 const gui = {
-  settings: 'FaceClusterPropsGUI'
+  settings: 'SphereBuffereGeometryGUI'
 }
 
 const buttons = {
@@ -32,7 +34,7 @@ const buttons = {
   tr: {},
   bl: {},
   br: {
-    icon: require('./img/circle-out.svg'),
+    icon: 'circle-out',
     mouseMode: 'box-out'
   },
   br2: false

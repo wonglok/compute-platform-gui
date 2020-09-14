@@ -120,6 +120,7 @@ export default {
       if (this.ctx.panner) {
         let zero = new Vector3(0, 0, 0)
         let lerpRotation = new Vector3(0, 0, 0)
+        let lerpYPosition = new Vector3(0, 10, 0)
 
         baseMesh.userData.canRun = true
         // baseMesh.layers.enable(1)
@@ -131,9 +132,13 @@ export default {
             }
             window.dispatchEvent(new Event('plot-curve'))
             lerpRotation.copy(baseMesh.rotation)
-            lerpRotation.lerp(zero, 0.2)
+            lerpRotation.lerp(zero, 0.1)
             baseMesh.rotation.set(lerpRotation.x, lerpRotation.y, lerpRotation.z)
-            baseMesh.rotation.set(lerpRotation.x, lerpRotation.y, lerpRotation.z)
+            lerpYPosition.x = baseMesh.position.x
+            lerpYPosition.z = baseMesh.position.z
+            lerpYPosition.y = 10
+
+            baseMesh.position.lerp(lerpYPosition, 0.3)
             this.ctx.ammo.setMeshPosition({ mesh: baseMesh })
           }
         })
@@ -288,7 +293,7 @@ export default {
       let roundedGeo = makeCurved(boxW, boxH, boxDepth)
       let roundedMat = new MeshBasicMaterial({ transparent: true })
       let screen = new Mesh(roundedGeo, roundedMat)
-      screen.position.y = boxDepth * 0.5 + 0.15
+      screen.position.y = boxDepth * 0.5 + boxDepth * 0.2
 
       this.$on('texture', ({ texture }) => {
         if (texture && roundedMat.map !== texture) {
@@ -345,6 +350,20 @@ export default {
       baseMesh.add(screen)
     }
 
+    let getIcon = ({ work, key = 'br' }) => {
+      let icon = require('./icon/box-out.svg')
+      if (work.buttons[key].icon === 'circle-out') {
+        icon = require('./icon/circle-out.svg')
+      }
+      if (work.buttons[key].icon === 'circle-in') {
+        icon = require('./icon/circle-in.svg')
+      }
+      if (work.buttons[key].icon === 'icon-stack') {
+        icon = require('./icon/icon-stack.svg')
+      }
+      return icon
+    }
+
     let baseMesh = makeBaseMesh()
 
     if (this.work.buttons.tl) {
@@ -357,22 +376,17 @@ export default {
     }
 
     if (this.work.buttons.bl) {
-      let icon = require('./icon/gear-black.png')
+      let icon = require('./icon/icon-code.svg')
       makeButton({ corner: 'bl', color: '#ffffff', baseMesh, icon })
     }
 
     if (this.work.buttons.br) {
-      let icon = require('./icon/box-out.svg')
-      if (this.work.buttons.br.icon) {
-        icon = this.work.buttons.br.icon
-      }
+      let icon = getIcon({ work: this.work, key: 'br' })
       makeButton({ corner: 'br', color: '#ffffff', baseMesh, icon })
     }
+
     if (this.work.buttons.br2) {
-      let icon = require('./icon/box-out.svg')
-      if (this.work.buttons.br2.icon) {
-        icon = this.work.buttons.br2.icon
-      }
+      let icon = getIcon({ work: this.work, key: 'br2' })
       makeButton({ corner: 'br2', color: '#ffffff', baseMesh, icon })
     }
 

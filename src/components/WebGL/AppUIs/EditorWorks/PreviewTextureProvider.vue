@@ -32,6 +32,12 @@ export default {
       this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget })
     }
 
+    this.$root.$on('refresh-ui', () => {
+      if (this.runCore) {
+        this.runCore.runRefresh()
+      }
+    })
+
     let getSignature = () => {
       return JSON.stringify([
         core.works.map(e => {

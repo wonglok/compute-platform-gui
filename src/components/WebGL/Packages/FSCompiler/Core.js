@@ -1,7 +1,7 @@
 import * as UI from '../../AppUIs/EditorSpace/ageUI'
 import Vue from 'vue'
 import { getID } from '../../Core/O3DNode'
-import { makeMonitorCode, makePackageCode, treeToFlat } from './FSCompiler'
+import { makeMonitorCode, makePackageCode, makeVueCode, treeToFlat } from './FSCompiler'
 import { EventDispatcher } from 'three/build/three.module'
 // import { EventDispatcher } from './UMD'
 import WorkBoxTypes from '../../AppUIs/EditorWorkBoxTypes/WorkBoxTypes.js'
@@ -13,6 +13,8 @@ import WorkBoxTypes from '../../AppUIs/EditorWorkBoxTypes/WorkBoxTypes.js'
 //     this.vm = vm
 //   }
 // }
+
+export { WorkBoxTypes }
 
 export class AppCore extends EventDispatcher {
   constructor ({ onLoop, $root }) {
@@ -123,6 +125,27 @@ export class AppCore extends EventDispatcher {
     }
   }
 
+  processVueCode ({ vueCode }) {
+    let templateCode = vueCode.match(/<template>([\S\s]*?)<\/template>/gi)
+    templateCode = templateCode[0]
+    templateCode = templateCode.replace(/^<template>/, '')
+    templateCode = templateCode.replace(/<\/template>$/, '')
+
+    let styleCode = vueCode.match(/<style([\S\s]*?)<\/style>/gi)
+    let styleHTML = styleCode[0]
+
+    let scriptCode = vueCode.match(/<script>([\S\s]*?)<\/script>/gi)
+    scriptCode = scriptCode[0]
+    scriptCode = scriptCode.replace(/^<script>/, '')
+    scriptCode = scriptCode.replace(/<\/script>$/, '')
+
+    return {
+      templateCode,
+      styleHTML,
+      scriptCode
+    }
+  }
+
   refresh () {
     window.dispatchEvent(new Event('plot-curve'))
     setTimeout(() => {
@@ -132,6 +155,7 @@ export class AppCore extends EventDispatcher {
       window.dispatchEvent(new Event('plot-curve'))
     }, 200)
   }
+
   getCurrentWorkFrom () {
     return this.works.find(e => e._id === this.current.workFrom)
   }

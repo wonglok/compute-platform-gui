@@ -38,26 +38,30 @@ export const use = async ({ box, work, works, arrows }) => {
   let checkAndRun = () => {
     let { api, arrowAB, arrowBA } = getFirstConnectedItem({ work })
     if (api && api.replaceGeometry) {
-      api.replaceGeometry({ geometry: new SphereBufferGeometry(60, 36, 36) })
+      let gui = work.guiData
+
+      api.replaceGeometry({ geometry: new SphereBufferGeometry(gui.radius, gui.segmentX, gui.segmentY) })
       arrowAB.errorCode = ''
       arrowAB.errorMsg = ''
     } else if (api && !api.replaceGeometry) {
       if (arrowAB) {
-        arrowAB.errorCode = 'api.replaceGeometry'
-        arrowAB.errorMsg = 'api.replaceGeometry method is not found'
+        arrowAB.errorCode = 'API.replaceGeometry'
+        arrowAB.errorMsg = 'API.replaceGeometry method is not found'
         console.error(arrowAB.errorMsg)
       }
     } else {
       if (arrowBA) {
-        arrowBA.errorCode = 'Wrong direction, api is not found'
-        arrowBA.errorMsg = 'Wrong direction, api is not found'
+        arrowBA.errorCode = 'API is not found'
+        arrowBA.errorMsg = 'API is not found'
         console.error(arrowBA.errorMsg)
       }
     }
   }
 
   checkAndRun()
-
+  box.onRefresh(() => {
+    checkAndRun()
+  })
 
   // let geo = new BoxBufferGeometry(100, 100, 100, 5, 5, 5)
   // let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#ffba00') })

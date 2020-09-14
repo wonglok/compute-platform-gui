@@ -24,6 +24,6 @@ export const use = async ({ box, work, works, arrows }) => {
   api.drawItem = new Mesh(geo, mat)
   box.scene.add(api.drawItem)
 
-  console.log('context of run time', api.drawItem, box, works, arrows)
+  // console.log('context of run time', api.drawItem, box, works, arrows)
   // box.scene.background = new Color('#ffba00')
 }

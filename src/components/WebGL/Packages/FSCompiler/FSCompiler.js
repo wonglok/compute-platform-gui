@@ -288,3 +288,19 @@ export const makePackageCode = async ({ pack }) => {
 
   return code
 }
+
+
+export const makeVueCode = async ({ pack }) => {
+  // if (!pack) {
+  //   pack = {
+  //     name: 'codebase',
+  //     list: getDefaultList()
+  //   }
+  //   console.log('You missed pack')
+  // }
+
+  let file = pack.list.find(e => e.path === './gui.vue')
+  if (file) {
+    return file.src
+  }
+}
