@@ -1,7 +1,7 @@
 // export default as { Files } from
 import fileTree from './loadFiles.js'
 import coverImage from './img/thumb.svg'
-import { getID } from '../../../Core/O3DNode.js'
+// import { getID } from '../../../Core/O3DNode.js'
 
 const workBoxFrameColor = '#bababa'
 const workBoxScreenColor = '#ffffff'

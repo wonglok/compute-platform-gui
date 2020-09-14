@@ -1,10 +1,10 @@
 // export default as { Files } from
 import fileTree from './loadFiles.js'
 import coverImage from './img/thumb.svg'
-import { getID } from '../../../Core/O3DNode.js'
-import { EventDispatcher } from 'three'
+// import { getID } from '../../../Core/O3DNode.js'
+// import { EventDispatcher } from 'three'
 
-const workBoxFrameColor = '#bababa'
+const workBoxFrameColor = '#98ddd6'
 const workBoxScreenColor = '#ffffff'
 
 const io = {

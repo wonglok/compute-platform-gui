@@ -16,14 +16,16 @@
         </div>
       </div> -->
 
-      <div v-if="canChoose.includes('draw-type')">
-        <div class="font-sans text-xl  mb-3">
-          Draw Type 畫圖
+
+      <div v-if="canChoose.includes('material')">
+        <div class="font-sans text-xl mb-3">
+          Materials 視覺效果
         </div>
-        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('draw-type'))">
+        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('material'))">
           <div>{{ wbType.displayName }}</div>
         </div>
       </div>
+
 
       <div v-if="canChoose.includes('geometry')">
         <div class="font-sans text-xl mb-3">
@@ -34,11 +36,11 @@
         </div>
       </div>
 
-      <div v-if="canChoose.includes('material')">
+      <div v-if="canChoose.includes('draw-type')">
         <div class="font-sans text-xl  mb-3">
-          Materials 視覺效果
+          Draw Type 畫圖
         </div>
-        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('material'))">
+        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('draw-type'))">
           <div>{{ wbType.displayName }}</div>
         </div>
       </div>

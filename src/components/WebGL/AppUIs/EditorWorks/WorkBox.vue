@@ -93,6 +93,10 @@ export default {
         mat.dispose()
       })
 
+      if (this.work.workBoxFrameColor) {
+        mat.color.set(this.work.workBoxFrameColor)
+      }
+
       let baseMesh = new Mesh(geo, mat)
       baseMesh.name = 'base-mesh'
       baseMesh.layers.enable(1)
