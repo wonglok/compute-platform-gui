@@ -256,13 +256,13 @@ export default {
   },
   methods: {
     onClickFullScreen () {
-      let lst = [
+      let list = [
         'fullscreen',
         'topleft',
         'topleft-large'
       ]
       this.previewIdx = this.previewIdx || 0
-      this.showPreview = lst[this.previewIdx % lst.length]
+      this.showPreview = list[this.previewIdx % list.length]
       this.previewIdx++
       if (this.showPreview === 'topleft-large') {
         this.pSize = 512
