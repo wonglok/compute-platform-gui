@@ -233,11 +233,14 @@ export default {
     })
     this.$watch('currentWorkInWin', () => {
       if (this.currentWorkInWin) {
+        this.__showPreview = this.showPreview
+        this.__pSize = this.pSize
+
         this.showPreview = 'topleft'
         this.pSize = 270
       } else {
-        this.showPreview = 'fullscreen'
-        this.pSize = 270
+        this.showPreview = this.__showPreview
+        this.pSize = this.__pSize
       }
       window.dispatchEvent(new Event('resize'))
     })
