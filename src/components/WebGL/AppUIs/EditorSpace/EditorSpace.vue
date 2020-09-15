@@ -455,7 +455,7 @@ export default {
 
       // this.rayplay.setLayer(2)
 
-      this.camera.position.y = 100
+      this.camera.position.y = 125
       this.camera.position.z = 0
       this.camera.lookAt(this.scene.position)
 

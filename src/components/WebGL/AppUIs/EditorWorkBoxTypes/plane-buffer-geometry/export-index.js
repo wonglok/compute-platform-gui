@@ -12,8 +12,8 @@ const io = {
 }
 
 const guiData = {
-  width: 200,
-  height: 200,
+  width: 120,
+  height: 120,
   segmentX: 30,
   segmentY: 30
 }
