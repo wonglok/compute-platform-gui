@@ -235,6 +235,9 @@ export default {
       if (this.currentWorkInWin) {
         this.showPreview = 'topleft'
         this.pSize = 270
+      } else {
+        this.showPreview = 'fullscreen'
+        this.pSize = 270
       }
       window.dispatchEvent(new Event('resize'))
     })
