@@ -23,12 +23,13 @@ export default {
     let core = this.ctx.core
 
     let dpi = window.devicePixelRatio || 1
-    this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, this.size * dpi)
+
 
     let setup = () => {
       if (this.runCore) {
         this.runCore.goCleanUp()
       }
+      this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, this.size * dpi)
       this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget })
     }
 
@@ -47,6 +48,9 @@ export default {
       ])
     }
 
+    this.$watch('size', () => {
+      this.last = ''
+    })
     this.$root.$on('compile-workbox', () => {
       this.last = ''
     })
@@ -66,10 +70,12 @@ export default {
     }, 100)
 
     this.onLoop(() => {
-      this.$parent.$emit('texture', {
-        enable: true,
-        texture: this.displayRenderTarget.texture
-      })
+      if (this.displayRenderTarget) {
+        this.$parent.$emit('texture', {
+          enable: true,
+          texture: this.displayRenderTarget.texture
+        })
+      }
     })
   }
 }

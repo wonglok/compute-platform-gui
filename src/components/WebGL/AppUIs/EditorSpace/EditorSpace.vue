@@ -69,16 +69,16 @@
       <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>
     </div> -->
 
-    <div v-if="core" :class="{ 'pointer-events-none': true }" class=" absolute top-0 left-0">
-      <div style="width: 270px; height: 270px; margin: 15px; " >
+    <div v-if="core" :class="{ 'pointer-events-none': false }"  @click="togglePSize()" class=" cursor-pointer absolute top-0 left-0">
+      <div :style="{ width: `${pSize}px`, height: `${pSize}px`, margin: `15px` }">
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane>
-            <PreviewTextureProvider :size="270"></PreviewTextureProvider>
+            <PreviewTextureProvider :size="pSize"></PreviewTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
 
-      <div style="width: 270px; height: 270px; margin: 15px; " >
+      <div style="width: 270px; height: 270px; margin: 15px; ">
         <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="core.getCurrentWork()">
             <WBTextureProvider :size="270" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
@@ -120,6 +120,7 @@ export default {
   ],
   data () {
     return {
+      pSize: 270,
       overlayGUI: false,
       dynamo: false,
       shell: false,
@@ -221,8 +222,31 @@ export default {
     window.addEventListener('plot-curve', () => {
       this.$forceUpdate()
     })
+    this.$watch('currentWorkInWin', () => {
+      if (this.currentWorkInWin) {
+        this.pSize = 270
+      }
+      window.dispatchEvent(new Event('resize'))
+    })
+  },
+  computed: {
+    currentWorkInWin () {
+      if (this.core) {
+        return this.core.getCurrentWork()
+      } else {
+        return false
+      }
+    }
   },
   methods: {
+    togglePSize () {
+      if (this.pSize !== 1024) {
+        this.pSize = 1024
+      } else if (this.pSize === 1024) {
+        this.pSize = 270
+      }
+      window.dispatchEvent(new Event('resize'))
+    },
     onChooseOverlay (ev) {
       console.log(ev)
     },
