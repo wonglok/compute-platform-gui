@@ -80,14 +80,14 @@
       <div :style="{ width: `${pSize + 2}px`, height: `${pSize + 2}px` }"  :class="{ 'rounded-lg border border-gray-500 mb-3': showPreview === 'topleft' || showPreview === 'topleft-large' }">
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="showPreview === 'topleft' || showPreview === 'topleft-large'">
-            <PreviewTextureProvider :size="pSize"></PreviewTextureProvider>
+            <PreviewTextureProvider :size="512"></PreviewTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
       <div :style="{ width: `${pSize}px`, height: `${pSize}px` }" :class="{ 'rounded-lg border border-gray-500': core.getCurrentWork() }">
         <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="core.getCurrentWork()">
-            <WBTextureProvider :size="512" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
+            <WBTextureProvider :size="pSize" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
