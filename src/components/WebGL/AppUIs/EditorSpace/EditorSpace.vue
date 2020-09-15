@@ -35,6 +35,10 @@
 
       <WBArrow v-for="arrow in core.arrows" :key="arrow._id" :arrow="arrow" :arrowID="arrow._id" :core="core">
       </WBArrow>
+
+      <PreviewPlane>
+        <PreviewTextureProvider :size="vmin"></PreviewTextureProvider>
+      </PreviewPlane>
     </O3D>
 
     <div @click="onClickWrapper" class="absolute top-0 left-0 full" ref="wrapper">
@@ -69,7 +73,7 @@
       <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>
     </div> -->
 
-    <div v-if="core"  class=" cursor-pointer absolute top-0 left-0">
+    <div v-if="core" class="pointer-events-none cursor-pointer absolute top-0 left-0">
       <div :style="{ width: `${pSize}px`, height: `${pSize}px`, margin: `15px` }" @click="togglePSize()">
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane>
@@ -77,7 +81,7 @@
           </PreviewPlane>
         </GLArtCanvas>
       </div>
-      <div :class="{ 'pointer-events-none': true }"  style="width: 270px; height: 270px; margin: 15px; ">
+      <div style="width: 270px; height: 270px; margin: 15px; ">
         <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="core.getCurrentWork()">
             <WBTextureProvider :size="270" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
@@ -119,6 +123,7 @@ export default {
   ],
   data () {
     return {
+      vmin: Math.min(window.innerWidth, window.innerHeight),
       pSize: 270,
       overlayGUI: false,
       dynamo: false,
@@ -179,6 +184,7 @@ export default {
         this.$forceUpdate()
       }
       */
+
       if (this.mouseMode === '') {
         let idx = this.$root.escs.findIndex(e => e === restore)
         if (idx !== -1) {
@@ -572,9 +578,10 @@ export default {
     Vue.prototype.$core = this.core
 
     // run demo
-    this.core.addDemoOps()
+    // this.core.addDemoOps()
 
     this.$root.escs = this.$root.escs || []
+
     window.addEventListener('keydown', (ev) => {
       if (!this.isComponentActive) {
         return
@@ -587,6 +594,9 @@ export default {
       }
     })
 
+    window.addEventListener('resize', () => {
+      this.vmin = Math.min(window.innerWidth, window.innerHeight)
+    }, false)
   },
   beforeDestroy () {
     this.isComponentActive = false
