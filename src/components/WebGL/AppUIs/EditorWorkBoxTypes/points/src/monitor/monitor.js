@@ -14,6 +14,7 @@ export const use = ({ box, work }) => {
 
   let geo = new PlaneBufferGeometry(200, 200, 10, 10)
   let mat = new ShaderMaterial({
+    transparent: true,
     vertexShader: `
       void main (void) {
         gl_PointSize = 10.0;
@@ -38,7 +39,7 @@ export const use = ({ box, work }) => {
 
   box.onLoop(() => {
     let time = window.performance.now() * 0.001
-    mesh.position.z = Math.sin(time * 3.3333) * 50.0
+    mesh.position.z = Math.sin(time * 3.3333) * 10.0
   })
 
   scene.add(mesh)
