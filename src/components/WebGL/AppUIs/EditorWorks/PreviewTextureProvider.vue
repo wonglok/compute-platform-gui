@@ -22,15 +22,13 @@ export default {
   async mounted () {
     let core = this.ctx.core
 
-    let dpi = window.devicePixelRatio || 1
-
-
     let setup = () => {
+      let dpi = window.devicePixelRatio || 1
       if (this.runCore) {
         this.runCore.goCleanUp()
       }
       this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, this.size * dpi)
-      this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget })
+      this.runCore = new RunCore  ({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget })
     }
 
     this.$root.$on('refresh-ui', () => {

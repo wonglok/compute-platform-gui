@@ -69,16 +69,15 @@
       <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>
     </div> -->
 
-    <div v-if="core" :class="{ 'pointer-events-none': false }"  @click="togglePSize()" class=" cursor-pointer absolute top-0 left-0">
-      <div :style="{ width: `${pSize}px`, height: `${pSize}px`, margin: `15px` }">
+    <div v-if="core"  class=" cursor-pointer absolute top-0 left-0">
+      <div :style="{ width: `${pSize}px`, height: `${pSize}px`, margin: `15px` }" @click="togglePSize()">
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane>
             <PreviewTextureProvider :size="pSize"></PreviewTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
-
-      <div style="width: 270px; height: 270px; margin: 15px; ">
+      <div :class="{ 'pointer-events-none': true }"  style="width: 270px; height: 270px; margin: 15px; ">
         <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="core.getCurrentWork()">
             <WBTextureProvider :size="270" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
@@ -240,9 +239,9 @@ export default {
   },
   methods: {
     togglePSize () {
-      if (this.pSize !== 1024) {
-        this.pSize = 1024
-      } else if (this.pSize === 1024) {
+      if (this.pSize !== 512) {
+        this.pSize = 512
+      } else if (this.pSize === 512) {
         this.pSize = 270
       }
       window.dispatchEvent(new Event('resize'))
