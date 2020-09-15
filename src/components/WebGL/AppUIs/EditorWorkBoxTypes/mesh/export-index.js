@@ -40,7 +40,7 @@ const buttons = {
   tr: {},
   bl: {},
   br: {
-    icon: 'circle-in',
+    icon: 'circle-plus',
     mouseMode: 'box-in'
   },
   br2: false

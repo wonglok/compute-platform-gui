@@ -140,7 +140,7 @@ export default {
             baseMesh.rotation.set(lerpRotation.x, lerpRotation.y, lerpRotation.z)
             lerpYPosition.x = baseMesh.position.x
             lerpYPosition.z = baseMesh.position.z
-            lerpYPosition.y = 10
+            lerpYPosition.y = 0
 
             baseMesh.position.lerp(lerpYPosition, 0.3)
             if (this.ctx.ammo) {
@@ -366,6 +366,9 @@ export default {
       }
       if (work.buttons[key].icon === 'icon-stack') {
         icon = require('./icon/icon-stack.svg')
+      }
+      if (work.buttons[key].icon === 'circle-plus') {
+        icon = require('./icon/circle-plus.svg')
       }
       return icon
     }
