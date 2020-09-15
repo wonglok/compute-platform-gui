@@ -17,6 +17,9 @@ export default {
   props: {
     size: {
       default: 256
+    },
+    sizeY: {
+      default: 256
     }
   },
   async mounted () {
@@ -27,8 +30,8 @@ export default {
       if (this.runCore) {
         this.runCore.goCleanUp()
       }
-      this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, this.size * dpi)
-      this.runCore = new RunCore  ({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget })
+      this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, (this.size) * dpi)
+      this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget })
     }
 
     this.$root.$on('refresh-ui', () => {

@@ -143,7 +143,9 @@ export default {
             lerpYPosition.y = 10
 
             baseMesh.position.lerp(lerpYPosition, 0.3)
-            this.ctx.ammo.setMeshPosition({ mesh: baseMesh })
+            if (this.ctx.ammo) {
+              this.ctx.ammo.setMeshPosition({ mesh: baseMesh })
+            }
           }
         })
 

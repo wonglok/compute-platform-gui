@@ -30,6 +30,7 @@ export const use = ({ box, work }) => {
       }
     `
   })
+
   let mesh = new Points(geo, mat)
 
   camera.position.z = 150

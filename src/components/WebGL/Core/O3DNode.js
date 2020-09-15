@@ -148,6 +148,21 @@ export const visibleHeightAtZDepthForCamYAxis = ({ depth, camera }) => {
   return 2 * Math.tan(vFOV / 2) * Math.abs(depth)
 }
 
+export const getScreenYAxis = ({ camera, depth = 0 }) => {
+  let width = visibleWidthAtZDepthForCamYAxis({ depth, camera })
+  let height = visibleHeightAtZDepthForCamYAxis({ depth, camera })
+  let min = Math.min(width, height)
+  let max = Math.max(width, height)
+  return {
+    min,
+    max,
+    isVertical: height > width,
+    isLandscape: width > height,
+    width,
+    height
+  }
+}
+
 export const visibleHeightAtZDepth = (depth, camera) => {
   // compensate for cameras not positioned at z = 0
   const cameraOffset = camera.position.z

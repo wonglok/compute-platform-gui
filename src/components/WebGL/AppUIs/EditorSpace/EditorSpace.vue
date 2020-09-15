@@ -20,9 +20,10 @@
       <AmbinetLight :color="0xffffff" :helper="isDev && isOff" :intensity="0.5"></AmbinetLight>
     </O3D>
 
-    <O3D v-if="core && ammo">
-      <WorkFloor :mouseMode="mouseMode" @move-point="onMove($event)" @click-floor="onClickFloor" @delta="onPan($event)"></WorkFloor>
-
+    <O3D v-if="core">
+      <O3D :py="-10">
+        <WorkFloor :mouseMode="mouseMode" @move-point="onMove($event)" @click-floor="onClickFloor" @delta="onPan($event)"></WorkFloor>
+      </O3D>
       <O3D v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
           <WBTextureProvider :key="work._id" :work="work" v-if="work"></WBTextureProvider>
@@ -36,9 +37,11 @@
       <WBArrow v-for="arrow in core.arrows" :key="arrow._id" :arrow="arrow" :arrowID="arrow._id" :core="core">
       </WBArrow>
 
-      <PreviewPlane>
-        <PreviewTextureProvider :size="vmin"></PreviewTextureProvider>
-      </PreviewPlane>
+      <O3D v-if="showPreview === 'fullscreen'" :rx="pi * -0.5" :py="-5">
+        <PreviewPlaneFullScreen>
+          <PreviewTextureProvider :size="512"></PreviewTextureProvider>
+        </PreviewPlaneFullScreen>
+      </O3D>
     </O3D>
 
     <div @click="onClickWrapper" class="absolute top-0 left-0 full" ref="wrapper">
@@ -46,13 +49,15 @@
     </div>
 
     <div class="absolute top-0 right-0 flex">
+
+      <div class="p-3">
+        <img src="./icon/fullscreen.svg" @click="onClickFullScreen" class="w-10 h-10" alt="">
+      </div>
+
       <div class="p-3">
         <img src="./icon/add.svg" @click="onClickAdd" class="w-10 h-10" alt="">
       </div>
-      <!--
-      <div class="p-3">
-        <img src="./icon/gear.svg" @click="onClickGear" class="w-10 h-10" alt="">
-      </div> -->
+
     </div>
 
     <div v-if="core">
@@ -74,9 +79,9 @@
     </div> -->
 
     <div v-if="core" class="pointer-events-none cursor-pointer absolute top-0 left-0">
-      <div :style="{ width: `${pSize}px`, height: `${pSize}px`, margin: `15px` }" @click="togglePSize()">
+      <div :style="{ width: `${pSize}px`, height: `${pSize}px`, margin: `15px` }">
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
-          <PreviewPlane>
+          <PreviewPlane :visible="showPreview === 'topleft' || showPreview === 'topleft-large'">
             <PreviewTextureProvider :size="pSize"></PreviewTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
@@ -84,12 +89,11 @@
       <div style="width: 270px; height: 270px; margin: 15px; ">
         <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="core.getCurrentWork()">
-            <WBTextureProvider :size="270" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
+            <WBTextureProvider :size="512" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
     </div>
-
 
     <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-out' || overlay === 'box-in'">
       <OVBoxInOut @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVBoxInOut>
@@ -123,6 +127,7 @@ export default {
   ],
   data () {
     return {
+      showPreview: 'fullscreen',
       vmin: Math.min(window.innerWidth, window.innerHeight),
       pSize: 270,
       overlayGUI: false,
@@ -137,6 +142,7 @@ export default {
       camera: false,
       scene: false,
       core: false,
+      showBGLayer: true,
       mouseMode: '',
       offset: {
         x: 0,
@@ -244,14 +250,30 @@ export default {
     }
   },
   methods: {
-    togglePSize () {
-      if (this.pSize !== 512) {
+    onClickFullScreen () {
+      let lst = [
+        'fullscreen',
+        'topleft',
+        'topleft-large'
+      ]
+      this.previewIdx = this.previewIdx || 0
+      this.showPreview = lst[this.previewIdx % lst.length]
+      this.previewIdx++
+      if (this.showPreview === 'topleft-large') {
         this.pSize = 512
-      } else if (this.pSize === 512) {
+      } else {
         this.pSize = 270
       }
       window.dispatchEvent(new Event('resize'))
     },
+    // togglePSize () {
+    //   if (this.pSize !== 512) {
+    //     this.pSize = 512
+    //   } else if (this.pSize === 512) {
+    //     this.pSize = 270
+    //   }
+    //   window.dispatchEvent(new Event('resize'))
+    // },
     onChooseOverlay (ev) {
       console.log(ev)
     },
@@ -446,12 +468,12 @@ export default {
       this.core.moveWorkToTrash({ work })
     },
     async setupAmmo () {
-      let ammo = new AmmoPhysics({
-        onLoop: this.onLoop,
-        onClean: this.onClean
-      })
-      await ammo.waitForSetup()
-      this.ammo = ammo
+      // let ammo = new AmmoPhysics({
+      //   onLoop: this.onLoop,
+      //   onClean: this.onClean
+      // })
+      // await ammo.waitForSetup()
+      // this.ammo = ammo
     },
     setupGraphics () {
       this.camera = new PCamera({
