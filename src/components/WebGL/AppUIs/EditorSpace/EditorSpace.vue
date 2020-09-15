@@ -49,7 +49,6 @@
     </div>
 
     <div class="absolute top-0 right-0 flex">
-
       <div class="p-3">
         <img src="./icon/fullscreen.svg" @click="onClickFullScreen" class="w-10 h-10" alt="">
       </div>
@@ -57,7 +56,6 @@
       <div class="p-3">
         <img src="./icon/add.svg" @click="onClickAdd" class="w-10 h-10" alt="">
       </div>
-
     </div>
 
     <div v-if="core">
@@ -78,15 +76,15 @@
       <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>
     </div> -->
 
-    <div v-if="core" class="pointer-events-none cursor-pointer absolute top-0 left-0">
-      <div :style="{ width: `${pSize}px`, height: `${pSize}px`, margin: `15px` }">
+    <div v-if="core" class="pointer-events-none cursor-pointer absolute top-0 left-0 p-3">
+      <div :style="{ width: `${pSize + 2}px`, height: `${pSize + 2}px` }"  :class="{ 'rounded-lg border border-gray-500 mb-3': showPreview === 'topleft' || showPreview === 'topleft-large' }">
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
-          <PreviewPlane :visible="showPreview === 'topleft' || showPreview === 'topleft-large'">
+          <PreviewPlane v-if="showPreview === 'topleft' || showPreview === 'topleft-large'">
             <PreviewTextureProvider :size="pSize"></PreviewTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
-      <div style="width: 270px; height: 270px; margin: 15px; ">
+      <div :style="{ width: `${pSize}px`, height: `${pSize}px` }" :class="{ 'rounded-lg border border-gray-500': core.getCurrentWork() }">
         <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="core.getCurrentWork()">
             <WBTextureProvider :size="512" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
@@ -235,6 +233,7 @@ export default {
     })
     this.$watch('currentWorkInWin', () => {
       if (this.currentWorkInWin) {
+        this.showPreview = 'topleft'
         this.pSize = 270
       }
       window.dispatchEvent(new Event('resize'))

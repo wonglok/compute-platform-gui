@@ -22,8 +22,8 @@ export const use = ({ box, work }) => {
     `,
     fragmentShader: `
       void main (void) {
-        if (length(gl_PointCoord.xy - 0.5) < 0.5) {
-          gl_FragColor = vec4(vec3(0.5), 0.5);
+        if (length(gl_PointCoord.xy - 0.5) <= 0.5) {
+          gl_FragColor = vec4(vec3(0.5), 1.0);
         } else {
           discard;
         }
