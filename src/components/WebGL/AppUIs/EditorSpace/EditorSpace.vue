@@ -125,7 +125,7 @@ export default {
   ],
   data () {
     return {
-      showPreview: 'fullscreen',
+      showPreview: 'topleft',
       vmin: Math.min(window.innerWidth, window.innerHeight),
       pSize: 270,
       overlayGUI: false,
