@@ -5,7 +5,7 @@
       您想畫設麽？
     </div>
     <div class=" text-center text-lg mb-12">
-      What do you want to draw?
+      Please choose your compute draw type.
     </div>
     <div class="flex justify-around max-w-4xl mx-auto">
       <div class=" w-1/4  flex flex-col justify-center items-center">
@@ -32,12 +32,12 @@
         </div>
       </div>
 
-      <!-- <div class="w-1/4 flex flex-col justify-center items-center">
-        <div class="text-center mb-12">立方體 平面 矩陣 <br/> Cubic Face Cluster</div>
+      <div class="w-1/4 flex flex-col justify-center items-center">
+        <div class="text-center mb-12">視覺計算 平面矩陣 <br/> Visual Compute Cluster</div>
         <div>
-          <img src="./img/cube-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'cube-face-cluster')" alt="">
+          <img src="./img/cube-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'compute-visual-cluster')" alt="">
         </div>
-      </div> -->
+      </div>
 
     </div>
   </div>

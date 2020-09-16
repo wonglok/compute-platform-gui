@@ -18,6 +18,11 @@ export default {
     size: {
       default: 256
     },
+    media: {
+      default () {
+        return {}
+      }
+    },
     work: {}
   },
   async mounted () {
@@ -37,7 +42,8 @@ export default {
 
       miniBox = new WBTextureProviderEngine({ onMasterLoop: this.onLoop })
       miniBox.deps = {
-        THREE
+        THREE,
+        media: this.media
       }
 
       miniBox = {
@@ -70,6 +76,13 @@ export default {
     })
 
     this.$watch('work', () => {
+      if (this.isDestroyed) {
+        return
+      }
+      compileCode()
+    })
+
+    this.$watch('media', () => {
       if (this.isDestroyed) {
         return
       }

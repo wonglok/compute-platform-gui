@@ -4,7 +4,7 @@ import Vue from 'vue'
 import { Chrome } from 'vue-color'
 
 export class RunCore extends EventDispatcher {
-  constructor ({ onMasterLoop, core, display, renderer }) {
+  constructor ({ onMasterLoop, core, display, renderer, media = {} }) {
     super()
     let box = this
     this.core = core
@@ -25,7 +25,8 @@ export class RunCore extends EventDispatcher {
     this.workspaces = new Map()
 
     this.deps = {
-      THREE
+      THREE,
+      media
     }
 
     this.onRefresh = (fnc) => {
@@ -190,7 +191,6 @@ export class CoreShell {
       return file.src
     }
   }
-
 
   processVueCode ({ vueCode }) {
     let templateCode = vueCode.match(/<template>([\S\s]*?)<\/template>/gi)

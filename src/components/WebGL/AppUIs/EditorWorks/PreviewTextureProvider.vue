@@ -15,6 +15,11 @@ export default {
     O3DNode
   ],
   props: {
+    media: {
+      default () {
+        return {}
+      }
+    },
     size: {
       default: 256
     },
@@ -31,7 +36,7 @@ export default {
         this.runCore.goCleanUp()
       }
       this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, (this.size) * dpi)
-      this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget })
+      this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget, media: this.media })
     }
 
     this.$root.$on('refresh-ui', () => {
@@ -50,6 +55,9 @@ export default {
     }
 
     this.$watch('size', () => {
+      this.last = ''
+    })
+    this.$watch('media', () => {
       this.last = ''
     })
     this.$root.$on('compile-workbox', () => {

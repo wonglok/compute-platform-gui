@@ -26,7 +26,7 @@
       </O3D>
       <O3D v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-          <WBTextureProvider :key="work._id" :work="work" v-if="work"></WBTextureProvider>
+          <WBTextureProvider :media="media" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
 
           <!-- <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider> -->
           <!-- <GLFlower></GLFlower> -->
@@ -39,7 +39,7 @@
 
       <O3D v-if="showPreview === 'fullscreen'" :rx="pi * -0.5" :py="-5">
         <PreviewPlaneFullScreen>
-          <PreviewTextureProvider :size="512"></PreviewTextureProvider>
+          <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
         </PreviewPlaneFullScreen>
       </O3D>
     </O3D>
@@ -49,6 +49,11 @@
     </div>
 
     <div class="absolute top-0 right-0 flex">
+      <div class="p-3">
+        <img src="./icon/mic-off.svg" v-if="!media.micNow" @click="onClickMic" class="w-10 h-10" alt="">
+        <img src="./icon/mic-on.svg" v-if="media.micNow" @click="onClickMic" class="w-10 h-10" alt="">
+      </div>
+
       <div class="p-3">
         <img src="./icon/fullscreen.svg" @click="onClickFullScreen" class="w-10 h-10" alt="">
       </div>
@@ -80,14 +85,14 @@
       <div :style="{ width: `${pSize + 2}px`, height: `${pSize + 2}px` }"  :class="{ 'rounded-lg border border-gray-500 mb-3': showPreview === 'topleft' || showPreview === 'topleft-large' }">
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="showPreview === 'topleft' || showPreview === 'topleft-large'">
-            <PreviewTextureProvider :size="512"></PreviewTextureProvider>
+            <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
       <div :style="{ width: `${pSize}px`, height: `${pSize}px` }" :class="{ 'rounded-lg border border-gray-500': core.getCurrentWork() }">
         <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="core.getCurrentWork()">
-            <WBTextureProvider :size="pSize" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
+            <WBTextureProvider :media="media" :size="pSize" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
@@ -109,7 +114,6 @@
 
 <script>
 import Vue from 'vue'
-
 import * as UI from './ageUI'
 import { Scene, Vector2, Vector3 } from 'three'
 import { RenderRoot } from '../../Core/RenderRoot'
@@ -119,12 +123,18 @@ import { Dragger } from './Dragger'
 import { AmmoPhysics } from './AmmoPhysics'
 import { getID, getScreen } from '../../Core/O3DNode'
 import { AppCore } from '../../Packages/FSCompiler/Core'
+import { setupTimed, setupNow } from './Mic.js'
+
 export default {
   mixins: [
     RenderRoot
   ],
   data () {
     return {
+      media: {
+        micNow: false,
+        micPast: false
+      },
       showPreview: 'topleft',
       vmin: Math.min(window.innerWidth, window.innerHeight),
       pSize: 270,
@@ -255,6 +265,16 @@ export default {
     }
   },
   methods: {
+    onClickMic () {
+      let timed = setupTimed()
+      let now = setupNow()
+      this.media.micPast = timed
+      this.media.micNow = now
+      this.onLoop(() => {
+        timed.update()
+        now.update()
+      })
+    },
     onClickFullScreen () {
       let list = [
         'fullscreen',

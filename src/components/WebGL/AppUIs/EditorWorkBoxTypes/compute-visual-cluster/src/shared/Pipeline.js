@@ -1,4 +1,4 @@
-// import * as Shaders from './Shaders.js'
+import * as Shaders from './Shaders.js'
 let glsl = (strings, ...args) => {
 
   let res = ''
@@ -12,20 +12,54 @@ let glsl = (strings, ...args) => {
 
   return res
 }
+/*
+{
+  name: 'distributionMode',
+  type: 'float',
+  updater: 'select',
+  options: [
+    {
+      _id: getID(),
+      value: '0.0',
+      display: 'Cube Distribution'
+    },
+    {
+      _id: getID(),
+      value: '1.0',
+      display: 'Plane Distribution'
+    }
+  ],
+  needsAuhtorises: false,
+  value: '0.0'
+},
+{
+  name: 'faceDistribution',
+  type: 'float',
+  updater: 'slider',
+  needsAuhtorises: false,
+  value: 3.0973
+},
+{
+  name: 'faceSize',
+  type: 'float',
+  updater: 'slider',
+  needsAuhtorises: false,
+  value: 0.3084
+}
+*/
 
 export class Pipeline {
-  constructor (box) {
+  constructor ({ box, work }) {
     let { onLoop, onClean, deps } = box
-    this.Shaders = box.deps.Shaders
-    this.userData = box.userData
+    this.Shaders = Shaders
+    this.work = work
     this.box = box
     this.onClean = onClean
     this.onLoop = onLoop
     this.deps = deps
-    this.camera = box.userData.camera
+    this.camera = box.camera
 
     let { Object3D, Color } = this.deps.THREE
-    this.box.userData.scene.background = new Color('#000000')
 
     this.o3d = new Object3D()
 
@@ -34,16 +68,15 @@ export class Pipeline {
     }
 
     this.camera.position.z = 100
-    let config = this.getDefaultConfig()
+    let config = work.guiData.config
 
-    config.extraUniforms = [
-      ...config.extraUniforms,
-      ...this.userData.work.guiData.extraUniforms
-    ]
-
-    this.config = config
-
-    console.log(box.userData)
+    box.onRefresh(() => {
+      this.config = {
+        ...this.getDefaultConfig(),
+        ...config
+      }
+    })
+    box.runRefresh()
   }
 
   getNewAttr () {
@@ -123,6 +156,41 @@ out.w = 1;`
         //     x: 0, y: 0, z: 0
         //   }
         // }
+
+        {
+          name: 'distributionMode',
+          type: 'float',
+          updater: 'select',
+          options: [
+            {
+              _id: '__asda3454a',
+              value: '0.0',
+              display: 'Cube Distribution'
+            },
+            {
+              _id: '__afd232dsa',
+              value: '1.0',
+              display: 'Plane Distribution'
+            }
+          ],
+          needsAuhtorises: false,
+          value: 1.0
+        },
+        {
+          name: 'faceDistribution',
+          type: 'float',
+          updater: 'slider',
+          needsAuhtorises: false,
+          value: 3.0973
+        },
+        {
+          name: 'faceSize',
+          type: 'float',
+          updater: 'slider',
+          needsAuhtorises: false,
+          value: 0.3084
+        }
+
       ],
 
       vertexBlockersCode: ``,
@@ -169,7 +237,6 @@ varying vec2 vUv;`,
       time: { value: 0 }
     }
     let defines = {}
-
 
     let uniformStr = ``
     config.extraUniforms.forEach(uniform => {
@@ -237,6 +304,24 @@ varying vec2 vUv;`,
     this.onLoop(() => {
       uniforms.time.value = window.performance.now() * 0.001
 
+      if (this.deps.media) {
+        if (this.deps.media.micNow) {
+          let micNow = this.deps.media.micNow.getTexture()
+          if (micNow) {
+            config.extraUniforms.filter(e => e.updater === 'mic-now').forEach(u => {
+              u.value = micNow
+            })
+          }
+        }
+        if (this.deps.media.micPast) {
+          let micPast = this.deps.media.micPast.getTexture()
+          if (micPast) {
+            config.extraUniforms.filter(e => e.updater === 'mic').forEach(u => {
+              u.value = micPast
+            })
+          }
+        }
+      }
       config.extraUniforms.forEach(uniform => {
         uniforms[uniform.name] = { value: uniform.value }
       })

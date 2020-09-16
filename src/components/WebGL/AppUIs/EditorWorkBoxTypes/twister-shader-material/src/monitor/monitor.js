@@ -7,7 +7,7 @@ export const use = async ({ box, work }) => {
   // let mat = new MeshBasicMaterial({ map: texture, color: new Color('#ffffff'), side: DoubleSide })
   // let geo = new PlaneBufferGeometry(170, 170, 2, 2)
 
-  let geo = new SphereBufferGeometry(60, 70, 70)
+  let geo = new SphereBufferGeometry(80, 70, 70)
   let material = makeMaterial({ work, box })
   // let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe'), side: DoubleSide })
   let mesh = new Points(geo, material)
