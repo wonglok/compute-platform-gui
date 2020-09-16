@@ -49,7 +49,7 @@
     </div>
 
     <div class="absolute top-0 right-0 flex">
-      <div class="p-3">
+      <div class="p-3" v-if="core" v-show="core.works.some(e => e.needsMic)">
         <img src="./icon/mic-off.svg" v-if="!media.micNow" @click="onClickMic" class="w-10 h-10" alt="">
         <img src="./icon/mic-on.svg" v-if="media.micNow" @click="onClickMic" class="w-10 h-10" alt="">
       </div>

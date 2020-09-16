@@ -92,24 +92,24 @@ void main (void) {
     pos.z += d3Z * gapper;
   #endif
 
-  // pos.xyz *= 2.0;
+  pos.xyz *= 2.0;
 
-  // float r1 = rand(vec2(d3X)) - 0.5;
-  // float r2 = rand(vec2(d3Y)) - 0.5;
-  // float r3 = rand(vec2(d3Z)) - 0.5;
-  // pos += vec4(vec3(r1, r2, r3) * 30.0, 0.0);
+  float r1 = rand(vec2(d3X)) - 0.5;
+  float r2 = rand(vec2(d3Y)) - 0.5;
+  float r3 = rand(vec2(d3Z)) - 0.5;
+  pos += vec4(vec3(r1, r2, r3) * 30.0, 0.0);
 
-  // float az = 0.0;
-  // float el = 0.0;
-  // toBall(pos.xyz, az, el);
-  // pos.xyz = fromBall(50.0 + historySound.r * 22.8, az, el);
+  float az = 0.0;
+  float el = 0.0;
+  toBall(pos.xyz, az, el);
+  pos.xyz = fromBall(50.0 + 5.0 * (currentSound.r + historySound.r) * 0.5 * 22.8, az, el);
 
-  // float pX = pos.x;
-  // float pY = pos.y;
-  // float pZ = pos.z;
-  // float piz = 0.005 * 2.0 * 3.14159265;
+  float pX = pos.x;
+  float pY = pos.y;
+  float pZ = pos.z;
+  float piz = 0.005 * 2.0 * 3.14159265;
 
-  // pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateY(time + pY * piz) * pos.xyz;
+  pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateY(time + pY * piz) * pos.xyz;
 
   vec4 starterPosition = pos;
   vec4 finalPosition = pos;

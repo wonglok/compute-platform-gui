@@ -2,7 +2,7 @@
   <div class="" :style="{height: height ? px(height) : '100%',width: width ? px(width) : '100%'}">
     <div ref="mounter" class="full">
     </div>
-    <div class="fixed" :style="{ zIndex: 300, left: widget.pageX + 'px', top: widget.pageY + 25 + 'px' }" ref="widget" v-show="widget.display">
+    <div class="fixed" :style="{ zIndex: 300, left: offset.x + widget.pageX + 'px', top: offset.y + widget.pageY + 25 + 'px' }" ref="widget" v-show="widget.display">
       <Chrome v-if="widget.type === 'color'" v-model="current.color" @input="onChangeColor($event)"></Chrome>
       <input v-if="widget.type === 'number'" v-model="current.number" style="width: 350px" min="-100" max="100" step="0.001" @input="onChangeNumber($event.target.value)" type="range" />
     </div>
@@ -38,6 +38,14 @@ export default {
     Chrome
   },
   props: {
+    offset: {
+      default () {
+        return {
+          x: 0,
+          y: 0
+        }
+      }
+    },
     colorPrefix: {
       default: '0x'
     },

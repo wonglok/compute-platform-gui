@@ -67,7 +67,7 @@ export class Pipeline {
       o3d: this.o3d
     }
 
-    this.camera.position.z = 100
+    this.camera.position.z = 150
     let config = work.guiData.config
 
     box.onRefresh(() => {

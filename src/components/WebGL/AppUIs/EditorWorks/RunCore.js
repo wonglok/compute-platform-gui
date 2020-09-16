@@ -2,6 +2,7 @@ import { Clock, Color, EventDispatcher, PerspectiveCamera, Scene } from 'three'
 import * as THREE from 'three'
 import Vue from 'vue'
 import { Chrome } from 'vue-color'
+import { O3DVue } from '../../Core/O3DVue'
 
 export class RunCore extends EventDispatcher {
   constructor ({ onMasterLoop, core, display, renderer, media = {} }) {
@@ -237,6 +238,9 @@ export class CoreShell {
   makeNewInstance ({ vueCode }) {
     let config = this.getConfig({ vueCode })
     let { templateCode } = this.processVueCode({ vueCode })
+    config.mixins = config.mixins || [
+    ]
+    config.mixins.push(O3DVue)
     let newObj = {
       ...config,
       components: {

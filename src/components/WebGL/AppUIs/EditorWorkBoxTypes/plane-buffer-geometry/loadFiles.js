@@ -49,7 +49,6 @@ importAll(require.context('!raw-loader!./src/', true, /\.glsl$/, 'sync'), 'sync'
 importAll(require.context('!raw-loader!./src/', true, /\.vert$/, 'sync'), 'sync')
 importAll(require.context('!raw-loader!./src/', true, /\.frag$/, 'sync'), 'sync')
 
-
 exporter.forEach(f => {
   var dir = path.dirname(f.path)
   if (!exporter.map(e => e.path).includes(dir) && dir !== '.') {
