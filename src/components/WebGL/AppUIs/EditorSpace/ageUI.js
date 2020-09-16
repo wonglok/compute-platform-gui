@@ -64,7 +64,7 @@ export const getWin = (config = {}, pos = {}, data = {}) => {
   return {
     _id: getID(),
     title: '',
-    type: 'purple',
+    type: 'custom-function',
     order: 0,
     pos: {
       x: window.innerWidth - width - 15,
