@@ -254,6 +254,16 @@ export const O3DNode = {
       default: false
     }
   },
+  activated () {
+    if (this.o3d) {
+      this.o3d.visible = true
+    }
+  },
+  deactivated () {
+    if (this.o3d) {
+      this.o3d.visible = false
+    }
+  },
   created () {
     this.self = this
     this.$on('add', (v) => {

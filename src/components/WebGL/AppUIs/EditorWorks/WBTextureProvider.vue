@@ -15,6 +15,9 @@ export default {
     O3DNode
   ],
   props: {
+    canRun: {
+      default: true
+    },
     size: {
       default: 256
     },
@@ -24,6 +27,17 @@ export default {
       }
     },
     work: {}
+  },
+  data () {
+    return {
+      isSuspend: false
+    }
+  },
+  activated () {
+    this.isSuspend = false
+  },
+  deactivated () {
+    this.isSuspend = true
   },
   async mounted () {
     let core = this.ctx.core
@@ -108,7 +122,14 @@ export default {
     // })
 
     this.onLoop(() => {
+      if (!this.canRun) {
+        return
+      }
       if (this.isDestroyed) {
+        return
+      }
+
+      if (this.isSuspend) {
         return
       }
 

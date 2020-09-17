@@ -91,8 +91,7 @@ export class RunCore extends EventDispatcher {
     }
 
     this.onMasterLoop(() => {
-      this.runLoop()
-      this.defaultRender()
+
     })
 
     let html = v => v[0]

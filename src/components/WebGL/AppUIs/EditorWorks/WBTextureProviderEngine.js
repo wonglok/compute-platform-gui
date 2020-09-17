@@ -25,7 +25,6 @@ export class WBTextureProviderEngine extends EventDispatcher {
     }
 
     this.runRefresh = () => {
-      isAborted = true
       try {
         this.refreshTask.forEach(e => e())
       } catch (e) {
@@ -34,7 +33,9 @@ export class WBTextureProviderEngine extends EventDispatcher {
     }
 
     this.runLoop = () => {
-      isAborted = true
+      if (isAborted) {
+        return
+      }
       try {
         this.tasks.forEach(e => e())
       } catch (e) {

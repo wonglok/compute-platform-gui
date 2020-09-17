@@ -26,7 +26,7 @@
       </O3D>
       <div v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-          <WBTextureProvider :size="150" :media="media" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
+          <WBTextureProvider :canRun="!core.getCurrentWork()" :size="150" :media="media" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
 
           <!-- <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider> -->
           <!-- <GLFlower></GLFlower> -->
@@ -37,23 +37,29 @@
       <WBArrow v-for="arrow in core.arrows" :key="arrow._id" :arrow="arrow" :arrowID="arrow._id" :core="core">
       </WBArrow>
 
-      <O3D v-if="showPreview === 'fullscreen'" :rx="pi * -0.5">
-        <PreviewPlaneFullScreen>
-          <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
-        </PreviewPlaneFullScreen>
-      </O3D>
+      <keep-alive>
+        <O3D v-if="showPreview === 'fullscreen'" :visible="showPreview === 'fullscreen'" :rx="pi * -0.5">
+          <PreviewPlaneFullScreen>
+            <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
+          </PreviewPlaneFullScreen>
+        </O3D>
+      </keep-alive>
 
-      <O3D v-if="showPreview === 'topleft'" :rx="pi * -0.5">
-        <PreviewPlaneTopLeft>
-          <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
-        </PreviewPlaneTopLeft>
-      </O3D>
+      <keep-alive>
+        <O3D v-if="showPreview === 'topleft'" :visible="showPreview === 'topleft'" :rx="pi * -0.5">
+          <PreviewPlaneTopLeft>
+            <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
+          </PreviewPlaneTopLeft>
+        </O3D>
+      </keep-alive>
 
-      <O3D v-if="core.getCurrentWork()" :rx="pi * -0.5">
-        <PreviewPlaneTopLeft :offset="{ x: 0, y: -256, z: 0 }" >
-          <WBTextureProvider :size="150" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
-        </PreviewPlaneTopLeft>
-      </O3D>
+      <keep-alive>
+        <O3D v-if="core.getCurrentWork()" :visible="core.getCurrentWork()" :rx="pi * -0.5">
+          <PreviewPlaneTopLeft :offset="{ x: 0, y: -256, z: 0 }" >
+            <WBTextureProvider :size="150" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
+          </PreviewPlaneTopLeft>
+        </O3D>
+      </keep-alive>
     </div>
 
     <div @click="onClickWrapper" class="absolute top-0 left-0 full" ref="wrapper">

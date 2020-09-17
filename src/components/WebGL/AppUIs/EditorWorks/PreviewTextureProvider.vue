@@ -27,6 +27,17 @@ export default {
       default: 256
     }
   },
+  data () {
+    return {
+      stopRunning: false
+    }
+  },
+  activated () {
+    this.stopRunning = false
+  },
+  deactivated () {
+    this.stopRunning = true
+  },
   async mounted () {
     let core = this.ctx.core
     let setupTexture = () => {
@@ -52,6 +63,16 @@ export default {
     this.$root.$on('refresh-ui', () => {
       if (this.runCore) {
         this.runCore.runRefresh()
+      }
+    })
+
+    this.onLoop(() => {
+      if (this.stopRunning) {
+        return
+      }
+      if (this.runCore) {
+        this.runCore.runLoop()
+        this.runCore.defaultRender()
       }
     })
 
