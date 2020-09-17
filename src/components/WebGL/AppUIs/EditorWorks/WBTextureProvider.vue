@@ -63,8 +63,6 @@ export default {
       let Monitor = await core.makeWorkBoxMonitor({ work: this.work })
       if (Monitor) {
         Monitor.use({ box: miniBox, work: this.work, arrows: core.arrows, works: core.works })
-        // console.log(Monitor)
-
       }
     }
 
