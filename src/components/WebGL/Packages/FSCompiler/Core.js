@@ -232,6 +232,8 @@ export class AppCore extends EventDispatcher {
     })
 
     if (!hasFound) {
+      let fromType = this.getCurrentWorkFrom().type
+      let toType = workTo.type
       if (direction === 'out') {
         this.arrows.push({
           _id: getID(),
@@ -239,7 +241,9 @@ export class AppCore extends EventDispatcher {
           errorMsg: '',
           direction: direction,
           from: this.current.workFrom,
-          to: workTo._id
+          to: workTo._id,
+          fromType,
+          toType
         })
       } else if (direction === 'in') {
         this.arrows.push({
@@ -248,7 +252,9 @@ export class AppCore extends EventDispatcher {
           errorMsg: '',
           direction: direction,
           to: this.current.workFrom,
-          from: workTo._id
+          from: workTo._id,
+          fromType,
+          toType
         })
       }
     } else {

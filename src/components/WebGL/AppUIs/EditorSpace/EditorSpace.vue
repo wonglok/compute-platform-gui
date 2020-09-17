@@ -20,11 +20,11 @@
       <AmbinetLight :color="0xffffff" :helper="isDev && isOff" :intensity="0.5"></AmbinetLight>
     </O3D>
 
-    <O3D v-if="core">
+    <div v-if="core">
       <O3D :py="-10">
-        <WorkFloor :mouseMode="mouseMode" @move-point="onMove($event)" @click-floor="onClickFloor" @delta="onPan($event)"></WorkFloor>
+        <WorkFloor :mouseMode="mouseMode" d--move-point="onMove($event)" @click-floor="onClickFloor" @delta="onPan($event)"></WorkFloor>
       </O3D>
-      <O3D v-for="work in core.works" :key="work._id">
+      <div v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
           <WBTextureProvider :media="media" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
 
@@ -32,7 +32,7 @@
           <!-- <GLFlower></GLFlower> -->
           <!-- <WBTextureDrawTypeProvider></WBTextureDrawTypeProvider> -->
         </WorkBox>
-      </O3D>
+      </div>
 
       <WBArrow v-for="arrow in core.arrows" :key="arrow._id" :arrow="arrow" :arrowID="arrow._id" :core="core">
       </WBArrow>
@@ -42,7 +42,7 @@
           <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
         </PreviewPlaneFullScreen>
       </O3D>
-    </O3D>
+    </div>
 
     <div @click="onClickWrapper" class="absolute top-0 left-0 full" ref="wrapper">
       <div @click="onClickToucher" class="absolute top-0 left-0 full" ref="toucher"></div>
@@ -429,9 +429,9 @@ export default {
       }
     },
     onMove({ point }) {
-      this.cursor.position.x = point.x
-      this.cursor.position.y = point.y
-      this.cursor.position.z = point.z
+      // this.cursor.position.x = point.x
+      // this.cursor.position.y = point.y
+      // this.cursor.position.z = point.z
     },
     onClickTL ({ work }) {
 

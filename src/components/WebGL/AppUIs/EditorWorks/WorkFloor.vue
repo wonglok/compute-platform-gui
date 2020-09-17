@@ -39,7 +39,13 @@ export default {
         this.$emit('click-floor', ev)
       })
       this.ctx.rayplay.move(mesh, (ev) => {
-        this.$emit('move-point', { point: ev.ray.point })
+        let cursor = this.ctx.cursor
+        if (cursor) {
+          cursor.position.x = ev.ray.point.x
+          cursor.position.y = ev.ray.point.y
+          cursor.position.z = ev.ray.point.z
+        }
+        // this.$emit('move-point', { point: ev.ray.point })
       })
     }
   }

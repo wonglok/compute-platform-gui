@@ -38,13 +38,13 @@ export const use = async ({ box, work, works, arrows }) => {
   }
 
   let cache = {
-
   }
-  let checkAndRun = () => {
+
+  let connectToMesh = () => {
     let { api, arrowAB, arrowBA } = getFirstConnectedItem({ work })
     if (api && api.replaceGeometry) {
 
-      cache.material = cache.material || makeMaterial({ work, box })
+      cache.material = makeMaterial({ work, box })
       cache.material.needsUpdate = true
 
       api.replaceMaterial({ material: cache.material })
@@ -64,15 +64,18 @@ export const use = async ({ box, work, works, arrows }) => {
         console.error(arrowBA.errorMsg)
       } else if (arrowAB) {
         setTimeout(() => {
-          checkAndRun()
+          connectToMesh()
         }, 1)
       }
     }
   }
 
-  checkAndRun()
+  connectToMesh()
+
+
+
   // box.onRefresh(() => {
-  //   checkAndRun()
+  //   connectToMesh()
   // })
 
   // let geo = new BoxBufferGeometry(100, 100, 100, 5, 5, 5)

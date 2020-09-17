@@ -19,7 +19,6 @@ export class RunCore extends EventDispatcher {
     this.tasks = []
     this.resizeTasks = []
     this.cleanTasks = []
-    this.cleanTasks = []
     this.refreshTask = []
 
     this.resources = {}
@@ -75,13 +74,15 @@ export class RunCore extends EventDispatcher {
 
     this.defaultRender = () => {
       let originalFrameBuffer = this.renderer.getRenderTarget()
-      this.renderer.setRenderTarget(this.display)
-      if (this.composer) {
-        this.composer.render()
-      } else {
-        this.renderer.render(this.scene, this.camera)
+      if (this.display) {
+        this.renderer.setRenderTarget(this.display)
+        if (this.composer) {
+          this.composer.render()
+        } else {
+          this.renderer.render(this.scene, this.camera)
+        }
+        this.renderer.setRenderTarget(originalFrameBuffer)
       }
-      this.renderer.setRenderTarget(originalFrameBuffer)
     }
 
     this.onMasterLoop(() => {

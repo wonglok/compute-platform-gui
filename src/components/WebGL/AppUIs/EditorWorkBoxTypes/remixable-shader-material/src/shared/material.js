@@ -15,18 +15,13 @@ let glsl = (strings, ...args) => {
 export const makeMaterial = ({ box, work, nodes }) => {
   let gui = work.guiData
 
-  let compiled = {
-    vsLib: '',
-    vsMain: '',
-    fsLib: '',
-    fsMain: ''
-  }
-
   let { ShaderMaterial, DoubleSide, Color, Points } = box.deps.THREE
 
   let defines = {
     DPI: `${(window.devicePixelRatio || 1).toFixed(1)}`
   }
+
+
 
   let uniforms = {
     pointSize: { type: 'f', value: 5 },
@@ -44,6 +39,13 @@ export const makeMaterial = ({ box, work, nodes }) => {
       }
     }
   })
+
+  let compiled = {
+    vsLib: '',
+    vsMain: '',
+    fsLib: '',
+    fsMain: ''
+  }
 
   let mvs = glsl`
 varying vec2 vUv;

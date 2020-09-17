@@ -31,6 +31,7 @@ export default {
     let dpi = window.devicePixelRatio || 1
     this.renderTarget = new WebGLRenderTarget(this.size * dpi, this.size * dpi)
 
+
     let miniBox = false
     let compileCode = async () => {
       if (miniBox) {
@@ -53,8 +54,10 @@ export default {
         renderTarget: this.renderTarget,
         work: this.work,
         onDefaultRender: () => {
-          this.ctx.renderer.setRenderTarget(this.renderTarget)
-          this.ctx.renderer.render(miniBox.scene, miniBox.camera)
+          if (this.renderTarget) {
+            this.ctx.renderer.setRenderTarget(this.renderTarget)
+            this.ctx.renderer.render(miniBox.scene, miniBox.camera)
+          }
         }
       }
 
@@ -62,6 +65,10 @@ export default {
       if (Monitor) {
         Monitor.use({ box: miniBox, work: this.work, arrows: core.arrows, works: core.works })
         // console.log(Monitor)
+        this.$parent.$emit('texture', {
+          enable: true,
+          texture: this.renderTarget.texture
+        })
       }
     }
 
@@ -106,9 +113,6 @@ export default {
 
     this.onLoop(() => {
       if (this.isDestroyed) {
-        this.$parent.$emit('texture', {
-          enable: false
-        })
         return
       }
 
@@ -122,10 +126,7 @@ export default {
 
       miniBox.onDefaultRender()
 
-      this.$parent.$emit('texture', {
-        enable: true,
-        texture: this.renderTarget.texture
-      })
+
 
       this.ctx.renderer.setRenderTarget(orig)
     })

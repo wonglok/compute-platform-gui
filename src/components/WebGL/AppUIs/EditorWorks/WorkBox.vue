@@ -189,8 +189,6 @@ export default {
       if (corner === 'tl') {
         btn.position.x = boxWidth * -0.5 + btnW * 0.5
         btn.position.z = boxHeight * -0.5 + btnW * 0.5
-
-
       }
 
       if (corner === 'tr') {

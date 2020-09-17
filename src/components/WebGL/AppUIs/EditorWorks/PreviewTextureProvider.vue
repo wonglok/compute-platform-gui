@@ -29,13 +29,19 @@ export default {
   },
   async mounted () {
     let core = this.ctx.core
-
-    let setup = () => {
+    let setupTexture = () => {
       let dpi = window.devicePixelRatio || 1
+      this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, (this.size) * dpi)
+      this.$parent.$emit('texture', {
+        enable: true,
+        texture: this.displayRenderTarget.texture
+      })
+    }
+    let setup = () => {
       if (this.runCore) {
         this.runCore.goCleanUp()
       }
-      this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, (this.size) * dpi)
+      setupTexture()
       this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget, media: this.media })
     }
 
@@ -77,15 +83,6 @@ export default {
         }
       }
     }, 100)
-
-    this.onLoop(() => {
-      if (this.displayRenderTarget) {
-        this.$parent.$emit('texture', {
-          enable: true,
-          texture: this.displayRenderTarget.texture
-        })
-      }
-    })
   }
 }
 </script>
