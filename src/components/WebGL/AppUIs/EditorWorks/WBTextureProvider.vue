@@ -65,10 +65,6 @@ export default {
         Monitor.use({ box: miniBox, work: this.work, arrows: core.arrows, works: core.works })
         // console.log(Monitor)
 
-        // this.$parent.$emit('texture', {
-        //   enable: true,
-        //   texture: this.renderTarget.texture
-        // })
       }
     }
 
@@ -129,8 +125,14 @@ export default {
       miniBox.onDefaultRender()
 
       if (this.renderTarget) {
-        let holder = lookupHolder(this, 'isWorkBox')
-        holder.texture = this.renderTarget.texture
+        let holder = lookupHolder(this, 'isTextureAttach')
+        if (holder) {
+          holder.texture = this.renderTarget.texture
+        }
+        // this.$parent.$emit('texture', {
+        //   enable: true,
+        //   texture: this.renderTarget.texture
+        // })
       }
 
       this.ctx.renderer.setRenderTarget(orig)

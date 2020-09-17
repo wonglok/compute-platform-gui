@@ -18,6 +18,7 @@ export default {
   ],
   data () {
     return {
+      isTextureAttach: true,
       texture: false,
       unitPos: {
         x: 0,
@@ -42,7 +43,19 @@ export default {
       plane.position.y = -this.ctx.camera.position.z
     })
 
-    this.$on('texture', ({ texture }) => {
+    // this.$on('texture', ({ texture }) => {
+    //   if (texture && mat.map !== texture) {
+    //     let screen = getScreenYAxis({ depth: 0, camera: this.ctx.camera })
+    //     let geo = new PlaneBufferGeometry(1, 1, 2, 2)
+    //     plane.geometry = geo
+    //     mat.map = texture
+    //     texture.encoding = LinearEncoding
+    //     console.log(texture)
+    //     mat.needsUpdate = true
+    //   }
+    // })
+    this.onLoop(() => {
+      let texture = this.texture
       if (texture && mat.map !== texture) {
         let screen = getScreenYAxis({ depth: 0, camera: this.ctx.camera })
         let geo = new PlaneBufferGeometry(1, 1, 2, 2)

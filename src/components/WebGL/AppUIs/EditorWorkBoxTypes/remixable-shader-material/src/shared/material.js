@@ -60,7 +60,11 @@ void main(void) {
   ${compiled.vsMain}
 
   #ifdef USE_POINTS
-    gl_PointSize = pointSize * DPI;
+    #ifdef DPI
+      gl_PointSize = pointSize * DPI;
+    #else
+      gl_PointSize = pointSize;
+    #endif
   #endif
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);

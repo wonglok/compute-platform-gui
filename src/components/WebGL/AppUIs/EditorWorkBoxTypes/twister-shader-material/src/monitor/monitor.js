@@ -15,6 +15,11 @@ export const use = async ({ box, work }) => {
   camera.position.z = 150
   scene.background = new Color('#ffffff')
 
+  if (material.defines) {
+    material.defines.USE_POINTS = 'true'
+    material.defines.DPI = (window.devicePixelRatio || 1.0).toFixed(1)
+  }
+
   box.onLoop(() => {
     // mesh.rotation.x += 0.01
     // mesh.rotation.y += 0.01

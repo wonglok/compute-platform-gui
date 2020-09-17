@@ -5,7 +5,7 @@
 
 <script>
 import { PerspectiveCamera, Scene, Texture, WebGLRenderTarget } from 'three'
-import { O3DNode } from '../../Core/O3DNode'
+import { lookupHolder, O3DNode } from '../../Core/O3DNode'
 import * as THREE from 'three'
 import { WBTextureProviderEngine } from './WBTextureProviderEngine'
 import { RunCore } from '../../AppUIs/EditorWorks/RunCore.js'
@@ -32,10 +32,14 @@ export default {
     let setupTexture = () => {
       let dpi = window.devicePixelRatio || 1
       this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, (this.size) * dpi)
-      this.$parent.$emit('texture', {
-        enable: true,
-        texture: this.displayRenderTarget.texture
-      })
+      // this.$parent.$emit('texture', {
+      //   enable: true,
+      //   texture: this.displayRenderTarget.texture
+      // })
+      let holder = lookupHolder(this, 'isTextureAttach')
+      if (holder) {
+        holder.texture = this.displayRenderTarget.texture
+      }
     }
     let setup = () => {
       if (this.runCore) {

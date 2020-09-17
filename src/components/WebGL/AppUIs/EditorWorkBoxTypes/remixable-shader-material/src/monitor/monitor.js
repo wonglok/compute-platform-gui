@@ -12,6 +12,11 @@ export const use = async ({ box, work }) => {
   // let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe'), side: DoubleSide })
   let mesh = new Points(geo, material)
 
+  if (material.defines) {
+    material.defines.USE_POINTS = 'true'
+    material.defines.DPI = (window.devicePixelRatio || 1.0).toFixed(1)
+  }
+
   camera.position.z = 150
   scene.background = new Color('#ffffff')
 

@@ -10,6 +10,7 @@ export const use = async ({ box, work, works, arrows }) => {
       api.drawItem.material = material
       if (material.defines) {
         material.defines.USE_POINTS = 'true'
+        material.defines.DPI = (window.devicePixelRatio || 1.0).toFixed(1)
       }
       material.needsUpdate = true
     },

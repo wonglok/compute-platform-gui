@@ -20,7 +20,7 @@ export default {
   data () {
     return {
       texture: false,
-      isWorkBox: true,
+      isTextureAttach: true,
       unitPos: {
         x: 0,
         y: 0,
