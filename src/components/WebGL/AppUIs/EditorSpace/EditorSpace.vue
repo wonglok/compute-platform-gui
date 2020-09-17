@@ -98,8 +98,9 @@
       </div>
     </div>
 
-    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-out' || overlay === 'box-in'">
-      <OVBoxInOut @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVBoxInOut>
+    <!-- <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-out' || overlay === 'box-in'"> -->
+    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-in'">
+      <OVBoxInMaker @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVBoxInMaker>
     </div>
 
     <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'genesis'">
@@ -391,6 +392,7 @@ export default {
         // }, 10)
       } else if (this.mouseMode === 'box-out') {
         this.overlay = 'box-out'
+        this.mouseMode = ''
 
         // let work = this.core.createWorkAtPos({
         //   position: {
