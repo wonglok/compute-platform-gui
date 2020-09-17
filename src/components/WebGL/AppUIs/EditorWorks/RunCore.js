@@ -4,10 +4,15 @@ import Vue from 'vue'
 import { Chrome } from 'vue-color'
 // import { O3DVue } from '../../Core/O3DVue'
 
+export const getID = () => {
+  return '_' + Math.random().toString(36).substr(2, 9)
+}
+
 export class RunCore extends EventDispatcher {
   constructor ({ onMasterLoop, core, display, renderer, media = {} }) {
     super()
     let box = this
+    this._id = getID()
     this.core = core
     this.display = display
     this.renderer = renderer
@@ -100,12 +105,12 @@ export class RunCore extends EventDispatcher {
         },
         template: `<div><slot></slot></div>`,
         beforeDestroy () {
-          console.log('workbox runner: clean up ' + this.work._id)
+          console.log(box._id, 'workbox runner: clean up ' + this.work._id)
         },
         async mounted () {
           let Module = await box.core.makePackageModule({ work: this.work })
           await Module.use({ box: this.box, work: this.work, arrows: core.arrows, works: core.works })
-          console.log('workbox runner: setup ' + this.work._id)
+          console.log(box._id, 'workbox runner: setup ' + this.work._id)
         }
       }
     }

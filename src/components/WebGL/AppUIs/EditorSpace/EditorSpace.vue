@@ -51,7 +51,7 @@
 
       <O3D v-if="core.getCurrentWork()" :rx="pi * -0.5">
         <PreviewPlaneTopLeft :offset="{ x: 0, y: -256, z: 0 }" >
-          <WBTextureProvider :size="512" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
+          <WBTextureProvider :size="150" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
         </PreviewPlaneTopLeft>
       </O3D>
     </div>
