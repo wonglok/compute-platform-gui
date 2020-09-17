@@ -57,7 +57,7 @@ export const use = async ({ box, work, works, arrows }) => {
       } else if (arrowAB) {
         setTimeout(() => {
           checkAndRun()
-        }, 100)
+        }, 1)
       }
     }
   }
