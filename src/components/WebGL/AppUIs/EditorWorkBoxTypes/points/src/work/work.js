@@ -24,10 +24,13 @@ export const use = async ({ box, work, works, arrows }) => {
   workspaces.set(work._id, api)
 
   let mat = new ShaderMaterial({
+    defines: {
+      DPI: `${(window.devicePixelRatio || 1).toFixed(1)}`
+    },
     transparent: true,
     vertexShader: `
       void main (void) {
-        gl_PointSize = 2.5;
+        gl_PointSize = 2.5 + DPI;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,

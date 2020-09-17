@@ -54,7 +54,7 @@
         <img src="./icon/mic-on.svg" v-if="media.micNow" @click="onClickMic" class="w-10 h-10" alt="">
       </div>
 
-      <div class="p-3">
+      <div class="p-3" v-if="!isMobileVertical">
         <img src="./icon/fullscreen.svg" @click="onClickFullScreen" class="w-10 h-10" alt="">
       </div>
 
@@ -81,7 +81,7 @@
       <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>
     </div> -->
 
-    <div v-if="core" class="pointer-events-none cursor-pointer absolute top-0 left-0 p-3">
+    <div v-if="core && !isMobileVertical" class="pointer-events-none cursor-pointer absolute top-0 left-0 p-3">
       <div :style="{ width: `${pSize + 2}px`, height: `${pSize + 2}px` }"  :class="{ 'rounded-lg border border-gray-500 mb-3': showPreview === 'topleft' || showPreview === 'topleft-large' }">
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="showPreview === 'topleft' || showPreview === 'topleft-large'">
@@ -107,7 +107,6 @@
     </div>
 
     <!-- <component v-show="false" v-if="dynamo" ref="dynamo" :is="dynamo"></component> -->
-
     <!-- <div ref="drag-area" class="age-drag-area age-layer full"></div> -->
   </div>
 </template>
@@ -135,8 +134,8 @@ export default {
         micNow: false,
         micPast: false
       },
-      showPreview: 'topleft',
-      vmin: Math.min(window.innerWidth, window.innerHeight),
+      showPreview: window.innerWidth > 767 ? 'topleft' : 'fullscreen',
+      isMobileVertical: window.innerWidth <= 500 && window.innerHeight > window.innerWidth,
       pSize: 270,
       overlayGUI: false,
       dynamo: false,
@@ -239,7 +238,13 @@ export default {
   },
   created () {
     window.addEventListener('plot-curve', () => {
-      this.$forceUpdate()
+      needsForceUpate = true
+    })
+    let needsForceUpate = true
+    this.onLoop(() => {
+      if (needsForceUpate) {
+        this.$forceUpdate()
+      }
     })
     this.$watch('currentWorkInWin', () => {
       if (this.currentWorkInWin) {
@@ -642,7 +647,7 @@ export default {
     })
 
     window.addEventListener('resize', () => {
-      this.vmin = Math.min(window.innerWidth, window.innerHeight)
+      this.isMobileVertical = window.innerWidth <= 500 && window.innerHeight > window.innerWidth
     }, false)
   },
   beforeDestroy () {

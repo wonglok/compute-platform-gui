@@ -83,8 +83,9 @@ export default {
     }
 
     //------
+    let baseMeshGeo = makeCurved(boxWidth, boxHeight, boxDepth, 'extrude')
     let makeBaseMesh = () => {
-      let geo = makeCurved(boxWidth, boxHeight, boxDepth, 'extrude')
+      let geo = baseMeshGeo
       // let geo = new BoxBufferGeometry(boxWidth, boxDepth, boxHeight, 1, 1)
       let mat = new MeshStandardMaterial({ color: new Color('#bababa') })
 
@@ -122,9 +123,9 @@ export default {
       }
 
       if (this.ctx.panner) {
-        let zero = new Vector3(0, 0, 0)
-        let lerpRotation = new Vector3(0, 0, 0)
-        let lerpYPosition = new Vector3(0, 10, 0)
+        // let zero = new Vector3(0, 0, 0)
+        // let lerpRotation = new Vector3(0, 0, 0)
+        // let lerpYPosition = new Vector3(0, 10, 0)
 
         baseMesh.userData.canRun = true
         // baseMesh.layers.enable(1)
@@ -135,14 +136,14 @@ export default {
               return
             }
             window.dispatchEvent(new Event('plot-curve'))
-            lerpRotation.copy(baseMesh.rotation)
-            lerpRotation.lerp(zero, 0.1)
-            baseMesh.rotation.set(lerpRotation.x, lerpRotation.y, lerpRotation.z)
-            lerpYPosition.x = baseMesh.position.x
-            lerpYPosition.z = baseMesh.position.z
-            lerpYPosition.y = 0
+            // lerpRotation.copy(baseMesh.rotation)
+            // lerpRotation.lerp(zero, 0.1)
+            // baseMesh.rotation.set(lerpRotation.x, lerpRotation.y, lerpRotation.z)
+            // lerpYPosition.x = baseMesh.position.x
+            // lerpYPosition.z = baseMesh.position.z
+            // lerpYPosition.y = 0
 
-            baseMesh.position.lerp(lerpYPosition, 0.3)
+            // baseMesh.position.lerp(lerpYPosition, 0.3)
             if (this.ctx.ammo) {
               this.ctx.ammo.setMeshPosition({ mesh: baseMesh })
             }
@@ -295,8 +296,8 @@ export default {
     //   return screen
     // }
 
+    let roundedGeo = makeCurved(boxW, boxH, boxDepth)
     let makeRoundedScreen = ({ baseMesh, close }) => {
-      let roundedGeo = makeCurved(boxW, boxH, boxDepth)
       let roundedMat = new MeshBasicMaterial({ transparent: true })
       let screen = new Mesh(roundedGeo, roundedMat)
       screen.position.y = boxDepth * 0.5 + boxDepth * 0.2

@@ -7,7 +7,7 @@
     <div class=" text-center text-lg mb-12">
       Please choose your compute draw type.
     </div>
-    <div class="flex justify-around max-w-4xl mx-auto">
+    <div class="flex justify-around max-w-4xl mx-auto px-4">
       <div class=" w-1/4  flex flex-col justify-center items-center">
         <div class="text-center mb-12">點陣 Points</div>
         <div>
@@ -32,12 +32,12 @@
         </div>
       </div>
 
-      <div class="w-1/4 flex flex-col justify-center items-center">
+      <!-- <div class="w-1/4 flex flex-col justify-center items-center">
         <div class="text-center mb-12">視覺計算 平面矩陣 <br/> Visual Compute Cluster</div>
         <div>
           <img src="./img/cube-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'compute-visual-cluster')" alt="">
         </div>
-      </div>
+      </div> -->
 
     </div>
   </div>
@@ -45,6 +45,11 @@
 
 <script>
 // import { getLang } from '../../Packages/Languages/index.js'
+/**
+ *
+ * stackable. for generating step by step GLSL
+ */
+
 export default {
   data () {
     return {

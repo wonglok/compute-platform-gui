@@ -53,6 +53,10 @@ void main(void) {
   nPos.xyz += normalize(nPos.xyz) * sin(nPos.z * twisterZ);
 
   vUv = uv;
-  gl_PointSize = pointSize;
+
+  #ifdef USE_POINTS
+    gl_PointSize = pointSize * DPI;
+  #endif
+
   gl_Position = projectionMatrix * modelViewMatrix * vec4(nPos, 1.0);
 }

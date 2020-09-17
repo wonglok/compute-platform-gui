@@ -61,7 +61,7 @@ export const getIO = (args) => {
 
 export const getWin = (config = {}, pos = {}, data = {}) => {
   let width = window.innerWidth - 270 * 1 - 15 - 15 - 15
-  return {
+  let out = {
     _id: getID(),
     title: '',
     type: 'custom-function',
@@ -90,6 +90,11 @@ export const getWin = (config = {}, pos = {}, data = {}) => {
     ...config,
     data
   }
+  if (window.innerWidth <= 500 && window.innerHeight > window.innerWidth) {
+    out.pos.x = 15
+    out.pos.w = window.innerWidth - 15 - 15
+  }
+  return out
 }
 
 export const focusWinsOfApp = ({ wins, appName }) => {

@@ -5,9 +5,9 @@
       請選擇特效
     </div>
     <div class=" text-center text-lg mb-12">
-      Please Choose Effect Node
+      Please Choose Effect
     </div>
-    <div class="max-w-4xl mx-auto" v-if="work">
+    <div class="max-w-4xl mx-auto px-4" v-if="work">
 
       <!-- <div class="w-1/4 flex flex-col justify-center items-center">
         <div class="text-center mb-12">立方體 平面 矩陣 <br/> Cubic Face Cluster</div>
@@ -26,10 +26,18 @@
         </div>
       </div>
 
+      <div v-if="canChoose.includes('algorithms')">
+        <div class="font-sans text-xl mb-3">
+          Algorithms 運算方式
+        </div>
+        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('algorithms'))">
+          <div>{{ wbType.displayName }}</div>
+        </div>
+      </div>
 
       <div v-if="canChoose.includes('geometry')">
         <div class="font-sans text-xl mb-3">
-          Geometry 形狀
+          Geometry 幾何形狀
         </div>
         <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('geometry'))">
           <div>{{ wbType.displayName }}</div>

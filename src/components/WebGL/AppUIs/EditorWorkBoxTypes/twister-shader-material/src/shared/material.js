@@ -5,6 +5,7 @@ export const makeMaterial = ({ box, work }) => {
   let { ShaderMaterial, Color, Points } = box.deps.THREE
 
   let defines = {
+    DPI: `${(window.devicePixelRatio || 1).toFixed(1)}`
   }
   let uniforms = {
     pointSize: { type: 'f', value: 5.47 },

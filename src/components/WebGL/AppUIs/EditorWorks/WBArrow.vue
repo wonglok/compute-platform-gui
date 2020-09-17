@@ -77,7 +77,7 @@ export default {
       newSprite.color = '#ff0000'
       newSprite.padding = 3
       newSprite.position.y += 3.5
-      newSprite.position.z += -10
+      // newSprite.position.z += -10
       newSprite.backgroundColor = 'rgba(255,255,255,0.6)'
       newSprite.visible = this.arrow.errorMsg !== ''
 
@@ -93,17 +93,26 @@ export default {
       this.onClean(() => {
         this.ctx.rayplay.remove(cancelBall)
       })
+
       this.ctx.rayplay.add(cancelBall, () => {
         this.core.removeArrow({ arrow: this.getArrow() })
       })
+
       this.ctx.rayplay.hover(cancelBall, () => {
-        cancelBall.material.opacity = 1
+        // cancelBall.material.opacity = 1
+        // cancelBall.material.opacity = 0.18
+        if (this.arrow.errorMsg) {
+          cancelBall.material.opacity = 0.18
+        } else {
+          cancelBall.material.opacity = 1
+        }
+
         newSprite.material.opacity = 1
       }, () => {
         if (this.arrow.errorMsg) {
           cancelBall.material.opacity = 1
         } else {
-          cancelBall.material.opacity = 0.08
+          cancelBall.material.opacity = 0.18
         }
         newSprite.material.opacity = 0
       })
@@ -158,7 +167,6 @@ export default {
         ball.material.color.setHSL(0, 0.5, 0.5)
         cancelBall.material.color.setHSL(0,0.5, 0.7 + 0.3 * Math.abs(Math.sin(time)))
         curveO3D.material.color.setHSL(0, Math.abs(Math.sin(time)), 0.5)
-
         curve.getPointAt(0, ball.position)
       } else {
         curveO3D.material.color.set('#a6e22e')
@@ -167,14 +175,22 @@ export default {
       curveO3D.computeLineDistances()
     })
 
-    window.addEventListener('plot-curve', (evt) => {
+    let needsForceUpate = true
+    window.addEventListener('plot-curve', () => {
       if (!this.isValid) {
         return
       }
-      plot()
+      needsForceUpate = true
+    })
+
+    this.onLoop(() => {
+      if (needsForceUpate) {
+        plot()
+      }
     })
 
     this.o3d.add(curveO3D)
+    this.o3d.position.y -= 5
   }
 }
 </script>
