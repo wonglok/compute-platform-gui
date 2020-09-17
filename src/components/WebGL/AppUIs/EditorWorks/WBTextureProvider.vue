@@ -5,7 +5,7 @@
 
 <script>
 import { LinearEncoding, PerspectiveCamera, Scene, Texture, WebGLRenderTarget } from 'three'
-import { O3DNode } from '../../Core/O3DNode'
+import { lookupHolder, O3DNode } from '../../Core/O3DNode'
 import * as THREE from 'three'
 import { WBTextureProviderEngine } from './WBTextureProviderEngine'
 // import { MiniBoxEngine } from '../../Packages/FSCompiler/srcs/basic/src/monitor/MiniBoxEngine'
@@ -30,7 +30,6 @@ export default {
 
     let dpi = window.devicePixelRatio || 1
     this.renderTarget = new WebGLRenderTarget(this.size * dpi, this.size * dpi)
-
 
     let miniBox = false
     let compileCode = async () => {
@@ -65,12 +64,15 @@ export default {
       if (Monitor) {
         Monitor.use({ box: miniBox, work: this.work, arrows: core.arrows, works: core.works })
         // console.log(Monitor)
-        this.$parent.$emit('texture', {
-          enable: true,
-          texture: this.renderTarget.texture
-        })
+
+        // this.$parent.$emit('texture', {
+        //   enable: true,
+        //   texture: this.renderTarget.texture
+        // })
       }
     }
+
+    // lookupHolder
 
     compileCode()
 
@@ -126,7 +128,10 @@ export default {
 
       miniBox.onDefaultRender()
 
-
+      if (this.renderTarget) {
+        let holder = lookupHolder(this, 'isWorkBox')
+        holder.texture = this.renderTarget.texture
+      }
 
       this.ctx.renderer.setRenderTarget(orig)
     })

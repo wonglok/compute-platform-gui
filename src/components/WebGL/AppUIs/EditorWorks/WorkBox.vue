@@ -19,6 +19,8 @@ export default {
   ],
   data () {
     return {
+      texture: false,
+      isWorkBox: true,
       unitPos: {
         x: 0,
         y: 0,
@@ -300,7 +302,11 @@ export default {
       let screen = new Mesh(roundedGeo, roundedMat)
       screen.position.y = boxDepth * 0.5 + boxDepth * 0.2
 
-      this.$on('texture', ({ texture }) => {
+      // this.$on('texture', ({ texture }) => {
+      // })
+
+      this.onLoop(() => {
+        let texture = this.texture
         if (texture && roundedMat.map !== texture) {
           roundedMat.map = texture
           // texture.wrapS = texture.wrapT = RepeatWrapping

@@ -21,8 +21,6 @@ export const makeMaterial = ({ box, work, nodes }) => {
     DPI: `${(window.devicePixelRatio || 1).toFixed(1)}`
   }
 
-
-
   let uniforms = {
     pointSize: { type: 'f', value: 5 },
     time: { type: 't', value: 0 }

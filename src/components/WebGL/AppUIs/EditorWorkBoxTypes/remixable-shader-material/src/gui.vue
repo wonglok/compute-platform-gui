@@ -20,7 +20,7 @@
             Slider
           </th>
         </tr>
-        <tr>
+        <!-- <tr>
           <td class="p-3">baseColor</td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" min="1" max="1000" step="1" v-model="gui.baseColor" @input="onRefresh"  /></td>
           <td class="p-3">
@@ -33,9 +33,7 @@
           <td class="p-3">
             <Chrome :value="{ hex: gui.offsetModifier }" @input="(evt) => { gui.offsetModifier = evt.hex }"></Chrome>
           </td>
-          <!-- <td class="p-3">Segment X</td>
-          <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" v-model="gui.segmentX" @input="onRefresh" /></td> -->
-        </tr>
+        </tr> -->
 
         <tr>
           <td class="p-3">pointSize</td>
@@ -43,7 +41,7 @@
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="range" min="0" max="10" step="0.001" v-model="gui.pointSize" @input="onRefresh"  /></td>
         </tr>
 
-        <tr>
+        <!-- <tr>
           <td class="p-3">twisterX</td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" v-model="gui.twisterX" @input="onRefresh" /></td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="range" min="0" max="1" step="0.001" v-model="gui.twisterX" @input="onRefresh"  /></td>
@@ -78,7 +76,7 @@
           <td class="p-3">twisterSpeedZ</td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" v-model="gui.twisterSpeedZ" @input="onRefresh" /></td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="range" min="0" max="1" step="0.001" v-model="gui.twisterSpeedZ" @input="onRefresh"  /></td>
-        </tr>
+        </tr> -->
 
       </table>
     </div>
