@@ -89,6 +89,7 @@
           </PreviewPlane>
         </GLArtCanvas>
       </div>
+
       <div :style="{ width: `${pSize}px`, height: `${pSize}px` }" :class="{ 'rounded-lg border border-gray-500': core.getCurrentWork() }">
         <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="core.getCurrentWork()">
@@ -98,8 +99,8 @@
       </div>
     </div>
 
-    <!-- <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-out' || overlay === 'box-in'"> -->
-    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-in'">
+    <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-out' || overlay === 'box-in'">
+    <!-- <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-in'"> -->
       <OVBoxInMaker @choose="onChooseInfluence" @mouse-mode="mouseMode = $event" @overlay="overlay = $event"></OVBoxInMaker>
     </div>
 
@@ -393,7 +394,6 @@ export default {
         // }, 10)
       } else if (this.mouseMode === 'box-out') {
         this.overlay = 'box-out'
-        this.mouseMode = ''
 
         // let work = this.core.createWorkAtPos({
         //   position: {
