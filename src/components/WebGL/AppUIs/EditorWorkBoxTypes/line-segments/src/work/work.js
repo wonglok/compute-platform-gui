@@ -7,8 +7,10 @@ export const use = async ({ box, work, works, arrows }) => {
       geometry.needsUpdate = true
     },
     replaceMaterial: ({ material }) => {
-      api.drawItem.material = material
-      material.needsUpdate = true
+      if (!api.drawItem.material === material) {
+        api.drawItem.material = material
+        material.needsUpdate = true
+      }
     },
     replaceDrawItem: ({ drawItem }) => {
       box.scene.remove(api.drawItem)

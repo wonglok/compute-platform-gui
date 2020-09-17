@@ -248,17 +248,19 @@ export default {
       }
     })
     this.$watch('currentWorkInWin', () => {
-      if (this.currentWorkInWin) {
-        this.__showPreview = this.showPreview
-        this.__pSize = this.pSize
+      if (!this.isMobileVertical) {
+        if (this.currentWorkInWin) {
+          this.__showPreview = this.showPreview
+          this.__pSize = this.pSize
 
-        this.showPreview = 'topleft'
-        this.pSize = 270
-      } else {
-        this.showPreview = this.__showPreview
-        this.pSize = this.__pSize
+          this.showPreview = 'topleft'
+          this.pSize = 270
+        } else {
+          this.showPreview = this.__showPreview
+          this.pSize = this.__pSize
+        }
+        window.dispatchEvent(new Event('resize'))
       }
-      window.dispatchEvent(new Event('resize'))
     })
   },
   computed: {
@@ -284,8 +286,7 @@ export default {
     onClickFullScreen () {
       let list = [
         'fullscreen',
-        'topleft',
-        'topleft-large'
+        'topleft'
       ]
       this.previewIdx = this.previewIdx || 0
       this.showPreview = list[this.previewIdx % list.length]

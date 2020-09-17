@@ -44,7 +44,7 @@ export const use = async ({ box, work, works, arrows }) => {
     let { api, arrowAB, arrowBA } = getFirstConnectedItem({ work })
     if (api && api.replaceGeometry) {
 
-      cache.material = makeMaterial({ work, box })
+      cache.material = cache.material || makeMaterial({ work, box })
       cache.material.needsUpdate = true
 
       api.replaceMaterial({ material: cache.material })
