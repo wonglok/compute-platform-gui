@@ -3,11 +3,13 @@ export const use = async ({ box, work, works, arrows }) => {
   let { workspaces } = box
   let api = {
     replaceGeometry: ({ geometry }) => {
-      api.drawItem.geometry = geometry
-      geometry.needsUpdate = true
+      if (api.drawItem.geometry !== geometry) {
+        api.drawItem.geometry = geometry
+        geometry.needsUpdate = true
+      }
     },
     replaceMaterial: ({ material }) => {
-      if (!api.drawItem.material === material) {
+      if (api.drawItem.material !== material) {
         api.drawItem.material = material
         material.needsUpdate = true
       }
