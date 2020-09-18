@@ -57,6 +57,7 @@ export default {
         this.runCore.goCleanUp()
       }
       setupTexture()
+
       this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget, media: this.media })
     }
 

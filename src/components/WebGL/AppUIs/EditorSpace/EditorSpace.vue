@@ -13,20 +13,22 @@
     <!-- <pre>{{ core }}</pre> -->
 
     <O3D :px="50" :py="100" :pz="50">
-      <DirectionalLight :color="0xffffff" :floorColor="0xffffff" :helper="isDev && isOff" :intensity="0.75"></DirectionalLight>
+      <DirectionalLight :color="0xffffff" :floorColor="0xffffff" :helper="isDev && isOff" :intensity="0.8"></DirectionalLight>
     </O3D>
 
     <O3D :px="0" :py="100" :pz="0">
-      <AmbinetLight :color="0xffffff" :helper="isDev && isOff" :intensity="0.5"></AmbinetLight>
+      <AmbinetLight :color="0xffffff" :helper="isDev && isOff" :intensity="0.4"></AmbinetLight>
     </O3D>
 
     <div v-if="core">
       <O3D :py="-10">
         <WorkFloor :mouseMode="mouseMode" d--move-point="onMove($event)" @click-floor="onClickFloor" @delta="onPan($event)"></WorkFloor>
       </O3D>
+
+      <!-- Boxes -->
       <div v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-          <WBTextureProvider :canRun="!core.getCurrentWork()" :size="150" :media="media" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
+          <WBTextureProvider :canRun="!core.getCurrentWork()" :size="200" :media="media" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
 
           <!-- <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider> -->
           <!-- <GLFlower></GLFlower> -->
@@ -34,17 +36,20 @@
         </WorkBox>
       </div>
 
+      <!-- connections -->
       <WBArrow v-for="arrow in core.arrows" :key="arrow._id" :arrow="arrow" :arrowID="arrow._id" :core="core">
       </WBArrow>
 
+      <!-- main -->
       <keep-alive>
-        <O3D v-if="showPreview === 'fullscreen'" :visible="showPreview === 'fullscreen'" :rx="pi * -0.5">
+        <O3D :py="-5" v-if="showPreview === 'fullscreen'" :visible="showPreview === 'fullscreen'" :rx="pi * -0.5">
           <PreviewPlaneFullScreen>
             <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
           </PreviewPlaneFullScreen>
         </O3D>
       </keep-alive>
 
+      <!-- top left 1 -->
       <keep-alive>
         <O3D v-if="showPreview === 'topleft'" :visible="showPreview === 'topleft'" :rx="pi * -0.5">
           <PreviewPlaneTopLeft>
@@ -53,13 +58,18 @@
         </O3D>
       </keep-alive>
 
+      <!-- top left 2 -->
       <keep-alive>
         <O3D v-if="core.getCurrentWork()" :visible="core.getCurrentWork()" :rx="pi * -0.5">
           <PreviewPlaneTopLeft :offset="{ x: 0, y: -256, z: 0 }" >
-            <WBTextureProvider :size="150" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
+            <WBTextureProvider :size="512" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
           </PreviewPlaneTopLeft>
         </O3D>
       </keep-alive>
+
+      <CurosrImg v-if="!isTouch && cursor.enableImg" :cursor="cursor"></CurosrImg>
+      <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
+
     </div>
 
     <div @click="onClickWrapper" class="absolute top-0 left-0 full" ref="wrapper">
@@ -91,9 +101,6 @@
         <!-- <EditorFacePipeline :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'face-pipeline'"></EditorFacePipeline> -->
       </EditBox>
     </div>
-
-    <CurosrImg v-if="!isTouch && cursor.enableImg" :cursor="cursor"></CurosrImg>
-    <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
 
     <!-- <div class="absolute top-0 left-0 full bg-white" v-if="overlayGUI">
       <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>

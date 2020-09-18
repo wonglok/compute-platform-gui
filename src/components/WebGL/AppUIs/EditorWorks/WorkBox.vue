@@ -7,7 +7,7 @@
 
 <script>
 import { BoxBufferGeometry, CircleBufferGeometry, Color, DoubleSide, ExtrudeBufferGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, RepeatWrapping, Shape, ShapeBufferGeometry, TextureLoader, Vector2, Vector3 } from 'three'
-import O3DNode from '../../Core/O3DNode'
+import { getScreenYAxis, O3DNode } from '../../Core/O3DNode'
 import { make } from '../ARTBlockers/art-coder'
 import { loadTexture } from '../../Core/loadTexture'
 export default {
