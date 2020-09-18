@@ -69,7 +69,6 @@
 
       <CurosrImg v-if="!isTouch && cursor.enableImg" :cursor="cursor"></CurosrImg>
       <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
-
     </div>
 
     <div @click="onClickWrapper" class="absolute top-0 left-0 full" ref="wrapper">
@@ -94,9 +93,9 @@
     <div v-if="core">
       <EditBox v-for="win in core.wins" :key="win._id + '-wins'" :wins="core.wins" v-show="win.show" :win="win" :offset="offset" class="win-area">
         <EditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'editor'"></EditorUnit>
-        <!-- <PropsEditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'props-editor'"></PropsEditorUnit> -->
         <EditWorkBox :key="win._id + '---'" :win="win" :work="core.getWorkByWin({ win })" :core="core" :wins="core.wins"></EditWorkBox>
 
+        <!-- <PropsEditorUnit :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'props-editor'"></PropsEditorUnit> -->
         <!-- <EditorUnit :initTree="core.engineCodeTree" :key="win._id" v-if="win.appName === 'edit-pipeline'"></EditorUnit> -->
         <!-- <EditorFacePipeline :key="win._id" :win="win" :wins="core.wins" v-if="win.appName === 'face-pipeline'"></EditorFacePipeline> -->
       </EditBox>
