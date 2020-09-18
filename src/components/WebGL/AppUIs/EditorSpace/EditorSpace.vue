@@ -475,7 +475,6 @@ export default {
       } else {
         this.mouseMode = ''
       }
-
       // this.overlay = 'box-out'
     },
     onClickBR3 ({ work }) {

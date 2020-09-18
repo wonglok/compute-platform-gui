@@ -43,19 +43,23 @@ export default {
     let setupTexture = () => {
       let dpi = window.devicePixelRatio || 1
       this.displayRenderTarget = new WebGLRenderTarget(this.size * dpi, (this.size) * dpi)
+
       // this.$parent.$emit('texture', {
       //   enable: true,
       //   texture: this.displayRenderTarget.texture
       // })
+
       let holder = lookupHolder(this, 'isTextureAttach')
       if (holder) {
         holder.texture = this.displayRenderTarget.texture
       }
     }
+
     let setup = () => {
       if (this.runCore) {
         this.runCore.goCleanUp()
       }
+
       setupTexture()
 
       this.runCore = new RunCore({ onMasterLoop: this.onLoop, core, renderer: this.ctx.renderer, display: this.displayRenderTarget, media: this.media })
