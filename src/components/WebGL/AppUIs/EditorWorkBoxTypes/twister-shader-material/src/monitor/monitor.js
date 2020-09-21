@@ -20,10 +20,10 @@ export const use = async ({ box, work }) => {
     material.defines.DPI = (window.devicePixelRatio || 1.0).toFixed(1)
   }
 
-  box.onLoop(() => {
-    // mesh.rotation.x += 0.01
-    // mesh.rotation.y += 0.01
-  })
+  // box.onLoop(() => {
+  //   // mesh.rotation.x += 0.01
+  //   // mesh.rotation.y += 0.01
+  // })
 
   // box.onRefresh(() => {
   //   mesh.material = makeMaterial({ work, box })
