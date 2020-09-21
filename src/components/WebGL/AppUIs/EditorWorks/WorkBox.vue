@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- @texture = rtt -->
-    <slot @texture="$emit('texture', $event)"></slot>
+    <slot v-if="ready"></slot>
   </div>
 </template>
 
@@ -19,6 +19,7 @@ export default {
   ],
   data () {
     return {
+      ready: false,
       texture: false,
       isTextureAttach: true,
       unitPos: {
@@ -307,8 +308,9 @@ export default {
 
       this.onLoop(() => {
         let texture = this.texture
-        if (texture && roundedMat.map !== texture) {
+        if (texture) {
           roundedMat.map = texture
+          roundedMat.needsUpdate = true
           // texture.wrapS = texture.wrapT = RepeatWrapping
           texture.repeat.set(1 / 40, 1 / 40)
           texture.offset.set(0.5, 0.5)
@@ -410,6 +412,12 @@ export default {
     makeRoundedScreen({ baseMesh, close: close })
 
     this.ctx.core.refresh()
+
+
+
+    this.$nextTick(() => {
+      this.ready = true
+    })
   }
 }
 </script>

@@ -28,7 +28,7 @@
       <!-- Boxes -->
       <div v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-          <WBTextureProvider :canRun="!core.getCurrentWork()" :size="200" :media="media" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
+          <WBTextureProvider :canRun="!core.getCurrentWork()" :size="165" :media="media" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
 
           <!-- <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider> -->
           <!-- <GLFlower></GLFlower> -->
@@ -40,7 +40,7 @@
       <WBArrow v-for="arrow in core.arrows" :key="arrow._id" :arrow="arrow" :arrowID="arrow._id" :core="core">
       </WBArrow>
 
-      <!-- main -->
+      <!-- Main -->
       <keep-alive>
         <O3D :py="-5" v-if="showPreview === 'fullscreen'" :visible="showPreview === 'fullscreen'" :rx="pi * -0.5">
           <PreviewPlaneFullScreen>
@@ -565,7 +565,7 @@ export default {
 
       // this.rayplay.setLayer(2)
 
-      this.camera.position.y = 125
+      this.camera.position.y = 150
       this.camera.position.z = 0
       this.camera.lookAt(this.scene.position)
 

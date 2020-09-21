@@ -6,6 +6,7 @@ export const use = async ({ box, work, works, arrows }) => {
   let self = {
     mesh: false
   }
+
   workspaces.set(work._id, self)
 
   let getFirstConnectedItem = ({ work }) => {
@@ -37,24 +38,21 @@ export const use = async ({ box, work, works, arrows }) => {
     }
   }
 
-  let cache = {
-  }
-
+  let Cache = {}
   let connectToMesh = () => {
     let { api, arrowAB, arrowBA } = getFirstConnectedItem({ work })
-    if (api && api.replaceGeometry) {
+    if (api && api.replaceMaterial) {
+      Cache.material = Cache.material || makeMaterial({ work, box })
+      Cache.material.needsUpdate = true
 
-      cache.material = cache.material || makeMaterial({ work, box })
-      cache.material.needsUpdate = true
-
-      api.replaceMaterial({ material: cache.material })
+      api.replaceMaterial({ material: Cache.material })
 
       arrowAB.errorCode = ''
       arrowAB.errorMsg = ''
-    } else if (api && !api.replaceGeometry) {
+    } else if (api && !api.replaceMaterial) {
       if (arrowAB) {
-        arrowAB.errorCode = 'API.replaceGeometry'
-        arrowAB.errorMsg = 'API.replaceGeometry method is not found'
+        arrowAB.errorCode = 'API.replaceMaterial'
+        arrowAB.errorMsg = 'API.replaceMaterial method is not found'
         console.error(arrowAB.errorMsg)
       }
     } else {
@@ -71,8 +69,6 @@ export const use = async ({ box, work, works, arrows }) => {
   }
 
   connectToMesh()
-
-
 
   // box.onRefresh(() => {
   //   connectToMesh()
