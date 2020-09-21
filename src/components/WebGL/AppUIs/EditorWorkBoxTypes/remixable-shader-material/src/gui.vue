@@ -6,7 +6,7 @@
       </div>
     </div>
 
-    <div class="rounded-lg border py-3 px-5 m-3">
+    <div class="rounded-lg border py-3 px-5 m-3 overflow-x-auto scrolling-touch">
       <!-- <pre>{{ gui }}</pre> -->
       <table>
         <tr>

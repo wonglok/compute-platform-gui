@@ -8,7 +8,7 @@
         Dynamic Vertex Visual Object
       </div>
     </div>
-    <div class="rounded-lg border py-3 px-5 m-3">
+    <div class="rounded-lg border py-3 px-5 m-3 overflow-x-auto scrolling-touch">
       <div @click="tab = 'uniform'" class="font-sans text-xl mb-3 inline-block rounded-lg border-gray-500 border p-3 mx-2">
         Uniforms
       </div>

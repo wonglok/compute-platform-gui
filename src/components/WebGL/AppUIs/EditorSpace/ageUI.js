@@ -68,9 +68,9 @@ export const getWin = (config = {}, pos = {}, data = {}) => {
     order: 0,
     pos: {
       x: window.innerWidth - width - 15,
-      y: 15 + 50,
+      y: 15,
       w: width,
-      h: window.innerHeight - 15 * 2 - 50,
+      h: window.innerHeight - 15 * 2,
       s: 1,
       ...pos
     },

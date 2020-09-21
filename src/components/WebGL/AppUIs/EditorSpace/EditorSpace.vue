@@ -44,7 +44,7 @@
       <keep-alive>
         <O3D :py="-5" v-if="showPreview === 'fullscreen'" :visible="showPreview === 'fullscreen'" :rx="pi * -0.5">
           <PreviewPlaneFullScreen>
-            <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
+            <PreviewTextureProvider :media="media" :size="1024"></PreviewTextureProvider>
           </PreviewPlaneFullScreen>
         </O3D>
       </keep-alive>
@@ -53,7 +53,7 @@
       <keep-alive>
         <O3D v-if="showPreview === 'topleft'" :visible="showPreview === 'topleft'" :rx="pi * -0.5">
           <PreviewPlaneTopLeft>
-            <PreviewTextureProvider :media="media" :size="512"></PreviewTextureProvider>
+            <PreviewTextureProvider :media="media" :size="256"></PreviewTextureProvider>
           </PreviewPlaneTopLeft>
         </O3D>
       </keep-alive>
@@ -62,7 +62,7 @@
       <keep-alive>
         <O3D v-if="core.getCurrentWork()" :visible="core.getCurrentWork()" :rx="pi * -0.5">
           <PreviewPlaneTopLeft :offset="{ x: 0, y: -256, z: 0 }" >
-            <WBTextureProvider :size="512" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
+            <WBTextureProvider :size="256" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
           </PreviewPlaneTopLeft>
         </O3D>
       </keep-alive>
@@ -105,7 +105,8 @@
       <component @choose="onChooseOverlay" @overlay="overlayGUI = $event" @mouse-mode="mouseMode = $event" :is="overlayGUI"></component>
     </div> -->
 
-    <!-- <div v-if="core && !isMobileVertical" class="pointer-events-none cursor-pointer absolute top-0 left-0 p-3">
+    <!--
+    <div v-if="core && !isMobileVertical" class="pointer-events-none cursor-pointer absolute top-0 left-0 p-3">
       <div :style="{ width: `${pSize + 2}px`, height: `${pSize + 2}px` }"  :class="{ 'rounded-lg border border-gray-500 mb-3': showPreview === 'topleft' || showPreview === 'topleft-large' }">
         <GLArtCanvas :suspendRender="false" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="showPreview === 'topleft' || showPreview === 'topleft-large'">
@@ -121,7 +122,8 @@
           </PreviewPlane>
         </GLArtCanvas>
       </div>
-    </div> -->
+    </div>
+    -->
 
     <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-out' || overlay === 'box-in'">
     <!-- <div class="absolute top-0 left-0 full bg-white" v-if="overlay === 'box-in'"> -->
@@ -160,7 +162,7 @@ export default {
         micNow: false,
         micPast: false
       },
-      showPreview: window.innerWidth > 767 ? 'topleft' : 'fullscreen',
+      showPreview: 'topleft',
       isMobileVertical: window.innerWidth <= 500 && window.innerHeight > window.innerWidth,
       pSize: 270,
       overlayGUI: false,
