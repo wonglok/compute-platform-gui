@@ -53,7 +53,7 @@
       <keep-alive>
         <O3D v-if="showPreview === 'topleft'" :visible="showPreview === 'topleft'" :rx="pi * -0.5">
           <PreviewPlaneTopLeft :size="isMobileVertical ? half : 256">
-            <PreviewTextureProvider :media="media" :size="256"></PreviewTextureProvider>
+            <PreviewTextureProvider :media="media" :size="isMobileVertical ? half : 256"></PreviewTextureProvider>
           </PreviewPlaneTopLeft>
         </O3D>
       </keep-alive>
@@ -63,7 +63,7 @@
         <keep-alive>
           <O3D v-if="core.getCurrentWork()" :visible="core.getCurrentWork()" :rx="pi * -0.5">
             <PreviewPlaneTopLeft :size="half" :offset="{ x: half, y: 0, z: 0 }" >
-              <WBTextureProvider :size="256" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
+              <WBTextureProvider :size="half" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
             </PreviewPlaneTopLeft>
           </O3D>
         </keep-alive>

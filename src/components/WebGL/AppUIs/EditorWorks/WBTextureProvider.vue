@@ -132,9 +132,9 @@ export default {
       matrix.identity()
       frustum.setFromProjectionMatrix(matrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse))
 
-      let canRun = frustum.containsPoint(this.work.position)
-      console.log(this.work._id, canRun, this.work.position.x)
-      return canRun
+      let isInFrustum = frustum.containsPoint(this.work.position)
+      // console.log(this.work._id, isInFrustum, this.work.position.x)
+      return isInFrustum
     }
 
     this.onLoop(() => {

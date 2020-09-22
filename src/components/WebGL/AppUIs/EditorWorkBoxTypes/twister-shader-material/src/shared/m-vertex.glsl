@@ -7,6 +7,8 @@ uniform float twisterZ;
 uniform float twisterSpeedX;
 uniform float twisterSpeedY;
 uniform float twisterSpeedZ;
+uniform sampler2D micNow;
+uniform sampler2D micPast;
 
 mat3 rotateX (float rad) {
   float c = cos(rad);
@@ -43,11 +45,12 @@ void main(void) {
   vec3 nPos = position;
 
   // nPos.x += sin(nPos.y * 0.1 + time * 10.0) * 10.0;
+  float soundNow = texture2D(micNow, uv).x;
+  float soundPast = texture2D(micPast, uv).x;
 
-
-  nPos.xyz += normalize(nPos.xyz) * sin(nPos.x * twisterX);
-  nPos.xyz += normalize(nPos.xyz) * sin(nPos.y * twisterY);
-  nPos.xyz += normalize(nPos.xyz) * sin(nPos.z * twisterZ);
+  nPos.xyz += (soundPast * 20.0 + soundNow * 5.0 + normalize(nPos.xyz)) * sin(nPos.x * twisterX);
+  nPos.xyz += (soundPast * 20.0 + soundNow * 5.0 + normalize(nPos.xyz)) * sin(nPos.y * twisterY);
+  nPos.xyz += (soundPast * 20.0 + soundNow * 5.0 + normalize(nPos.xyz)) * sin(nPos.z * twisterZ);
 
   nPos.xyz *= rotateX(nPos.x * 0.02 * 3.14159265 * 2.0 * twisterX + sin(time * twisterSpeedX));
   nPos.xyz *= rotateY(nPos.y * 0.02 * 3.14159265 * 2.0 * twisterY + sin(time * twisterSpeedY));
@@ -58,6 +61,8 @@ void main(void) {
   nPos.xyz += normalize(nPos.xyz) * sin(nPos.z * twisterZ);
 
   vUv = uv;
+
+
 
   #ifdef USE_POINTS
     #ifdef DPI

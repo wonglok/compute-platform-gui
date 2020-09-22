@@ -7,6 +7,8 @@ export const makeMaterial = ({ box, work }) => {
   let defines = {
   }
   let uniforms = {
+    micNow: { type: 'mic-now', value: null },
+    micPast: { type: 'mic-past', value: null },
     pointSize: { type: 'f', value: 5.47 },
     twisterX: { type: 'f', value: 0.334 },
     twisterY: { type: 'f', value: 0.344 },
@@ -19,12 +21,23 @@ export const makeMaterial = ({ box, work }) => {
     time: { type: 't', value: 0 }
   }
 
+  console.log(box.deps)
+
   box.onLoop(() => {
     for (let kn in gui) {
       if (uniforms[kn].type === 'f') {
         uniforms[kn].value = gui[kn]
       } else if (uniforms[kn].type === 'c') {
         uniforms[kn].value.set(gui[kn])
+      }
+    }
+    for (let kn in uniforms) {
+      if (uniforms[kn].type === 'mic-now' && box.deps.media && box.deps.media.micNow) {
+        let micNow = box.deps.media.micNow.getTexture()
+        uniforms[kn].value = micNow
+      } else if (uniforms[kn].type === 'mic-past' && box.deps.media && box.deps.media.micPast) {
+        let micPast = box.deps.media.micPast.getTexture()
+        uniforms[kn].value = micPast
       }
     }
   })

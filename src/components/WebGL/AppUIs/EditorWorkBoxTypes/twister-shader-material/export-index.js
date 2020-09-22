@@ -68,7 +68,10 @@ const buttons = {
   // }
 }
 
+const needsMic = true
+
 export {
+  needsMic,
   displayName,
   tags,
   fileTree,
