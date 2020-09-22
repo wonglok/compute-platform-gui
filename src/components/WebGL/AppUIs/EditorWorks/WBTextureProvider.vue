@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import { LinearEncoding, PerspectiveCamera, Scene, Texture, WebGLRenderTarget } from 'three'
+import { LinearEncoding, PerspectiveCamera, Scene, Texture, Vector3, WebGLRenderTarget } from 'three'
 import { lookupHolder, O3DNode } from '../../Core/O3DNode'
 import * as THREE from 'three'
 import { WBTextureProviderEngine } from './WBTextureProviderEngine'
@@ -121,7 +121,27 @@ export default {
     //   }
     // })
 
+    var frustum = new THREE.Frustum();
+    let matrix = new THREE.Matrix4()
+    let scanCanRun = (object) => {
+      let camera = this.ctx.camera
+      camera.updateMatrix()
+      camera.updateMatrixWorld()
+      camera.updateProjectionMatrix()
+
+      matrix.identity()
+      frustum.setFromProjectionMatrix(matrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse))
+
+      let canRun = frustum.containsPoint(this.work.position)
+      console.log(this.work._id, canRun, this.work.position.x)
+      return canRun
+    }
+
     this.onLoop(() => {
+      let scan = scanCanRun(this.o3d)
+      if (!scan) {
+        return
+      }
       if (!this.canRun) {
         return
       }

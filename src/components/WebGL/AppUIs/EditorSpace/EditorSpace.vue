@@ -52,20 +52,31 @@
       <!-- top left 1 -->
       <keep-alive>
         <O3D v-if="showPreview === 'topleft'" :visible="showPreview === 'topleft'" :rx="pi * -0.5">
-          <PreviewPlaneTopLeft>
+          <PreviewPlaneTopLeft :size="isMobileVertical ? half : 256">
             <PreviewTextureProvider :media="media" :size="256"></PreviewTextureProvider>
           </PreviewPlaneTopLeft>
         </O3D>
       </keep-alive>
 
       <!-- top left 2 -->
-      <keep-alive>
-        <O3D v-if="core.getCurrentWork()" :visible="core.getCurrentWork()" :rx="pi * -0.5">
-          <PreviewPlaneTopLeft :offset="{ x: 0, y: -256, z: 0 }" >
-            <WBTextureProvider :size="256" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
-          </PreviewPlaneTopLeft>
-        </O3D>
-      </keep-alive>
+      <div v-if="isMobileVertical">
+        <keep-alive>
+          <O3D v-if="core.getCurrentWork()" :visible="core.getCurrentWork()" :rx="pi * -0.5">
+            <PreviewPlaneTopLeft :size="half" :offset="{ x: half, y: 0, z: 0 }" >
+              <WBTextureProvider :size="256" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
+            </PreviewPlaneTopLeft>
+          </O3D>
+        </keep-alive>
+      </div>
+      <div v-else>
+        <keep-alive>
+          <O3D v-if="core.getCurrentWork()" :visible="core.getCurrentWork()" :rx="pi * -0.5">
+            <PreviewPlaneTopLeft :offset="{ x: 0, y: -256, z: 0 }" >
+              <WBTextureProvider :size="256" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
+            </PreviewPlaneTopLeft>
+          </O3D>
+        </keep-alive>
+      </div>
 
       <CurosrImg v-if="!isTouch && cursor.enableImg" :cursor="cursor"></CurosrImg>
       <CursorArrow v-if="!isTouch && cursor.enableArrow" :from="core.getCurrentWorkFrom()" :cursor="cursor"></CursorArrow>
@@ -162,6 +173,7 @@ export default {
         micNow: false,
         micPast: false
       },
+      half: window.innerWidth / 2,
       showPreview: 'topleft',
       isMobileVertical: window.innerWidth <= 500 && window.innerHeight > window.innerWidth,
       pSize: 270,
@@ -676,6 +688,7 @@ export default {
     })
 
     window.addEventListener('resize', () => {
+      this.half = window.innerWidth / 2,
       this.isMobileVertical = window.innerWidth <= 500 && window.innerHeight > window.innerWidth
     }, false)
   },

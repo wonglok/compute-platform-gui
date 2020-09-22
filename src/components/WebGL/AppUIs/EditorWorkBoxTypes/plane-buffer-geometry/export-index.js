@@ -26,7 +26,7 @@ const compatability = {
   ]
 }
 
-const displayName = 'Plane Buffer Geometry'
+const displayName = 'Plane'
 
 const tags = [
   'geometry',

@@ -4,7 +4,7 @@ export const use = async ({ box, work, works, arrows }) => {
   let { Color, Mesh, BoxBufferGeometry, SphereBufferGeometry, MeshBasicMaterial } = box.deps.THREE
   let { workspaces } = box
   let self = {
-    mesh: false
+    material: false
   }
 
   workspaces.set(work._id, self)
@@ -38,14 +38,13 @@ export const use = async ({ box, work, works, arrows }) => {
     }
   }
 
-  let Cache = {}
   let connectToMesh = () => {
     let { api, arrowAB, arrowBA } = getFirstConnectedItem({ work })
     if (api && api.replaceMaterial) {
-      Cache.material = Cache.material || makeMaterial({ work, box })
-      Cache.material.needsUpdate = true
+      self.material = self.material || makeMaterial({ work, box })
+      self.material.needsUpdate = true
 
-      api.replaceMaterial({ material: Cache.material })
+      api.replaceMaterial({ material: self.material })
 
       arrowAB.errorCode = ''
       arrowAB.errorMsg = ''
@@ -63,7 +62,7 @@ export const use = async ({ box, work, works, arrows }) => {
       } else if (arrowAB) {
         setTimeout(() => {
           connectToMesh()
-        }, 1)
+        }, 0)
       }
     }
   }

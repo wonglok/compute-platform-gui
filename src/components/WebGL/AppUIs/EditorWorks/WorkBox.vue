@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- @texture = rtt -->
-    <slot v-if="ready"></slot>
+    <slot v-if="ready" @o3d="baseMesh.add($event)"></slot>
   </div>
 </template>
 
@@ -19,6 +19,7 @@ export default {
   ],
   data () {
     return {
+      baseMesh: false,
       ready: false,
       texture: false,
       isTextureAttach: true,
@@ -381,6 +382,8 @@ export default {
     }
 
     let baseMesh = makeBaseMesh()
+
+    this.baseMesh = baseMesh
 
     if (this.work.buttons.tl) {
       makeButton({ corner: 'tl', color: '#ffffff', baseMesh })

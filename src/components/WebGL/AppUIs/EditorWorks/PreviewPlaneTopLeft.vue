@@ -12,6 +12,9 @@ import { make } from '../ARTBlockers/art-coder'
 import { loadTexture } from '../../Core/loadTexture'
 export default {
   props: {
+    size: {
+      default: 256
+    },
     offset: {
       default () {
         return new Vector3()
@@ -42,10 +45,10 @@ export default {
     this.onLoop(() => {
       let vmin = Math.min(window.innerWidth, window.innerHeight)
       let screen = getScreenYAxis({ depth: 0, camera: this.ctx.camera })
-      plane.scale.x = screen.min / vmin * 256
-      plane.scale.y = screen.min / vmin * 256
+      plane.scale.x = screen.min / vmin * this.size
+      plane.scale.y = screen.min / vmin * this.size
 
-      plane.position.x = this.ctx.camera.position.x - screen.width * 0.5 + plane.scale.x * 0.5
+      plane.position.x = this.ctx.camera.position.x - screen.width * 0.5 + plane.scale.x * 0.5 + screen.min / vmin * this.offset.x
       plane.position.y = -this.ctx.camera.position.z + screen.height * 0.5 + plane.scale.y * -0.5 + screen.min / vmin * this.offset.y
     })
 

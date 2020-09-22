@@ -44,6 +44,11 @@ void main(void) {
 
   // nPos.x += sin(nPos.y * 0.1 + time * 10.0) * 10.0;
 
+
+  nPos.xyz += normalize(nPos.xyz) * sin(nPos.x * twisterX);
+  nPos.xyz += normalize(nPos.xyz) * sin(nPos.y * twisterY);
+  nPos.xyz += normalize(nPos.xyz) * sin(nPos.z * twisterZ);
+
   nPos.xyz *= rotateX(nPos.x * 0.02 * 3.14159265 * 2.0 * twisterX + sin(time * twisterSpeedX));
   nPos.xyz *= rotateY(nPos.y * 0.02 * 3.14159265 * 2.0 * twisterY + sin(time * twisterSpeedY));
   nPos.xyz *= rotateZ(nPos.z * 0.02 * 3.14159265 * 2.0 * twisterZ + sin(time * twisterSpeedZ));

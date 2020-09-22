@@ -60,17 +60,24 @@ export const getIO = (args) => {
 }
 
 export const getWin = (config = {}, pos = {}, data = {}) => {
-  let width = window.innerWidth - 270 * 1 - 15 - 15 - 15
+  let isMin = window.innerWidth <= 767
+  let margin = isMin ? 0 : 15
+  let vmin = Math.min(window.innerWidth, window.innerHeight)
+  let winTopGap = isMin ? vmin / 2 : 0
+  let width = window.innerWidth - 270 * 1 - margin - margin - margin
+  if (isMin) {
+    width = window.innerWidth
+  }
   let out = {
     _id: getID(),
     title: '',
     type: 'custom-function',
     order: 0,
     pos: {
-      x: window.innerWidth - width - 15,
-      y: 15,
+      x: window.innerWidth - width - margin,
+      y: margin + winTopGap,
       w: width,
-      h: window.innerHeight - 15 * 2,
+      h: window.innerHeight - margin * 2 - winTopGap,
       s: 1,
       ...pos
     },
@@ -91,8 +98,8 @@ export const getWin = (config = {}, pos = {}, data = {}) => {
     data
   }
   if (window.innerWidth <= 500 && window.innerHeight > window.innerWidth) {
-    out.pos.x = 15
-    out.pos.w = window.innerWidth - 15 - 15
+    // out.pos.x = 15
+    out.pos.w = window.innerWidth
   }
   return out
 }

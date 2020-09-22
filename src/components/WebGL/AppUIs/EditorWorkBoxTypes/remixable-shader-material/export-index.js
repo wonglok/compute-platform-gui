@@ -36,7 +36,7 @@ const compatability = {
   ]
 }
 
-const displayName = 'Remixable Shader Material'
+const displayName = 'Remixable Effect'
 
 const tags = [
   'material',

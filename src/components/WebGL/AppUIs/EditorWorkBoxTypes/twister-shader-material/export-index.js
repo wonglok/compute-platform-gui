@@ -35,7 +35,7 @@ const compatability = {
   ]
 }
 
-const displayName = 'Twister Shader Material'
+const displayName = 'Twister Effect'
 
 const tags = [
   'material',

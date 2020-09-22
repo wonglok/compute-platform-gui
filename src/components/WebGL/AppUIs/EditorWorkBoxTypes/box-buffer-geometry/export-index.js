@@ -28,7 +28,7 @@ const compatability = {
   ]
 }
 
-const displayName = 'Box Buffer Geometry'
+const displayName = 'Box'
 
 const tags = [
   'geometry',

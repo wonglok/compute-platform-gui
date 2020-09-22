@@ -25,7 +25,7 @@ const compatability = {
   ]
 }
 
-const displayName = 'Sphere Buffer Geometry'
+const displayName = 'Sphere'
 
 const tags = [
   'geometry',
