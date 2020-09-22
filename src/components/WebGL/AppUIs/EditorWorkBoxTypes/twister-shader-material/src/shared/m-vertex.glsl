@@ -40,7 +40,6 @@ mat3 rotateZ (float rad) {
   );
 }
 
-
 void main(void) {
   vec3 nPos = position;
 
@@ -61,8 +60,6 @@ void main(void) {
   nPos.xyz += normalize(nPos.xyz) * sin(nPos.z * twisterZ);
 
   vUv = uv;
-
-
 
   #ifdef USE_POINTS
     #ifdef DPI
