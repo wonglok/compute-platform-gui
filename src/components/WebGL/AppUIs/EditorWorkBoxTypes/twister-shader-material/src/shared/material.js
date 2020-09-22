@@ -35,9 +35,11 @@ export const makeMaterial = ({ box, work }) => {
       if (uniforms[kn].type === 'mic-now' && box.deps.media && box.deps.media.micNow) {
         let micNow = box.deps.media.micNow.getTexture()
         uniforms[kn].value = micNow
+        micNow.needsUpdate = true
       } else if (uniforms[kn].type === 'mic-past' && box.deps.media && box.deps.media.micPast) {
         let micPast = box.deps.media.micPast.getTexture()
         uniforms[kn].value = micPast
+        micPast.needsUpdate = true
       }
     }
   })

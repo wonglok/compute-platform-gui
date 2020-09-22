@@ -47,9 +47,9 @@ void main(void) {
   float soundNow = texture2D(micNow, uv).x;
   float soundPast = texture2D(micPast, uv).x;
 
-  nPos.xyz += (soundPast * 20.0 + soundNow * 5.0 + normalize(nPos.xyz)) * sin(nPos.x * twisterX);
-  nPos.xyz += (soundPast * 20.0 + soundNow * 5.0 + normalize(nPos.xyz)) * sin(nPos.y * twisterY);
-  nPos.xyz += (soundPast * 20.0 + soundNow * 5.0 + normalize(nPos.xyz)) * sin(nPos.z * twisterZ);
+  nPos.xyz += (soundPast * 20.0 + soundNow * 20.0 + normalize(nPos.xyz)) * sin(nPos.x * twisterX);
+  nPos.xyz += (soundPast * 20.0 + soundNow * 20.0 + normalize(nPos.xyz)) * sin(nPos.y * twisterY);
+  nPos.xyz += (soundPast * 20.0 + soundNow * 20.0 + normalize(nPos.xyz)) * sin(nPos.z * twisterZ);
 
   nPos.xyz *= rotateX(nPos.x * 0.02 * 3.14159265 * 2.0 * twisterX + sin(time * twisterSpeedX));
   nPos.xyz *= rotateY(nPos.y * 0.02 * 3.14159265 * 2.0 * twisterY + sin(time * twisterSpeedY));
