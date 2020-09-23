@@ -22,6 +22,12 @@ export const routes = [
     path: '/age',
     component: () => import('./components/age-0/pages/AgeEditor.vue')
   },
+
+  // {
+  //   path: '/pdf',
+  //   component: () => import('./components/pdf/pdf.vue')
+  // },
+
   // {
   //   path: '/docs',
   //   component: () => import('./components/WebGL/AppUIs/Docs/DocsLayout.vue'),

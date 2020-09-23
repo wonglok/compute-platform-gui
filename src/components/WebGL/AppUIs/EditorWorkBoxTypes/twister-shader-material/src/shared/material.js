@@ -31,6 +31,7 @@ export const makeMaterial = ({ box, work }) => {
         uniforms[kn].value.set(gui[kn])
       }
     }
+
     for (let kn in uniforms) {
       if (uniforms[kn].type === 'mic-now' && box.deps.media && box.deps.media.micNow) {
         let micNow = box.deps.media.micNow.getTexture()
