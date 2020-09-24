@@ -7,7 +7,6 @@
 import { PerspectiveCamera, Scene, Texture, WebGLRenderTarget } from 'three'
 import { lookupHolder, O3DNode } from '../../Core/O3DNode'
 import * as THREE from 'three'
-import { WBTextureProviderEngine } from './WBTextureProviderEngine'
 import { RunCore } from '../../AppUIs/EditorWorks/RunCore.js'
 
 export default {

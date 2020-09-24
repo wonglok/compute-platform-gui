@@ -7,8 +7,6 @@
 import { LinearEncoding, PerspectiveCamera, Scene, Texture, Vector3, WebGLRenderTarget } from 'three'
 import { lookupHolder, O3DNode } from '../../Core/O3DNode'
 import * as THREE from 'three'
-import { WBTextureProviderEngine } from './WBTextureProviderEngine'
-// import { MiniBoxEngine } from '../../Packages/FSCompiler/srcs/basic/src/monitor/MiniBoxEngine'
 
 export default {
   mixins: [
