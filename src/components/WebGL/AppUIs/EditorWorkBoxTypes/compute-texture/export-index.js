@@ -28,7 +28,6 @@ const io = {
 
 const guiData = {
   compute: glsl`
-
 const mat2 m = mat2(0.80,  0.60, -0.60,  0.80);
 
 float noise(in vec2 p) {
@@ -60,16 +59,19 @@ float pattern (vec2 p, float time) {
   return abs(vout);
 }
 
-void compute (inout vec4 nextColor, inout vec4 lastColor) {
+void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
   vec3 color = vec3(
-    1.0 - 0.8 * pattern(vec2(vUv * 1.0 + time * 0.15) + 0.1 * lastColor.r + -0.16 * cos(time * 0.15), time),
-    1.0 - 0.8 * pattern(vec2(vUv * 1.0 + time * 0.15) + 0.1 * lastColor.g + 0.0 * cos(time * 0.15), time),
-    1.0 - 0.8 * pattern(vec2(vUv * 1.0 + time * 0.15) + 0.1 * lastColor.b + 0.16 * cos(time * 0.15), time)
+    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + -0.25 * cos(time * 0.15), time),
+    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + 0.0 * cos(time * 0.15), time),
+    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + 0.25 * cos(time * 0.15), time)
   );
 
-  nextColor = vec4(color * color, 1.0);
+  if (length(abs(addonColor.rgb)) > 0.0) {
+    nextColor = vec4(color * addonColor.rgb, 0.5);
+  } else {
+    nextColor = vec4(color, 0.5);
+  }
 }
-
   `,
   sizeX: 128,
   sizeY: 128
@@ -77,18 +79,18 @@ void compute (inout vec4 nextColor, inout vec4 lastColor) {
 
 const compatability = {
   boxIn: [
+    'texture'
   ],
   boxOut: [
     'remixable-shader-material'
   ]
 }
 
-const displayName = 'Color Compute Texture'
+const displayName = 'Compute Texture'
 
 const tags = [
   'texture',
-  'color-texture',
-  'color-compute-texture'
+  'compute-texture'
 ]
 
 const gui = {
@@ -100,15 +102,15 @@ const buttons = {
   tr: {},
   bl: {},
 
-  br: {
-    icon: 'circle-out',
-    mouseMode: 'box-out'
-  },
+  // br: {
+  //   icon: 'circle-out',
+  //   mouseMode: 'box-out'
+  // },
 
-  // br2: {
-  //   icon: 'circle-plus',
-  //   mouseMode: 'box-in'
-  // }
+  br: {
+    icon: 'circle-plus',
+    mouseMode: 'box-in'
+  }
 
   // br2: {
   //   icon: require('./img/circle-out.svg'),

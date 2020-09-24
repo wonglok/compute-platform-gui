@@ -6,7 +6,10 @@ export const use = async ({ box, work, works, arrows }) => {
   let { workspaces } = box
 
   let self = {
-    computeTextureAPI: makeComputeTextureAPI({ box, work })
+    computeTextureAPI: makeComputeTextureAPI({ box, work }),
+    installColorTexture: ({ texture }) => {
+      self.computeTextureAPI.addTexture({ texture })
+    }
   }
 
   let myWork = work

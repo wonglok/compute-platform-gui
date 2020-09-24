@@ -15,7 +15,7 @@ let glsl = (strings, ...args) => {
 export const makeMaterialAPI = ({ box, work }) => {
   let gui = work.guiData
 
-  let { ShaderMaterial, DoubleSide, Color, Points } = box.deps.THREE
+  let { ShaderMaterial, FrontSide, Color, Points } = box.deps.THREE
 
   let defines = {
     DPI: `${(window.devicePixelRatio || 1).toFixed(1)}`
@@ -24,8 +24,8 @@ export const makeMaterialAPI = ({ box, work }) => {
   let uniforms = {
     colorTexture: { type: 't', value: null },
     vertexTexture: { type: 't', value: null },
-    pointSize: { type: 'f', value: 5 },
-    time: { type: 't', value: 0 }
+    pointSize: { type: 'f', value: 0 },
+    time: { type: 'time', value: 0 }
   }
 
   box.onLoop(() => {
@@ -40,17 +40,13 @@ export const makeMaterialAPI = ({ box, work }) => {
     }
   })
 
-  let compiled = {
-    vsLib: '',
-    vsMain: '',
-    fsLib: '',
-    fsMain: ''
-  }
 
   let mvs = glsl`
 varying vec2 vUv;
 
+#ifdef USE_POINTS
 uniform float pointSize;
+#endif
 
 #ifdef USE_VERTEX_TEXTURE
   uniform sampler2D vertexTexture;
@@ -58,27 +54,17 @@ uniform float pointSize;
 
 uniform float time;
 
-${compiled.vsLib}
 
 void main(void) {
-  vec3 newPos = position;
+  vec3 nPos = position;
+
   vUv = uv;
 
-  #ifdef USE_VERTEX_TEXTURE
-    newPos += texture2D(vertexTexture, vUv).xyz;
-  #endif
-
-  ${compiled.vsMain}
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(nPos, 1.0);
 
   #ifdef USE_POINTS
-    #ifdef DPI
-      gl_PointSize = pointSize * DPI;
-    #else
-      gl_PointSize = pointSize;
-    #endif
+    gl_PointSize = pointSize * DPI;
   #endif
-
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
 }
 `
 
@@ -91,16 +77,14 @@ uniform float time;
   uniform sampler2D colorTexture;
 #endif
 
-${compiled.fsLib}
 
 void main (void) {
-  vec4 outColor = vec4(vec3(vUv.x, vUv.y, vUv.x), 0.5);
+  vec4 outColor = vec4(vec3(vUv.x, vUv.y, vUv.y), 0.5);
 
   #ifdef USE_COLOR_TEXTURE
     outColor = texture2D(colorTexture, vUv);
-    #endif
+  #endif
 
-  ${compiled.fsMain}
 
   #ifdef USE_POINTS
     if (length(gl_PointCoord.xy - 0.5) >= 0.5) {
@@ -122,7 +106,6 @@ void main (void) {
 
   let material = new ShaderMaterial({
     transparent: true,
-    side: DoubleSide,
     defines,
     uniforms,
     vertexShader: mvs,

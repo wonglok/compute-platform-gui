@@ -1,9 +1,11 @@
 import { makeComputeTextureAPI } from '../shared/material.js'
-export const use = async ({ box, work }) => {
+import * as Util from '../util/util.js'
+
+export const use = async ({ box, work, arrows, works }) => {
   let { MeshBasicMaterial, Mesh, Points, PlaneBufferGeometry, Color, DoubleSide } = box.deps.THREE
   let { scene, camera } = box
 
-  let setup = () => {
+  let setup = async () => {
     let computeAPI = makeComputeTextureAPI({ box, work })
 
     let mat = new MeshBasicMaterial({ color: new Color('#ffffff'), side: DoubleSide })
@@ -21,9 +23,21 @@ export const use = async ({ box, work }) => {
     })
 
     box.onLoop(() => {
-      let texture = computeAPI.getOtherTextureOutput()
+      let texture = computeAPI.getCurrentTextureOutput()
       mat.map = texture
       mat.needsUpdate = true
+    })
+
+    let workspaces = box.workspaces
+    let conns = await Util.getConns({ work, arrows, works, workspaces })
+    let myWork = work
+    conns.forEach(({ api, work }) => {
+      if (api.installColorTexture) {
+        box.onLoop(() => {
+          let texture = computeAPI.getCurrentTextureOutput()
+          api.installColorTexture({ texture })
+        })
+      }
     })
   }
   setup()

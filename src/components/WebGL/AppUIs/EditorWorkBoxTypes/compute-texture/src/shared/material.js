@@ -35,6 +35,7 @@ export const makeComputeTextureAPI = ({ box, work }) => {
   let makeRenderMaterial = ({ compute, sizeX, sizeY }) => {
     var passThruUniforms = {
       time: { value: 0 },
+      addonTexture: { value: null },
       passThruTexture: { value: null }
     };
 
@@ -44,6 +45,7 @@ export const makeComputeTextureAPI = ({ box, work }) => {
     })
 
     let passThruFragmentShader = glsl`
+      uniform sampler2D addonTexture;
       uniform sampler2D passThruTexture;
       uniform float time;
       varying vec2 vUv;
@@ -53,9 +55,10 @@ export const makeComputeTextureAPI = ({ box, work }) => {
       void main() {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
         vec4 lastColor = texture2D( passThruTexture, uv );
+        vec4 addonColor = texture2D( addonTexture, uv );
         vec4 nextColor = lastColor;
 
-        compute(nextColor, lastColor);
+        compute(nextColor, lastColor, addonColor);
 
         gl_FragColor = nextColor;
       }
@@ -139,6 +142,10 @@ export const makeComputeTextureAPI = ({ box, work }) => {
     return mesh.material
   }
 
+  let addTexture = ({ texture }) => {
+    mesh.material.uniforms.addonTexture.value = texture
+  }
+
   let lastCompute = gui.compute
   let compile = () => {
     let sizeX = gui.sizeX
@@ -153,8 +160,10 @@ export const makeComputeTextureAPI = ({ box, work }) => {
   })
 
   return {
+    addTexture,
     getMaterial,
     compile,
+
     getCurrentTextureOutput,
     getOtherTextureOutput
   }

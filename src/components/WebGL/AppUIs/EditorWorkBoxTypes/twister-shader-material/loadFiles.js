@@ -15,7 +15,7 @@ async function importAll (r) {
       src: r(key).default
     }
 
-    if (key === './work.js') {
+    if (key === './work/work.js') {
       config.isEntry = true
       config.isPackageEntry = true
     }
@@ -30,7 +30,7 @@ async function importAll (r) {
     //   config.isPreviewEntry = true
     // }
 
-    if (key === './monitor.js') {
+    if (key === './monitor/monitor.js') {
       config.isEntry = true
       config.isMonitorEntry = true
     }

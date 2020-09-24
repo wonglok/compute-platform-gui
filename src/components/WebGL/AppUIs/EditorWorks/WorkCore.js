@@ -1,4 +1,4 @@
-import { Clock, Color, EventDispatcher, PerspectiveCamera, Scene, WebGLRenderTarget } from 'three'
+import { Clock, Color, DoubleSide, EventDispatcher, PerspectiveCamera, Scene, WebGLRenderTarget } from 'three'
 import * as THREE from 'three'
 import Vue from 'vue'
 import { Chrome } from 'vue-color'
@@ -145,7 +145,6 @@ export class WorkCore extends EventDispatcher {
             // console.log(this.work._id, isInFrustum, this.work.position.x)
             return isInFrustum
           }
-
           box.onLoop(() => {
             let canRun = scanCanRun()
             let renderTargetWorkbox = box.workboxRenderTargets.get(this.work._id)
@@ -170,7 +169,7 @@ export class WorkCore extends EventDispatcher {
               runRefresh () {
                 box.runRefresh()
               },
-              camera: new PerspectiveCamera(75, 1, 0.1, 1000),
+              camera: new PerspectiveCamera(75, 1, 0.00001, 100000),
             }
 
             let Module = await box.core.makeWorkBoxMonitor({ work: this.work })
@@ -178,15 +177,36 @@ export class WorkCore extends EventDispatcher {
             console.log(box._id, 'workbox monitor runner: setup ' + this.work._id)
           }
 
-          compile()
+          let getSignature = () => {
+            return JSON.stringify([
+              core.works.map(e => {
+                return [
+                  e._id
+                ]
+              }),
+              core.arrows.filter(e => e.to === this.work._id || e.from === this.work._id)
+            ])
+          }
+
+          this.last = ''
+          setInterval(() => {
+            if (this.last === '') {
+              this.last = getSignature()
+              compile()
+            } else {
+              let latest = getSignature()
+              if (this.last !== latest) {
+                this.last = latest
+                compile()
+              }
+            }
+          }, 100)
 
           box.$vm.$root.$on('compile-workbox', ({ work }) => {
             if (this.isDestroyed) {
               return
             }
-            if (work._id === this.work._id) {
-              compile()
-            }
+            compile()
           })
         }
       }

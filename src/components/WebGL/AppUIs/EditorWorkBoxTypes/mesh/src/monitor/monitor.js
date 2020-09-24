@@ -16,11 +16,12 @@ export const use = ({ box, work }) => {
   let mat = new MeshBasicMaterial({ wireframe: false, color: new Color('#bebebe'), side: DoubleSide })
   let mesh = new Mesh(geo, mat)
 
-  camera.position.z = 150
+  camera.position.z = 100
   scene.background = new Color('#ffffff')
 
   box.onLoop(() => {
-    mesh.rotation.z += 0.01
+    let time = window.performance.now() * 0.001
+    mesh.position.z = 20 * Math.sin(time)
   })
 
   scene.add(mesh)

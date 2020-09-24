@@ -53,12 +53,12 @@ const buttons = {
   tr: {},
   bl: {},
 
-  br: {
-    icon: 'circle-out',
-    mouseMode: 'box-out'
-  },
+  // br: {
+  //   icon: 'circle-out',
+  //   mouseMode: 'box-out'
+  // },
 
-  br2: {
+  br: {
     icon: 'circle-plus',
     mouseMode: 'box-in'
   }

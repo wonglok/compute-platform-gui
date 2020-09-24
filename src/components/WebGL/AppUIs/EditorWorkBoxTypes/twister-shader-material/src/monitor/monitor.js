@@ -1,5 +1,7 @@
 import { makeMaterial } from '../shared/material.js'
-export const use = async ({ box, work }) => {
+import { getConns } from '../util/util.js'
+
+export const use = async ({ box, work, arrows, works }) => {
   // if (box && box.userData && box.userData.work && box.userData.work.coverImage) {
   let { MeshBasicMaterial, Points, SphereBufferGeometry, Color, DoubleSide } = box.deps.THREE
   let { scene, camera } = box
