@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { CoreShell } from '../EditorWorks/RunCore'
+import { CoreShell } from '../EditorWorks/CoreShell'
 import * as THREE from 'three'
 export default {
   mixins: [

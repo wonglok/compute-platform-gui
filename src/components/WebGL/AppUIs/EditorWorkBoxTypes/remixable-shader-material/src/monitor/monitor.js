@@ -1,4 +1,4 @@
-import { makeMaterial } from '../shared/material.js'
+import { makeMaterialAPI } from '../shared/material.js'
 export const use = async ({ box, work }) => {
   // if (box && box.userData && box.userData.work && box.userData.work.coverImage) {
   let { MeshBasicMaterial, Mesh, Points, BoxBufferGeometry, Color, DoubleSide } = box.deps.THREE
@@ -8,7 +8,7 @@ export const use = async ({ box, work }) => {
   // let geo = new PlaneBufferGeometry(170, 170, 2, 2)
 
   let geo = new BoxBufferGeometry(80, 80, 80, 3, 3, 3)
-  let material = makeMaterial({ work, box })
+  let { material } = makeMaterialAPI({ work, box })
   // let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe'), side: DoubleSide })
   let mesh = new Mesh(geo, material)
 
@@ -26,7 +26,7 @@ export const use = async ({ box, work }) => {
   })
 
   // box.onRefresh(() => {
-  //   mesh.material = makeMaterial({ work, box })
+  //   mesh.material = makeMaterialAPI({ work, box })
   // })
 
   // box.runRefresh()

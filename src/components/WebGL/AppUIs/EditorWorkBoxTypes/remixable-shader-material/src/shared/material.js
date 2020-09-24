@@ -12,7 +12,7 @@ let glsl = (strings, ...args) => {
   return res
 }
 
-export const makeMaterial = ({ box, work, nodes }) => {
+export const makeMaterialAPI = ({ box, work }) => {
   let gui = work.guiData
 
   let { ShaderMaterial, DoubleSide, Color, Points } = box.deps.THREE
@@ -22,6 +22,8 @@ export const makeMaterial = ({ box, work, nodes }) => {
   }
 
   let uniforms = {
+    colorTexture: { type: 't', value: null },
+    vertexTexture: { type: 't', value: null },
     pointSize: { type: 'f', value: 5 },
     time: { type: 't', value: 0 }
   }
@@ -49,6 +51,11 @@ export const makeMaterial = ({ box, work, nodes }) => {
 varying vec2 vUv;
 
 uniform float pointSize;
+
+#ifdef USE_VERTEX_TEXTURE
+  uniform sampler2D vertexTexture;
+#endif
+
 uniform float time;
 
 ${compiled.vsLib}
@@ -56,6 +63,10 @@ ${compiled.vsLib}
 void main(void) {
   vec3 newPos = position;
   vUv = uv;
+
+  #ifdef USE_VERTEX_TEXTURE
+    newPos += texture2D(vertexTexture, vUv).xyz;
+  #endif
 
   ${compiled.vsMain}
 
@@ -76,10 +87,18 @@ varying vec2 vUv;
 
 uniform float time;
 
+#ifdef USE_COLOR_TEXTURE
+  uniform sampler2D colorTexture;
+#endif
+
 ${compiled.fsLib}
 
 void main (void) {
   vec4 outColor = vec4(vec3(vUv.x, vUv.y, vUv.x), 0.5);
+
+  #ifdef USE_COLOR_TEXTURE
+    outColor = texture2D(colorTexture, vUv);
+    #endif
 
   ${compiled.fsMain}
 
@@ -109,6 +128,7 @@ void main (void) {
     vertexShader: mvs,
     fragmentShader: mfs
   })
+  material.needsUpdate = true
 
   // box.onRefresh(() => {
   //   material.vertexShader = mvs
@@ -116,5 +136,21 @@ void main (void) {
   //   material.needsUpdate = true
   // })
 
-  return material
+  let installColorTexture = ({ texture }) => {
+    defines.USE_COLOR_TEXTURE = 'true'
+    uniforms.colorTexture.value = texture
+    material.needsUpdate = true
+  }
+
+  let installVertexTexture = ({ texture }) => {
+    defines.USE_VERTEX_TEXTURE = 'true'
+    uniforms.vertexTexture.value = texture
+    material.needsUpdate = true
+  }
+
+  return {
+    installColorTexture,
+    installVertexTexture,
+    material
+  }
 }

@@ -26,11 +26,11 @@
         </div>
       </div>
 
-      <div v-if="canChoose.includes('algorithms')">
+      <div v-if="canChoose.includes('texture')">
         <div class="font-sans text-xl mb-3">
-          Algorithms 運算方式
+          Texture 紋理
         </div>
-        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('algorithms'))">
+        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('texture'))">
           <div>{{ wbType.displayName }}</div>
         </div>
       </div>

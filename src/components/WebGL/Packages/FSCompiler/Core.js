@@ -234,6 +234,7 @@ export class AppCore extends EventDispatcher {
     if (!hasFound) {
       let fromType = this.getCurrentWorkFrom().type
       let toType = workTo.type
+
       if (direction === 'out') {
         this.arrows.push({
           _id: getID(),
@@ -257,6 +258,7 @@ export class AppCore extends EventDispatcher {
           toType
         })
       }
+
     } else {
       console.log('already added link')
     }

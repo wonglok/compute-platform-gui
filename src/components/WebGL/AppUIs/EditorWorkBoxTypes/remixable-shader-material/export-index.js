@@ -29,7 +29,7 @@ const guiData = {
 
 const compatability = {
   boxIn: [
-    'algorithms'
+    'texture',
   ],
   boxOut: [
     'draw-type'
@@ -54,13 +54,13 @@ const buttons = {
   bl: {},
 
   br: {
-    icon: 'circle-plus',
-    mouseMode: 'box-in'
+    icon: 'circle-out',
+    mouseMode: 'box-out'
   },
 
   br2: {
-    icon: 'circle-out',
-    mouseMode: 'box-out'
+    icon: 'circle-plus',
+    mouseMode: 'box-in'
   }
 
   // br2: {

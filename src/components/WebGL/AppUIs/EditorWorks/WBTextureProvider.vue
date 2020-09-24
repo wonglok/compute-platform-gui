@@ -65,6 +65,7 @@ export default {
         scene: new Scene(),
         camera: new PerspectiveCamera(75, 1, 0.1, 1000),
         renderTarget: this.renderTarget,
+        renderer: this.ctx.renderer,
         work: this.work,
         onDefaultRender: () => {
           if (this.renderTarget) {

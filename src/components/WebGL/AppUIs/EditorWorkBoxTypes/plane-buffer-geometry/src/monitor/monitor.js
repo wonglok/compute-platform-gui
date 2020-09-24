@@ -17,11 +17,29 @@ export const use = async ({ box, work }) => {
     mesh.rotation.z += 0.01
   })
 
-  box.onRefresh(() => {
+  // box.onRefresh(() => {
+  //   let gui = work.guiData
+  //   let geo = new PlaneBufferGeometry(gui.width, gui.height, gui.segmentX, gui.segmentY)
+  //   mesh.geometry = geo
+  //   mesh.geometry.needsUpdate = true
+  // })
+
+  let exec = () => {
+    if (mesh.geometry) {
+      mesh.geometry.dispose()
+    }
     let gui = work.guiData
     let geo = new PlaneBufferGeometry(gui.width, gui.height, gui.segmentX, gui.segmentY)
     mesh.geometry = geo
     mesh.geometry.needsUpdate = true
+  }
+
+  let tout = 0
+  box.onRefresh(() => {
+    clearTimeout(tout)
+    tout = setTimeout(() => {
+      exec()
+    }, 20)
   })
 
   box.runRefresh()

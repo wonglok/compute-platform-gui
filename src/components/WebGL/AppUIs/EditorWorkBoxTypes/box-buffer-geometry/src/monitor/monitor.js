@@ -17,11 +17,29 @@ export const use = async ({ box, work }) => {
     mesh.rotation.y += 0.01
   })
 
-  box.onRefresh(() => {
+  // box.onRefresh(() => {
+  //   let gui = work.guiData
+  //   let geo = new BoxBufferGeometry(gui.width, gui.height, gui.depth, gui.segmentX, gui.segmentY, gui.segmentZ)
+  //   mesh.geometry = geo
+  //   mesh.geometry.needsUpdate = true
+  // })
+
+  let exec = () => {
+    if (mesh.geometry) {
+      mesh.geometry.dispose()
+    }
     let gui = work.guiData
     let geo = new BoxBufferGeometry(gui.width, gui.height, gui.depth, gui.segmentX, gui.segmentY, gui.segmentZ)
     mesh.geometry = geo
     mesh.geometry.needsUpdate = true
+  }
+
+  let tout = 0
+  box.onRefresh(() => {
+    clearTimeout(tout)
+    tout = setTimeout(() => {
+      exec()
+    }, 20)
   })
 
   box.runRefresh()
