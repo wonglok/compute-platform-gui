@@ -167,6 +167,9 @@ export class WorkCore extends EventDispatcher {
               ...this.box,
               work: this.work,
               scene: new Scene(),
+              runRefresh () {
+                box.runRefresh()
+              },
               camera: new PerspectiveCamera(75, 1, 0.1, 1000),
             }
 
