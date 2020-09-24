@@ -84,6 +84,10 @@ vec4 compute () {
     (mod(squareIDX, dimension2D)) / dimension2D
   );
 
+  vec4 vertexData = texture2D(vertexTexture, textureUV);
+  // if (length(vertexData.xyz) > 0.0 || vertexData.a > 0.0) {
+  // }
+
   // ---------- Visual LOGIC ----------
 
   float gapper = 1.0;

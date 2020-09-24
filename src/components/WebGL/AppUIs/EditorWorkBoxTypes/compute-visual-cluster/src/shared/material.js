@@ -234,6 +234,9 @@ export class MetaShieldMaterial {
       attribute vec4 meta;
       varying highp vec3 vPos;
       varying highp vec2 vUv;
+
+      uniform sampler2D vertexTexture;
+
       /*
         LIBRARY
       */
@@ -345,23 +348,24 @@ export class MetaShieldMaterial {
 
   static fragmentShader ({ gui }) {
     return glsl`
-    varying highp vec3 vPos;
-    varying highp vec2 vUv;
-    uniform sampler2D colorTexture;
-      void main (void) {
-        vec4 textureColor = texture2D(colorTexture, vUv);
-        if (length(textureColor.rgb) > 0.0) {
-          gl_FragColor = textureColor;
-        } else {
-          vec3 v_tt = normalize(vPos);
-          gl_FragColor = vec4(
-            0.25 + abs(v_tt.x),
-            0.75 + abs(v_tt.y),
-            0.25 + abs(v_tt.z),
-            0.6
-          );
-        }
-      }
+
+varying highp vec3 vPos;
+varying highp vec2 vUv;
+uniform sampler2D colorTexture;
+void main (void) {
+  vec4 textureColor = texture2D(colorTexture, vUv);
+  if (length(textureColor.rgb) > 0.0) {
+    gl_FragColor = textureColor;
+  } else {
+    vec3 v_tt = normalize(vPos);
+    gl_FragColor = vec4(
+      0.25 + abs(v_tt.x),
+      0.75 + abs(v_tt.y),
+      0.25 + abs(v_tt.z),
+      0.6
+    );
+  }
+}
     `
   }
 }
