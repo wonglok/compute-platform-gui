@@ -61,9 +61,9 @@ float pattern (vec2 p, float time) {
 
 void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
   vec3 color = vec3(
-    1.0 - 0.35 * pattern(vec2(vUv * 2.0 + time * 0.15) + -0.35 * cos(time * 0.15), time),
-    1.0 - 0.35 * pattern(vec2(vUv * 2.0 + time * 0.15) + 0.0 * cos(time * 0.15), time),
-    1.0 - 0.35 * pattern(vec2(vUv * 2.0 + time * 0.15) + 0.35 * cos(time * 0.15), time)
+    1.0 - 0.7 * pattern(vec2(vUv * 1.0 + time * 0.15) + 0.5 * cos(time * 0.15), time),
+    1.0 - 0.7 * pattern(vec2(vUv * 1.0 + time * 0.15) + 0.5 * cos(time * 0.15), time),
+    1.0 - 0.7 * pattern(vec2(vUv * 1.0 + time * 0.15) + 0.5 * cos(time * 0.15), time)
   );
 
   if (length(abs(addonColor.rgb)) > 0.0) {
@@ -72,6 +72,7 @@ void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
     nextColor = vec4(color, 0.5);
   }
 }
+
   `,
   sizeX: 128,
   sizeY: 128
