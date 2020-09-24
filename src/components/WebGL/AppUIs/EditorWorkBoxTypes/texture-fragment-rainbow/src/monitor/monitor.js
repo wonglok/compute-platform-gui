@@ -32,10 +32,10 @@ export const use = async ({ box, work, arrows, works }) => {
     let conns = await Util.getConns({ work, arrows, works, workspaces })
     let myWork = work
     conns.forEach(({ api, work }) => {
-      if (api.installColorTexture) {
+      if (api.setColorTexture) {
         box.onLoop(() => {
           let texture = computeAPI.getCurrentTextureOutput()
-          api.installColorTexture({ texture })
+          api.setColorTexture({ texture })
         })
       }
     })

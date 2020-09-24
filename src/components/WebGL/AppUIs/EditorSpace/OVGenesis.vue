@@ -32,12 +32,12 @@
         </div>
       </div>
 
-      <!-- <div class="w-1/4 flex flex-col justify-center items-center">
+      <div class="w-1/4 flex flex-col justify-center items-center">
         <div class="text-center mb-12">視覺計算 平面矩陣 <br/> Visual Compute Cluster</div>
         <div>
           <img src="./img/cube-cluster.svg" class="  cursor-pointer" @click="$emit('choose', 'compute-visual-cluster')" alt="">
         </div>
-      </div> -->
+      </div>
 
     </div>
   </div>

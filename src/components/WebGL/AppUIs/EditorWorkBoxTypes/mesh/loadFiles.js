@@ -6,7 +6,7 @@ let exporter = []
 
 async function importAll (r) {
   r.keys().forEach(key => {
-    console.log(key)
+    // console.log(key)
 
     let config = {
       path: key,

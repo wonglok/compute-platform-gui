@@ -62,15 +62,15 @@ float pattern (vec2 p, float time) {
 
 void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
   vec3 color = vec3(
-    1.0 - 0.35 * pattern(vec2(vUv * 2.0 + time * 0.15) + -0.35 * cos(time * 0.15), time),
-    1.0 - 0.35 * pattern(vec2(vUv * 2.0 + time * 0.15) + 0.0 * cos(time * 0.15), time),
-    1.0 - 0.35 * pattern(vec2(vUv * 2.0 + time * 0.15) + 0.35 * cos(time * 0.15), time)
+    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + -0.4 * cos(time * 0.15), time),
+    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + 0.0 * cos(time * 0.15), time),
+    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + 0.4 * cos(time * 0.15), time)
   );
 
   if (length(abs(addonColor.rgb)) > 0.0) {
-    nextColor = vec4(color * addonColor.rgb, 0.5);
+    nextColor = vec4(color * color * addonColor.rgb, 0.5);
   } else {
-    nextColor = vec4(color, 0.5);
+    nextColor = vec4(color * color, 0.5);
   }
 }
 

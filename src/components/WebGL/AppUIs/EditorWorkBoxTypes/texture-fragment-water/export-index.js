@@ -76,8 +76,8 @@ vec4 waterwaves( in vec2 fragCoord, in vec2 iResolution, in float iTime)
   uv *= 2.0;
 
   float f = floor(mod(iTime*.5, 2.0)); 	// Flash value.
-  vec2 first = step(pixel, uv) * f;		   	// Rule out first screen pixels and flash.
-  uv  = step(fract(uv), pixel);				// Add one line of pixels per tile.
+  vec2 first = step(pixel, uv) * f;			// Rule out first screen pixels and flash.
+  uv  = step(fract(uv), pixel);				  // Add one line of pixels per tile.
   colour = mix(colour, vec3(1.0, 1.0, 0.0), (uv.x + uv.y) * first.x * first.y); // Yellow line
 
   #endif
@@ -124,7 +124,7 @@ const buttons = {
   tr: {},
   bl: {},
 
-  // br: {
+  // br2: {
   //   icon: 'circle-out',
   //   mouseMode: 'box-out'
   // },

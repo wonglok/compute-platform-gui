@@ -13,13 +13,13 @@ export const use = async ({ box, work, works, arrows }) => {
   }
 
   let myWork = work
-  let conns = await Util.getConns({ work, arrows, works, workspaces, key: 'installColorTexture' })
+  let conns = await Util.getConns({ work, arrows, works, workspaces })
   console.log(conns)
   conns.forEach(({ api, work }) => {
-    if (api.installColorTexture) {
+    if (api.setColorTexture) {
       box.onLoop(() => {
         let texture = self.computeTextureAPI.getCurrentTextureOutput()
-        api.installColorTexture({ texture })
+        api.setColorTexture({ texture })
       })
     }
   })

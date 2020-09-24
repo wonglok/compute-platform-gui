@@ -22,7 +22,7 @@ export const use = async ({ box, work, works, arrows }) => {
   }
   workspaces.set(work._id, api)
 
-  let geo = new PlaneBufferGeometry(200, 200, 80, 80)
+  let geo = new PlaneBufferGeometry(200, 200, 128, 128)
   // let geo = new BoxBufferGeometry(80, 80, 80, 24, 24, 24)
   let mat = new MeshBasicMaterial({ color: new Color('#bebebe') })
   api.drawItem = new Mesh(geo, mat)
