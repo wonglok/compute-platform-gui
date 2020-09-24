@@ -67,26 +67,37 @@ vec4 compute () {
     isInvalid = true;
   }
 
-  float dimension3D = ceil(pow(totalSquares, 1.0 / 3.0));
-
+  // cube
+  float dimension3D = floor(pow(totalSquares, 1.0 / 3.0));
   float dX3D = mod(abs(squareIDX / pow(dimension3D, 0.0)), dimension3D) - dimension3D * 0.5;
   float dY3D = mod(abs(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
   float dZ3D = mod(abs(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
 
-  float dimension2D = ceil(pow(totalSquares, 0.5));
+  // plane
+  float dimension2D = floor(pow(totalSquares, 0.5));
   float dX2D = (squareIDX / dimension2D) * 2.0 - dimension2D;
   float dY2D = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
 
+  // uv for planes & cube
+  vec2 textureUV = vec2(
+    (squareIDX / dimension2D) / dimension2D,
+    (mod(squareIDX, dimension2D)) / dimension2D
+  );
+
   // ---------- Visual LOGIC ----------
 
-  float gapper = 1.23;
+  float gapper = 1.0;
 
-  pos.x *= 0.14;
-  pos.y *= 0.14;
+  pos.x *= 0.15;
+  pos.y *= 0.15;
   pos.z *= 0.0;
 
   pos.x += dX3D * gapper;
   pos.y += dY3D * gapper;
+  pos.z += dZ3D * gapper;
+
+  pos.xy *= 0.45;
+
   pos.z += dZ3D * gapper;
 
   float r1 = rand(vec2(dX3D)) - 0.5;
@@ -105,6 +116,7 @@ vec4 compute () {
   float piz = 0.005 * 2.0 * 3.14159265;
 
   pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateY(time + pY * piz) * pos.xyz;
+
   pos.w = 1.0;
 
   if (isInvalid) {
@@ -113,9 +125,10 @@ vec4 compute () {
 
   return pos;
 }
+
   `,
-  sizeX: 48,
-  sizeY: 48
+  sizeX: 256,
+  sizeY: 256
 }
 
 const compatability = {
