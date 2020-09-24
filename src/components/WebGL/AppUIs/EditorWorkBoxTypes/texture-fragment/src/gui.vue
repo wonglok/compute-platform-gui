@@ -9,24 +9,6 @@
     <div class="rounded-lg border py-3 px-5 m-3 overflow-x-auto scrolling-touch">
       <!-- <pre>{{ gui }}</pre> -->
 
-      <div>
-        <ACE
-          @wheel.prevent=""
-          @wheel.stop=""
-          @save="() => {
-            onRefresh()
-          }"
-          :key="'./love.glsl'"
-          :path="'./love.glsl'"
-          v-model="gui.compute"
-          @input="() => { }"
-          @slide="() => { onRefresh() }"
-          theme="monokai"
-          width="100%"
-          :height="'calc(500px)'"
-        >
-        </ACE>
-      </div>
 
       <table>
         <tr>
@@ -106,6 +88,26 @@
         </tr> -->
 
       </table>
+
+      <div>
+        <ACE
+          @wheel.prevent=""
+          @wheel.stop=""
+          @save="() => {
+            onRefresh()
+          }"
+          :key="'./love.glsl'"
+          :path="'./love.glsl'"
+          v-model="gui.compute"
+          @input="() => { }"
+          @slide="() => { onRefresh() }"
+          theme="monokai"
+          width="100%"
+          :height="'calc(500px)'"
+        >
+        </ACE>
+      </div>
+
     </div>
 
   <!-- <pre class="">{{ gui }}</pre> -->

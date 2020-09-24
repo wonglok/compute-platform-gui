@@ -8,7 +8,7 @@
 <script>
 import { BoxBufferGeometry, CircleBufferGeometry, Color, DoubleSide, LinearEncoding, Mesh, SpriteMaterial, MeshStandardMaterial, PlaneBufferGeometry, TextureLoader, Vector3, Sprite } from 'three'
 import { getScreenYAxis, O3DNode, visibleHeightAtZDepthForCamYAxis, visibleWidthAtZDepthForCamYAxis } from '../../Core/O3DNode'
-import { make } from '../ARTBlockers/art-coder'
+// import { make } from '../ARTBlockers/art-coder'
 import { loadTexture } from '../../Core/loadTexture'
 export default {
   props: {
@@ -66,12 +66,15 @@ export default {
     this.onLoop(() => {
       let texture = this.texture
       if (texture && mat.map !== texture) {
-        let screen = getScreenYAxis({ depth: 0, camera: this.ctx.camera })
-        let geo = new PlaneBufferGeometry(1, 1, 2, 2)
-        plane.geometry = geo
+        // texture.repeat.set(1, 1)
+        // texture.offset.set(0, 0)
+
+        // let screen = getScreenYAxis({ depth: 0, camera: this.ctx.camera })
+        // let geo = new PlaneBufferGeometry(1, 1, 2, 2)
+        // plane.geometry = geo
         mat.map = texture
-        texture.encoding = LinearEncoding
-        console.log(texture)
+        // texture.needsUpdate = true
+        // texture.encoding = LinearEncoding
         mat.needsUpdate = true
       }
     })

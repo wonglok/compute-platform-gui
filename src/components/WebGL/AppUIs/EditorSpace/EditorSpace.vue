@@ -28,7 +28,7 @@
       <!-- Boxes -->
       <div v-for="work in core.works" :key="work._id">
         <WorkBox :key="work._id" :work="work" @tl="onClickTL($event)" @br="onClickBR($event)" @br3="onClickBR3($event)" @br2="onClickBR2($event)" @bl="onClickBL($event)" @preview="onClickPreview($event)" @tr="onRemoveWork($event)">
-          <WBTextureProvider :canRun="!core.getCurrentWork()" :size="165" :media="media" :key="work._id" :work="work" v-if="work"></WBTextureProvider>
+          <WBCoreTextureProvider :canRun="!core.getCurrentWork()" :size="165" :media="media" :key="work._id" :work="work" v-if="work"></WBCoreTextureProvider>
 
           <!-- <WBImageTextureProvider v-if="core.drawTypes.includes(work.type)" :key="work._id" :work="work"></WBImageTextureProvider> -->
           <!-- <GLFlower></GLFlower> -->
@@ -63,7 +63,7 @@
         <keep-alive>
           <O3D v-if="core.getCurrentWork()" :visible="core.getCurrentWork()" :rx="pi * -0.5">
             <PreviewPlaneTopLeft :size="half" :offset="{ x: half, y: 0, z: 0 }" >
-              <WBTextureProvider :size="half" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
+              <WBCoreTextureProvider :mode="'preview'" :size="half" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBCoreTextureProvider>
             </PreviewPlaneTopLeft>
           </O3D>
         </keep-alive>
@@ -72,7 +72,7 @@
         <keep-alive>
           <O3D v-if="core.getCurrentWork()" :visible="core.getCurrentWork()" :rx="pi * -0.5">
             <PreviewPlaneTopLeft :offset="{ x: 0, y: -256, z: 0 }" >
-              <WBTextureProvider :size="256" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBTextureProvider>
+              <WBCoreTextureProvider :mode="'preview'" :size="256" :media="media" :key="core.getCurrentWork()._id" :work="core.getCurrentWork()" v-if="core.getCurrentWork()"></WBCoreTextureProvider>
             </PreviewPlaneTopLeft>
           </O3D>
         </keep-alive>
@@ -129,7 +129,7 @@
       <div :style="{ width: `${pSize}px`, height: `${pSize}px` }" :class="{ 'rounded-lg border border-gray-500': core.getCurrentWork() }">
         <GLArtCanvas :suspendRender="!core.getCurrentWork()" :style="{ visibility: core.getCurrentWork() ? 'visible' : 'hidden' }" :rounded="'9px 9px 9px 9px'">
           <PreviewPlane v-if="core.getCurrentWork()">
-            <WBTextureProvider :media="media" :size="pSize" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBTextureProvider>
+            <WBCoreTextureProvider :media="media" :size="pSize" :key="core.getCurrentWork()._id" v-if="core.getCurrentWork()" :work="core.getCurrentWork()"></WBCoreTextureProvider>
           </PreviewPlane>
         </GLArtCanvas>
       </div>
@@ -162,6 +162,7 @@ import { AmmoPhysics } from './AmmoPhysics'
 import { getID, getScreen } from '../../Core/O3DNode'
 import { AppCore } from '../../Packages/FSCompiler/Core'
 import { setupTimed, setupNow } from './Mic.js'
+import { WorkCore } from '../EditorWorks/WorkCore'
 
 export default {
   mixins: [
@@ -169,6 +170,7 @@ export default {
   ],
   data () {
     return {
+      workCore: false,
       media: {
         micNow: false,
         micPast: false
@@ -659,6 +661,29 @@ export default {
         evt.preventDefault()
         evt.stopImmediatePropagation()
       })
+    },
+    setupWBCore () {
+      let setup = () => {
+        if (this.workCore) {
+          this.workCore.goCleanUp()
+        }
+
+        this.workCore = new WorkCore({ core: this.core, renderer: this.ctx.renderer, display: false, media: this.media, $vm: this })
+      }
+
+      setup()
+
+      this.onLoop(() => {
+        if (this.workCore) {
+          this.workCore.runLoop()
+        }
+      })
+
+      this.$root.$on('refresh-ui', () => {
+        if (this.workCore) {
+          this.workCore.runRefresh()
+        }
+      })
     }
   },
   async mounted () {
@@ -691,6 +716,8 @@ export default {
       this.half = window.innerWidth / 2,
       this.isMobileVertical = window.innerWidth <= 500 && window.innerHeight > window.innerWidth
     }, false)
+
+    this.setupWBCore()
   },
   beforeDestroy () {
     this.isComponentActive = false

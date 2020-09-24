@@ -33,7 +33,7 @@ export class AppCore extends EventDispatcher {
       workType: false
     }
 
-    this.initAirGapForBlock = 5
+  this.initAirGapForBlock = 5
 
     this.drawTypes = [
       'points',
