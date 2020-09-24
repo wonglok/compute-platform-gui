@@ -29,7 +29,8 @@ const guiData = {
 
 const compatability = {
   boxIn: [
-    'texture',
+    'texture-fragment',
+    'texture-vertex',
   ],
   boxOut: [
     'draw-type'

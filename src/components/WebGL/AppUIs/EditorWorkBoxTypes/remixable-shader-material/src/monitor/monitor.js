@@ -7,15 +7,10 @@ export const use = async ({ box, work }) => {
   let { workspaces } = box
   // let texture = new TextureLoader().load(box.userData.work.coverImage)
   // let mat = new MeshBasicMaterial({ map: texture, color: new Color('#ffffff'), side: DoubleSide })
-  // let geo = new PlaneBufferGeometry(170, 170, 2, 2)
-  workspaces.set(work._id, {
-    installColorTexture: ({ texture }) => {
-      installColorTexture({ texture })
-    }
-  })
+  // let geo = new BoxBufferGeometry(170, 170, 2, 2)
 
-  let geo = new BoxBufferGeometry(80, 80, 80, 3, 3, 3)
-  let { material, installColorTexture } = makeMaterialAPI({ work, box })
+  let geo = new BoxBufferGeometry(100, 100, 100, 55, 55, 55)
+  let { material, installColorTexture, installVertexTexture } = makeMaterialAPI({ work, box })
   // let mat = new MeshBasicMaterial({ wireframe: true, color: new Color('#bebebe'), side: DoubleSide })
   let mesh = new Mesh(geo, material)
 
@@ -45,5 +40,16 @@ export const use = async ({ box, work }) => {
     geo.dispose()
     material.dispose()
     console.log('clean up')
+  })
+
+  workspaces.set(work._id, {
+    installColorTexture: ({ texture }) => {
+      installColorTexture({ texture })
+      material.needsUpdate = true
+    },
+    installVertexTexture: ({ texture }) => {
+      installVertexTexture({ texture })
+      material.needsUpdate = true
+    }
   })
 }

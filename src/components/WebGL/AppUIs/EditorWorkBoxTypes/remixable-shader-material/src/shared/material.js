@@ -15,7 +15,7 @@ let glsl = (strings, ...args) => {
 export const makeMaterialAPI = ({ box, work }) => {
   let gui = work.guiData
 
-  let { ShaderMaterial, FrontSide, Color, Points } = box.deps.THREE
+  let { ShaderMaterial, DoubleSide, Color, Points } = box.deps.THREE
 
   let defines = {
     DPI: `${(window.devicePixelRatio || 1).toFixed(1)}`
@@ -40,7 +40,6 @@ export const makeMaterialAPI = ({ box, work }) => {
     }
   })
 
-
   let mvs = glsl`
 varying vec2 vUv;
 
@@ -57,8 +56,12 @@ uniform float time;
 
 void main(void) {
   vec3 nPos = position;
-
   vUv = uv;
+
+  #ifdef USE_VERTEX_TEXTURE
+    vec4 vertexData = texture2D(vertexTexture, vUv);
+    nPos = nPos.xyz * vertexData.xyz;
+  #endif
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(nPos, 1.0);
 
@@ -85,7 +88,6 @@ void main (void) {
     outColor = texture2D(colorTexture, vUv);
   #endif
 
-
   #ifdef USE_POINTS
     if (length(gl_PointCoord.xy - 0.5) >= 0.5) {
       discard;
@@ -105,9 +107,9 @@ void main (void) {
   })
 
   let material = new ShaderMaterial({
-    transparent: true,
     defines,
     uniforms,
+    transparent: true,
     vertexShader: mvs,
     fragmentShader: mfs
   })

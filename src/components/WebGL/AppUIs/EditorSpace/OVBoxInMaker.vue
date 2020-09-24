@@ -16,7 +16,6 @@
         </div>
       </div> -->
 
-
       <div v-if="canChoose.includes('material')">
         <div class="font-sans text-xl mb-3">
           Materials 視覺效果
@@ -26,11 +25,20 @@
         </div>
       </div>
 
-      <div v-if="canChoose.includes('texture')">
+      <div v-if="canChoose.includes('texture-vertex')">
         <div class="font-sans text-xl mb-3">
-          Texture 紋理
+          Vertex Texture 端點紋理
         </div>
-        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('texture'))">
+        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('texture-vertex'))">
+          <div>{{ wbType.displayName }}</div>
+        </div>
+      </div>
+
+      <div v-if="canChoose.includes('texture-fragment')">
+        <div class="font-sans text-xl mb-3">
+          Color Texture 顏色 紋理
+        </div>
+        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('texture-fragment'))">
           <div>{{ wbType.displayName }}</div>
         </div>
       </div>

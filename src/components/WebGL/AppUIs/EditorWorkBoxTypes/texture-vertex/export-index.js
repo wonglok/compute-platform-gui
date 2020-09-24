@@ -79,18 +79,19 @@ void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
 
 const compatability = {
   boxIn: [
-    'texture'
+    'texture-vertex'
   ],
   boxOut: [
     'remixable-shader-material'
   ]
 }
 
-const displayName = 'Compute Texture'
+const displayName = 'Vertex Compute Texture'
 
 const tags = [
   'texture',
-  'compute-texture'
+  'texture-vertex',
+  'compute-texture-vertex'
 ]
 
 const gui = {
