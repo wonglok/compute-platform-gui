@@ -28,50 +28,71 @@ const io = {
 
 const guiData = {
   compute: glsl`
-const mat2 m = mat2(0.80,  0.60, -0.60,  0.80);
 
-float noise(in vec2 p) {
-  return sin(p.x)*sin(p.y);
-}
+// Found this on GLSL sandbox. I really liked it, changed a few things and made it tileable.
+// :)
+// by David Hoskins.
 
-float fbm4( vec2 p ) {
-    float f = 0.0;
-    f += 0.5000 * noise( p ); p = m * p * 2.02;
-    f += 0.2500 * noise( p ); p = m * p * 2.03;
-    f += 0.1250 * noise( p ); p = m * p * 2.01;
-    f += 0.0625 * noise( p );
-    return f / 0.9375;
-}
 
-float fbm6( vec2 p ) {
-    float f = 0.0;
-    f += 0.500000*(0.5+0.5*noise( p )); p = m*p*2.02;
-    f += 0.250000*(0.5+0.5*noise( p )); p = m*p*2.03;
-    f += 0.125000*(0.5+0.5*noise( p )); p = m*p*2.01;
-    f += 0.062500*(0.5+0.5*noise( p )); p = m*p*2.04;
-    f += 0.031250*(0.5+0.5*noise( p )); p = m*p*2.01;
-    f += 0.015625*(0.5+0.5*noise( p ));
-    return f/0.96875;
-}
+// Water turbulence effect by joltz0r 2013-07-04, improved 2013-07-07
 
-float pattern (vec2 p, float time) {
-  float vout = fbm4(p + time + fbm6( p + fbm4( p + time )));
-  return abs(vout);
+
+// Redefine below to see the tiling...
+//#define SHOW_TILING
+
+#define TAU 6.28318530718
+#define MAX_ITER 35
+
+vec4 waterwaves( in vec2 fragCoord, in vec2 iResolution, in float iTime)
+{
+  float time = iTime * .5+23.0;
+    // uv should be the 0-1 uv of texture...
+  vec2 uv = fragCoord.xy / iResolution.xy;
+
+#ifdef SHOW_TILING
+  vec2 p = mod(uv*TAU*2.0, TAU)-250.0;
+#else
+    vec2 p = mod(uv*TAU, TAU)-250.0;
+#endif
+  vec2 i = vec2(p);
+  float c = 1.0;
+  float inten = .005;
+
+  for (int n = 0; n < MAX_ITER; n++)
+  {
+    float t = time * (1.0 - (3.5 / float(n+1)));
+    i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
+    c += 1.0/length(vec2(p.x / (sin(i.x+t)/inten),p.y / (cos(i.y+t)/inten)));
+  }
+  c /= float(MAX_ITER);
+  c = 1.17-pow(c, 1.4);
+  vec3 colour = vec3(pow(abs(c), 8.0));
+    colour = clamp(colour + vec3(0.0, 0.35, 0.5), 0.0, 1.0);
+
+
+  #ifdef SHOW_TILING
+  // Flash tile borders...
+  vec2 pixel = 2.0 / iResolution.xy;
+  uv *= 2.0;
+
+  float f = floor(mod(iTime*.5, 2.0)); 	// Flash value.
+  vec2 first = step(pixel, uv) * f;		   	// Rule out first screen pixels and flash.
+  uv  = step(fract(uv), pixel);				// Add one line of pixels per tile.
+  colour = mix(colour, vec3(1.0, 1.0, 0.0), (uv.x + uv.y) * first.x * first.y); // Yellow line
+
+  #endif
+  return vec4(colour, 1.0);
 }
 
 void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
-  vec3 color = vec3(
-    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + -0.25 * cos(time * 0.15), time),
-    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + 0.0 * cos(time * 0.15), time),
-    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + 0.25 * cos(time * 0.15), time)
-  );
-
-  if (length(abs(addonColor.rgb)) > 0.0) {
-    nextColor = vec4(color * addonColor.rgb, 0.5);
+  if (length(addonColor.rgb) > 0.0) {
+    nextColor = waterwaves(vUv * 1024.0, vec2(1024.0), time) * addonColor;
   } else {
-    nextColor = vec4(color, 0.5);
+    nextColor = waterwaves(vUv * 1024.0, vec2(1024.0), time);
   }
+  nextColor.a = 0.75;
 }
+
   `,
   sizeX: 128,
   sizeY: 128

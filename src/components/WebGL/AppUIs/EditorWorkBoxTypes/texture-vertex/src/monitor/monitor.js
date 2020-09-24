@@ -10,7 +10,7 @@ export const use = async ({ box, work, arrows, works }) => {
 
     let mat = new MeshBasicMaterial({ color: new Color('#ffffff'), side: DoubleSide })
 
-    let geo = new PlaneBufferGeometry(150, 150, 3, 3)
+    let geo = new PlaneBufferGeometry(200, 200, 3, 3)
     let mesh = new Mesh(geo, mat)
     scene.add(mesh)
     camera.position.z = 100
