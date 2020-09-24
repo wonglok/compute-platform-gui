@@ -184,7 +184,7 @@ export class WorkCore extends EventDispatcher {
                   e._id
                 ]
               }),
-              core.arrows.filter(e => e.to === this.work._id || e.from === this.work._id)
+              core.arrows
             ])
           }
 

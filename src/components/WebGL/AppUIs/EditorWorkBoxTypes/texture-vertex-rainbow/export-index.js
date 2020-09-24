@@ -86,7 +86,7 @@ const compatability = {
   ]
 }
 
-const displayName = 'Vertex Compute Texture'
+const displayName = 'Vertex Rainbow'
 
 const tags = [
   'texture',

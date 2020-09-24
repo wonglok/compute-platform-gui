@@ -92,7 +92,6 @@ void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
   }
   nextColor.a = 0.75;
 }
-
   `,
   sizeX: 128,
   sizeY: 128
@@ -100,19 +99,19 @@ void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
 
 const compatability = {
   boxIn: [
-    'texture-fragment'
+    'texture-vertex'
   ],
   boxOut: [
     'remixable-shader-material'
   ]
 }
 
-const displayName = 'Fragment Compute Texture'
+const displayName = 'Vertex Water'
 
 const tags = [
   'texture',
-  'texture-fragment',
-  'compute-texture-fragment'
+  'texture-vertex',
+  'compute-texture-vertex'
 ]
 
 const gui = {
