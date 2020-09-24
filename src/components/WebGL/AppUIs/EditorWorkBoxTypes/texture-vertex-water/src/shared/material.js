@@ -74,7 +74,7 @@ export const makeComputeTextureAPI = ({ box, work }) => {
     var material = new ShaderMaterial( {
       side: DoubleSide,
       defines: {
-        resolution: `vec2(${sizeX.toFixed(1)}, ${sizeY.toFixed(1)})`
+        resolution: `vec2(${Number(sizeX || 0).toFixed(1)}, ${Number(sizeY || 0).toFixed(1)})`
       },
       uniforms: passThruUniforms,
       vertexShader: passThruVertexShader,
@@ -150,6 +150,8 @@ export const makeComputeTextureAPI = ({ box, work }) => {
   let compile = () => {
     let sizeX = gui.sizeX
     let sizeY = gui.sizeY
+    targetA = makeRenderTarget({ sizeX, sizeY })
+    targetB = makeRenderTarget({ sizeX, sizeY })
     mesh.material = makeRenderMaterial({ compute: gui.compute, sizeX, sizeY })
   }
   box.onRefresh(() => {

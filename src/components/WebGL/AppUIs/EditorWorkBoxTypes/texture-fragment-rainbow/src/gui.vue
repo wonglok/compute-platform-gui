@@ -40,7 +40,7 @@
         <tr>
           <td class="p-3">SizeXY</td>
           <td class="p-3">
-            <select class=" bg-transparent border-b border-black" type="text" :value="gui.sizeX" @input="($event) => { gui.sizeY = $event.target.value; gui.sizeX = $event.target.value; onRefresh(); }">
+            <select class=" bg-transparent border-b border-black" type="text" :value="gui.sizeX" @input="($event) => { gui.sizeY = $event.target.value; gui.sizeX = $event.target.value; onRefresh(); }" @change="($event) => { gui.sizeY = $event.target.value; gui.sizeX = $event.target.value; onRefresh(); }">
               <option :value="128">128x128</option>
               <option :value="256">256x256</option>
               <option :value="512">512x512</option>

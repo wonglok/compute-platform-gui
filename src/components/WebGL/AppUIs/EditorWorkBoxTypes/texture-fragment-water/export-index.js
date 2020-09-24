@@ -94,8 +94,8 @@ void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
 }
 
   `,
-  sizeX: 128,
-  sizeY: 128
+  sizeX: 256,
+  sizeY: 256
 }
 
 const compatability = {
