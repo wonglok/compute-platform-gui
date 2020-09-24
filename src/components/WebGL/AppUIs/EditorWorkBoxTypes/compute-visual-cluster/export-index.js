@@ -114,8 +114,8 @@ vec4 compute () {
   return pos;
 }
   `,
-  sizeX: 256,
-  sizeY: 256
+  sizeX: 48,
+  sizeY: 48
 }
 
 const compatability = {
