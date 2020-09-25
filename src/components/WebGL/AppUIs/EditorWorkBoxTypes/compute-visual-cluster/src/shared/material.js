@@ -308,6 +308,7 @@ export class MetaShieldMaterial {
         az = atan2(pos.y, pos.x);
         el = atan2(pos.z, sqrt(pos.x * pos.x + pos.y * pos.y));
       }
+
       // float az = 0.0;
       // float el = 0.0;
       // vec3 noiser = vec3(lastVel);
@@ -337,8 +338,8 @@ export class MetaShieldMaterial {
         float pointIDX = meta.w;
 
         float dimension2D = ceil(pow(totalSquares, 0.5));
-        float d2X = (squareIDX / dimension2D) * 2.0 - dimension2D;
-        float d2Y = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
+        // float d2X = (squareIDX / dimension2D) * 2.0 - dimension2D;
+        // float d2Y = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
 
         vUv.x = (squareIDX / dimension2D) / dimension2D;
         vUv.y = (mod(squareIDX, dimension2D)) / dimension2D;

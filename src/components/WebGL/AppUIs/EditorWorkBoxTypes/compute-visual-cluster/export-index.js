@@ -73,22 +73,30 @@ vec4 compute () {
   float dY3D = mod(abs(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
   float dZ3D = mod(abs(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
 
-  // plane
+  // planes
   float dimension2D = floor(pow(totalSquares, 0.5));
   float dX2D = (squareIDX / dimension2D) * 2.0 - dimension2D;
   float dY2D = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
 
-  // uv for planes & cube
+  // UV for planes & cube
   vec2 textureUV = vec2(
     (squareIDX / dimension2D) / dimension2D,
     (mod(squareIDX, dimension2D)) / dimension2D
   );
 
-  vec4 vertexData = texture2D(vertexTexture, textureUV);
-  // if (length(vertexData.xyz) > 0.0 || vertexData.a > 0.0) {
-  // }
+  vec4 vertexData = texture2D(vertexTexture, vec2(
+    textureUV.x,
+    textureUV.y
+  ));
 
-  // ---------- Visual LOGIC ----------
+  bool hasVertexData = (length(vertexData.xyz) > 0.0 || vertexData.a > 0.0);
+
+  // ---------- Graphics Code ----------
+
+  float extraRadius = 0.0;
+  if (hasVertexData) {
+    extraRadius += 20.0 * vertexData.r;
+  }
 
   float gapper = 1.0;
 
@@ -102,17 +110,16 @@ vec4 compute () {
 
   pos.xy *= 0.45;
 
-  pos.z += dZ3D * gapper;
-
   float r1 = rand(vec2(dX3D)) - 0.5;
   float r2 = rand(vec2(dY3D)) - 0.5;
   float r3 = rand(vec2(dZ3D)) - 0.5;
-  pos += vec4(vec3(r1, r2, r3), 0.0);
+  pos += 0.3 * vec4(vec3(r1, r2, r3), 0.0);
 
   float az = 0.0;
   float el = 0.0;
   toBall(pos.xyz, az, el);
-  pos.xyz = fromBall(50.0, az, el);
+
+  pos.xyz = fromBall(50.0 + extraRadius, az, el);
 
   float pX = pos.x;
   float pY = pos.y;
@@ -120,6 +127,8 @@ vec4 compute () {
   float piz = 0.005 * 2.0 * 3.14159265;
 
   pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateY(time + pY * piz) * pos.xyz;
+
+
 
   pos.w = 1.0;
 
@@ -137,7 +146,8 @@ vec4 compute () {
 
 const compatability = {
   boxIn: [
-    'texture-fragment'
+    'texture-fragment',
+    'texture-vertex'
   ],
   boxOut: [
     'remixable-shader-material'

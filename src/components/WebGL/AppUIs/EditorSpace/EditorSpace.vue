@@ -88,7 +88,7 @@
 
     <div class="absolute top-0 right-0 flex">
       <div class="p-3" v-if="core" v-show="core.works.some(e => e.needsMic)">
-        <img src="./icon/mic-off.svg" v-if="!media.micNow" @click="onClickMic" class="w-10 h-10" alt="">
+        <img src="./icon/mic-off.svg" v-if="!media.micNow" @click="onClickMic" class="w-10 h-10 wobble-forever" alt="">
         <img src="./icon/mic-on.svg" v-if="media.micNow" @click="onClickMic" class="w-10 h-10" alt="">
       </div>
 
@@ -772,4 +772,44 @@ export default {
   background-color: #F5F5F5;
 }
 
+
+/* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+
+@keyframes wobble {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  15% {
+    transform: translate3d(-25%, 0, 0) rotate3d(0, 0, 1, -5deg);
+  }
+
+  30% {
+    transform: translate3d(20%, 0, 0) rotate3d(0, 0, 1, 3deg);
+  }
+
+  45% {
+    transform: translate3d(-15%, 0, 0) rotate3d(0, 0, 1, -3deg);
+  }
+
+  60% {
+    transform: translate3d(10%, 0, 0) rotate3d(0, 0, 1, 2deg);
+  }
+
+  75% {
+    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -1deg);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.wobble {
+  animation-name: wobble;
+}
+
+.wobble-forever {
+  animation: wobble 1s linear 0s Infinite normal both;
+}
 </style>
