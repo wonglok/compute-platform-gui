@@ -81,7 +81,7 @@ vec4 compute () {
   //   nextColor = vec4(color * color, 0.5);
   // }
 
-  nextColor = realtimeMicColor + recordedMicColor;
+  nextColor = lastColor * realtimeMicColor + recordedMicColor;
 
   return nextColor;
 }
@@ -93,19 +93,19 @@ vec4 compute () {
 
 const compatability = {
   boxIn: [
+    'texture-media',
+    'texture-fragment',
     'texture-vertex'
   ],
   boxOut: [
-    'remixable-shader-material'
   ]
 }
 
-const displayName = 'Realtime Mic Texture'
+const displayName = 'Realtime + Recorded Mic'
 
 const tags = [
-  'texture',
-  'texture-vertex',
-  'compute-texture-vertex'
+  'texture-media',
+  'compute-texture'
 ]
 
 const gui = {

@@ -146,11 +146,11 @@ vec4 compute () {
 
 const compatability = {
   boxIn: [
+    'texture-media',
     'texture-fragment',
     'texture-vertex'
   ],
   boxOut: [
-    'remixable-shader-material'
   ]
 }
 

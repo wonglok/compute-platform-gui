@@ -25,11 +25,11 @@
         </div>
       </div>
 
-      <div v-if="canChoose.includes('texture-vertex')">
+      <div v-if="canChoose.includes('texture-media')">
         <div class="font-sans text-xl mb-3">
-          Vertex Texture 端點紋理
+          Meida Texture 媒體紋理
         </div>
-        <div @click="$emit('choose', wbType.type)" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('texture-vertex'))">
+        <div @click="$emit('choose', wbType.type); onClickMic()" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('texture-media'))">
           <div>{{ wbType.displayName }}</div>
         </div>
       </div>
@@ -144,6 +144,9 @@ export default {
     this.canChoose = this.work.compatability[this.filterKey] || []
   },
   methods: {
+    onClickMic () {
+      this.$parent.onClickMic()
+    },
     getType (v) {
       return (item) => {
         item.tags = item.tags || []
