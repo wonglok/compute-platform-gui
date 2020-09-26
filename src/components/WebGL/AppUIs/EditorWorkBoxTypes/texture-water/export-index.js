@@ -27,14 +27,13 @@ const io = {
 }
 
 const guiData = {
-  influenceType: 'vertex',
+  influenceType: 'fragment',
 
   compute: glsl`
 
 // Found this on GLSL sandbox. I really liked it, changed a few things and made it tileable.
 // :)
 // by David Hoskins.
-
 
 // Water turbulence effect by joltz0r 2013-07-04, improved 2013-07-07
 
