@@ -83,7 +83,10 @@ export default {
     let getSignature = () => {
       return JSON.stringify([
         core.works.map(e => {
-          return e._id
+          return [
+            e._id,
+            e.guiData && e.guiData.refresher
+          ]
         }),
         core.arrows
       ])

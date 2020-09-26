@@ -27,7 +27,64 @@ const io = {
 }
 
 const guiData = {
+  influenceType: 'vertex',
+
   compute: glsl`
+
+// Found this on GLSL sandbox. I really liked it, changed a few things and made it tileable.
+// :)
+// by David Hoskins.
+
+
+// Water turbulence effect by joltz0r 2013-07-04, improved 2013-07-07
+
+
+// Redefine below to see the tiling...
+//#define SHOW_TILING
+
+#define TAU 6.28318530718
+#define MAX_ITER 35
+
+vec4 waterwaves( in vec2 fragCoord, in vec2 iResolution, in float iTime)
+{
+  float time = iTime * .5+23.0;
+    // uv should be the 0-1 uv of texture...
+  vec2 uv = fragCoord.xy / iResolution.xy;
+
+#ifdef SHOW_TILING
+  vec2 p = mod(uv*TAU*2.0, TAU)-250.0;
+#else
+    vec2 p = mod(uv*TAU, TAU)-250.0;
+#endif
+  vec2 i = vec2(p);
+  float c = 1.0;
+  float inten = .005;
+
+  for (int n = 0; n < MAX_ITER; n++)
+  {
+    float t = time * (1.0 - (3.5 / float(n+1)));
+    i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
+    c += 1.0/length(vec2(p.x / (sin(i.x+t)/inten),p.y / (cos(i.y+t)/inten)));
+  }
+  c /= float(MAX_ITER);
+  c = 1.17-pow(c, 1.4);
+  vec3 colour = vec3(pow(abs(c), 8.0));
+    colour = clamp(colour + vec3(0.0, 0.35, 0.5), 0.0, 1.0);
+
+
+  #ifdef SHOW_TILING
+  // Flash tile borders...
+  vec2 pixel = 2.0 / iResolution.xy;
+  uv *= 2.0;
+
+  float f = floor(mod(iTime*.5, 2.0)); 	// Flash value.
+  vec2 first = step(pixel, uv) * f;			// Rule out first screen pixels and flash.
+  uv  = step(fract(uv), pixel);				  // Add one line of pixels per tile.
+  colour = mix(colour, vec3(1.0, 1.0, 0.0), (uv.x + uv.y) * first.x * first.y); // Yellow line
+
+  #endif
+  return vec4(colour, 1.0);
+}
 
 const mat2 m = mat2(0.80,  0.60, -0.60,  0.80);
 
@@ -60,40 +117,49 @@ float pattern (vec2 p, float time) {
   return abs(vout);
 }
 
-void compute (inout vec4 nextColor, inout vec4 lastColor, in vec4 addonColor) {
-  vec3 color = vec3(
-    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + -0.4 * cos(time * 0.15), time),
-    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + 0.0 * cos(time * 0.15), time),
-    1.0 - pattern(vec2(vUv * 2.0 + time * 0.15) + 0.4 * cos(time * 0.15), time)
+
+vec4 compute () {
+  vec2 uv = gl_FragCoord.xy / resolution.xy;
+
+  vec2 cc = vec2(
+    mod(time * 0.1 + uv.x, 1.0),
+    mod(time * 0.1 + uv.y, 1.0)
   );
 
-  if (length(abs(addonColor.rgb)) > 0.0) {
-    nextColor = vec4(color * color * addonColor.rgb, 0.5);
-  } else {
-    nextColor = vec4(color * color, 0.5);
-  }
+  vec4 lastFrame = texture2D( passThruTexture, vec2(uv.x, uv.y) );
+  vec4 addonColor = texture2D( addonTexture, vec2(uv.x, uv.y) );
+  vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(uv.x, uv.y) );
+  vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x, uv.y) );
+  vec4 nextColor = lastFrame;
+
+  vec4 color = waterwaves(vUv * 1024.0, vec2(1024.0), time);
+
+  nextColor = lastFrame * realtimeMicColor + color + recordedMicColor + addonColor;
+
+  return nextColor;
 }
 
   `,
-  sizeX: 256,
-  sizeY: 256
+  sizeX: 128,
+  sizeY: 128,
+  refresher: 0
 }
 
 const compatability = {
   boxIn: [
-    'texture-fragment'
+    'texture-media',
+    'texture-fragment',
+    'texture-vertex'
   ],
   boxOut: [
-    'remixable-shader-material'
   ]
 }
 
-const displayName = 'Fragment Rainbow'
+const displayName = 'Water'
 
 const tags = [
-  'texture',
-  'texture-fragment',
-  'compute-texture-fragment'
+  'texture-mic',
+  'texture-media'
 ]
 
 const gui = {
@@ -105,7 +171,7 @@ const buttons = {
   tr: {},
   bl: {},
 
-  // br2: {
+  // br: {
   //   icon: 'circle-out',
   //   mouseMode: 'box-out'
   // },

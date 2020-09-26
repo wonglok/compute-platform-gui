@@ -27,6 +27,8 @@ const io = {
 }
 
 const guiData = {
+  influenceType: 'vertex',
+
   compute: glsl`
 
 const mat2 m = mat2(0.80,  0.60, -0.60,  0.80);
@@ -69,33 +71,28 @@ vec4 compute () {
     mod(time * 0.1 + uv.y, 1.0)
   );
 
-  vec4 lastColor = texture2D( passThruTexture, vec2(uv.x, uv.y) );
+  vec4 lastFrame = texture2D( passThruTexture, vec2(uv.x, uv.y) );
   vec4 addonColor = texture2D( addonTexture, vec2(uv.x, uv.y) );
   vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(uv.x, uv.y) );
   vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x, uv.y) );
-  vec4 nextColor = lastColor;
+  vec4 nextColor = lastFrame;
 
-  // vec4 color = vec4(
-  //   pattern(vec2(vUv * 2.0 + time * 0.15) + -0.4 * cos(time * 0.15), time),
-  //   pattern(vec2(vUv * 2.0 + time * 0.15) + 0.0 * cos(time * 0.15), time),
-  //   pattern(vec2(vUv * 2.0 + time * 0.15) + 0.4 * cos(time * 0.15), time),
-  //   1.0
-  // );
+  vec4 color = vec4(
+    pattern(vec2(vUv * (2.0 + 5.0 * recordedMicColor.r) + time * 0.15) + -0.4 * cos(time * 0.15), time),
+    pattern(vec2(vUv * (2.0 + 5.0 * recordedMicColor.r) + time * 0.15) + 0.0 * cos(time * 0.15), time),
+    pattern(vec2(vUv * (2.0 + 5.0 * recordedMicColor.r) + time * 0.15) + 0.4 * cos(time * 0.15), time),
+    1.0
+  );
 
-  // if (length(abs(addonColor.rgb)) > 0.0) {
-  //   nextColor = vec4(color * color * addonColor.rgb, 0.5);
-  // } else {
-  //   nextColor = vec4(color * color, 0.5);
-  // }
-
-  nextColor = lastColor * realtimeMicColor + recordedMicColor + addonColor;
+  nextColor = lastFrame * realtimeMicColor + color + recordedMicColor + addonColor;
 
   return nextColor;
 }
 
   `,
   sizeX: 128,
-  sizeY: 128
+  sizeY: 128,
+  refresher: 0
 }
 
 const compatability = {

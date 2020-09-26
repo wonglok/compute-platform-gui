@@ -49,6 +49,16 @@
           </td>
           <td class="p-3"></td>
         </tr>
+        <tr>
+          <td class="p-3">Influence Type</td>
+          <td class="p-3">
+            <select class=" bg-transparent border-b border-black" type="text" v-model="gui.influenceType" @input="onRefresh()" @change="onRefresh(); gui.refresher += 1">
+              <option :value="'vertex'">Motion / Shape / Vertex</option>
+              <option :value="'fragment'">Color / Fragment</option>
+            </select>
+          </td>
+          <td class="p-3"></td>
+        </tr>
 
         <!-- <tr>
           <td class="p-3">twisterX</td>

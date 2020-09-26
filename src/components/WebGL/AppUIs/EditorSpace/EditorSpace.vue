@@ -667,7 +667,6 @@ export default {
         if (this.workCore) {
           this.workCore.goCleanUp()
         }
-
         this.workCore = new WorkCore({ core: this.core, renderer: this.ctx.renderer, display: false, media: this.media, $vm: this })
       }
 

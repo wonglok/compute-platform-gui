@@ -34,6 +34,7 @@ async function importAll (r) {
       config.isEntry = true
       config.isMonitorEntry = true
     }
+
     exporter.push(config)
     // let filename = path.basename(key).replace('.glsl', '')
     // exporter[filename] = r(key)
@@ -55,7 +56,6 @@ exporter.push({
   type: 'file',
   src: require('!raw-loader!../util/util.js').default
 })
-
 
 exporter.forEach(f => {
   var dir = path.dirname(f.path)

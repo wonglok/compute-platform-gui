@@ -419,7 +419,7 @@ export class ComputeGeo {
     box.scene.add(this.shield)
     box.camera.position.z = 100
 
-    this.setColorTexture = ({ texture }) => {
+    this.setFragmentTexture = ({ texture }) => {
       this.shield.material.uniforms.colorTexture.value = texture
     }
 

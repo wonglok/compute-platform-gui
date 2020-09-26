@@ -30,6 +30,7 @@ export class WorkCore extends EventDispatcher {
     this.resources = {}
     this.workspaces = new Map()
     this.workboxRenderTargets = new Map()
+    // topleft preview box
     this.previewRenderTargets = new Map()
 
     this.deps = {
@@ -176,12 +177,14 @@ export class WorkCore extends EventDispatcher {
             await Module.use({ box: miniBox, work: this.work, arrows: core.arrows, works: core.works })
             console.log(box._id, 'workbox monitor runner: setup ' + this.work._id)
           }
+          compile()
 
           let getSignature = () => {
             return JSON.stringify([
               core.works.map(e => {
                 return [
-                  e._id
+                  e._id,
+                  e.guiData && e.guiData.refresher
                 ]
               }),
               core.arrows
@@ -206,7 +209,9 @@ export class WorkCore extends EventDispatcher {
             if (this.isDestroyed) {
               return
             }
-            compile()
+            if (this.work._id === work._id) {
+              compile()
+            }
           })
         }
       }
@@ -219,7 +224,7 @@ export class WorkCore extends EventDispatcher {
       template: html`
         <div>
           <div v-for="work in works" :key="work._id">
-            <WorkRunner v-if="isReady(work)" :size="256" :work="work" :box="box"></WorkRunner>
+            <WorkRunner :size="200" :work="work" :box="box"></WorkRunner>
           </div>
         </div>
       `,
@@ -234,6 +239,9 @@ export class WorkCore extends EventDispatcher {
           works: box.core.works,
           arrwos: box.core.arrows
         }
+      },
+      mounted () {
+
       }
     })
 
@@ -247,6 +255,16 @@ export class WorkCore extends EventDispatcher {
 
     try {
       this.tasks.forEach(e => e())
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  runClean () {
+    if (this.isAborted) {
+      return
+    }
+    try {
+      this.cleanTasks.forEach(e => e())
     } catch (e) {
       console.error(e)
     }
