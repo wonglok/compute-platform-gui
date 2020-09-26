@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="full scrolling-touch overflow-y-auto">
     <div class="mb-12"></div>
     <div class=" text-center text-4xl mb-6">
       您想畫設麽？
