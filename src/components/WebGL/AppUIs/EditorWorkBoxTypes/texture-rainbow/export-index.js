@@ -64,27 +64,24 @@ float pattern (vec2 p, float time) {
 
 
 vec4 compute () {
-  vec2 uv = gl_FragCoord.xy / resolution.xy;
-
-  vec2 cc = vec2(
-    mod(time * 0.1 + uv.x, 1.0),
-    mod(time * 0.1 + uv.y, 1.0)
-  );
+  vec2 sec = 1.0 / resolution.xy;
+  vec2 uv = gl_FragCoord.xy * sec;
+  float speed = 0.2;
 
   vec4 lastFrame = texture2D( passThruTexture, vec2(uv.x, uv.y) );
   vec4 addonColor = texture2D( addonTexture, vec2(uv.x, uv.y) );
-  vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(uv.x, uv.y) );
-  vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x, uv.y) );
+  vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(uv.x * 0.5, uv.y) );
+  vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x * 0.5, uv.y) );
   vec4 nextColor = lastFrame;
 
   vec4 color = vec4(
-    pattern(vec2(vUv * (2.0 + 5.0 * recordedMicColor.r) + time * 0.15) + -0.4 * cos(time * 0.15), time),
-    pattern(vec2(vUv * (2.0 + 5.0 * recordedMicColor.r) + time * 0.15) + 0.0 * cos(time * 0.15), time),
-    pattern(vec2(vUv * (2.0 + 5.0 * recordedMicColor.r) + time * 0.15) + 0.4 * cos(time * 0.15), time),
+    pattern(vec2(vUv * (2.0 + 0.0 * recordedMicColor.r) + time * 0.15) + -0.4 * cos(time * 0.15), time),
+    pattern(vec2(vUv * (2.0 + 0.0 * recordedMicColor.g) + time * 0.15) + 0.0 * cos(time * 0.15), time),
+    pattern(vec2(vUv * (2.0 + 0.0 * recordedMicColor.b) + time * 0.15) + 0.4 * cos(time * 0.15), time),
     1.0
   );
 
-  nextColor = lastFrame * realtimeMicColor + color + recordedMicColor + addonColor;
+  nextColor = lastFrame * realtimeMicColor + color + addonColor;
 
   return nextColor;
 }
@@ -105,7 +102,7 @@ const compatability = {
   ]
 }
 
-const displayName = 'Mic'
+const displayName = 'Rainbow'
 
 const tags = [
   'texture-mic',

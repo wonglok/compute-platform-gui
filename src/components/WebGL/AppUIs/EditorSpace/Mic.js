@@ -64,9 +64,7 @@ export const setupTimed = () => {
       analyser.getFrequencyData()
 
       historyArr.pop()
-      historyArr.unshift(analyser.data.slice())
-
-      // savedBits = new Uint8Array(dataPerScan * maxHistory)
+      historyArr.unshift(new Uint8Array(analyser.data))
 
       for (let ai = 0; ai < historyArr.length; ai++) {
         let currnetAI = historyArr[ai]
