@@ -328,21 +328,23 @@ export class MetaShieldMaterial {
       ${gui.compute}
 
       void main (void) {
+        vUv = uv;
+
         vec4 data = compute();
         gl_Position = projectionMatrix * modelViewMatrix * data;
         vPos = data.xyz;
 
-        float vertexIDX = meta.x;
-        float squareIDX = meta.y;
-        float totalSquares = meta.z;
-        float pointIDX = meta.w;
+        // float vertexIDX = meta.x;
+        // float squareIDX = meta.y;
+        // float totalSquares = meta.z;
+        // float pointIDX = meta.w;
 
-        float dimension2D = ceil(pow(totalSquares, 0.5));
-        // float d2X = (squareIDX / dimension2D) * 2.0 - dimension2D;
-        // float d2Y = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
+        // float dimension2D = ceil(pow(totalSquares, 0.5));
+        // // float d2X = (squareIDX / dimension2D) * 2.0 - dimension2D;
+        // // float d2Y = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
 
-        vUv.x = (squareIDX / dimension2D) / dimension2D;
-        vUv.y = (mod(squareIDX, dimension2D)) / dimension2D;
+        // vUv.x = (squareIDX / dimension2D) / dimension2D;
+        // vUv.y = (mod(squareIDX, dimension2D)) / dimension2D;
       }
     `
   }

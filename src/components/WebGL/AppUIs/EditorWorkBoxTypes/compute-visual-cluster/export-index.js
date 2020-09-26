@@ -30,6 +30,7 @@ const guiData = {
   compute: glsl`
 
 vec4 compute () {
+  //  ------- setup code -------
   float vertexIDX = meta.x;
   float squareIDX = meta.y;
   float totalSquares = meta.z;
@@ -84,6 +85,8 @@ vec4 compute () {
     (mod(squareIDX, dimension2D)) / dimension2D
   );
 
+  vUv = textureUV.xy;
+
   vec4 vertexData = texture2D(vertexTexture, vec2(
     textureUV.x,
     textureUV.y
@@ -127,8 +130,6 @@ vec4 compute () {
   float piz = 0.005 * 2.0 * 3.14159265;
 
   pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateY(time + pY * piz) * pos.xyz;
-
-
 
   pos.w = 1.0;
 
