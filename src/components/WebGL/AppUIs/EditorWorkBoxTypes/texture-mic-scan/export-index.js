@@ -30,7 +30,6 @@ const guiData = {
   influenceType: 'vertex',
 
   compute: glsl`
-
 const mat2 m = mat2(0.80,  0.60, -0.60,  0.80);
 
 float noise(in vec2 p) {
@@ -100,7 +99,6 @@ vec4 compute () {
 
   return nextColor;
 }
-
   `,
   sizeX: 128,
   sizeY: 128,

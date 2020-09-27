@@ -8,13 +8,12 @@
       Please choose your compute draw type.
     </div>
     <div class="flex justify-around flex-wrap max-w-4xl mx-auto px-4">
-      <div class="mx-5 my-5">
+      <!-- <div class="mx-5 my-5">
         <div class="text-center mb-12">點陣 Points</div>
         <div class=" text-center">
           <img src="./img/dots.svg" class=" inline-block cursor-pointer" @click="$emit('choose', 'points')" alt="">
         </div>
       </div>
-      <!--  -->
 
       <div class="mx-5 my-5">
         <div class="text-center mb-12">線段 Line Segments</div>
@@ -23,18 +22,24 @@
         </div>
       </div>
 
-      <!-- -->
       <div class="mx-5 my-5">
         <div class="text-center mb-12">網面 Mesh</div>
         <div class=" text-center">
           <img src="./img/faces.svg" class=" inline-block cursor-pointer" @click="$emit('choose', 'mesh')" alt="">
         </div>
+      </div> -->
+
+      <div class="mx-5 my-5">
+        <div class="text-center mb-12">平面矩陣 <br/> Plane Cluster</div>
+        <div class=" text-center">
+          <img src="./img/cube-cluster.svg" class=" inline-block cursor-pointer" @click="$emit('choose', 'compute-visual-cluster')" alt="">
+        </div>
       </div>
 
       <div class="mx-5 my-5">
-        <div class="text-center mb-12">視覺計算 平面矩陣 <br/> Visual Compute Cluster</div>
+        <div class="text-center mb-12">點陣 <br/> Points</div>
         <div class=" text-center">
-          <img src="./img/cube-cluster.svg" class=" inline-block cursor-pointer" @click="$emit('choose', 'compute-visual-cluster')" alt="">
+          <img src="./img/dots.svg" class=" inline-block cursor-pointer" @click="$emit('choose', 'compute-points')" alt="">
         </div>
       </div>
 

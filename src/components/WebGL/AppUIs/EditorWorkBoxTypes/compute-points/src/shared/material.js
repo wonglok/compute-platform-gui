@@ -12,22 +12,33 @@ let glsl = (strings, ...args) => {
   return res
 }
 
-
 class MetaGeometry {
   constructor ({ width, THREE }) {
     this.width = width
-    // let geo = new THREE.BufferGeometry()
-
-    // geo.setAttribute('position', new THREE.BufferAttribute(this.makePos(), 3))
-    // geo.setAttribute('uv', new THREE.BufferAttribute(this.makeMetaUV(), 2))
-    // geo.setAttribute('meta', new THREE.BufferAttribute(this.makeMeta(), 4))
     let { BufferGeometry, BufferAttribute } = THREE
     let geo = new BufferGeometry()
     geo.setAttribute('position', new BufferAttribute(this.makePos(), 3))
+    geo.setAttribute('uv', new BufferAttribute(this.makeUV(), 2))
     geo.setAttribute('meta', new BufferAttribute(this.makeMeta(), 4))
-    // geo.setAttribute('uv', new BufferAttribute(this.makeMetaUV(), 2))
-
     return geo
+  }
+
+  makeUV () {
+    let ARR_VALUE = []
+    let WIDTH = this.width
+    let iii = 0
+    for (var ix = 0; ix < WIDTH; ix++) {
+      for (var iy = 0; iy < WIDTH; iy++) {
+        // console.log(iii)
+        // let id = iii / 2
+
+        ARR_VALUE[iii + 0] = (ix) / WIDTH
+        ARR_VALUE[iii + 1] = (iy) / WIDTH
+
+        iii += 2
+      }
+    }
+    return new Float32Array(ARR_VALUE)
   }
 
   makeMeta () {
@@ -42,9 +53,9 @@ class MetaGeometry {
           // console.log(iii)
           let id = iii / 4
 
-          ARR_VALUE[iii + 0] = id % 6 // square vertex ID
-          ARR_VALUE[iii + 1] = Math.floor(id / 6) // square ID
-          ARR_VALUE[iii + 2] = total / 6.0 // percentage
+          ARR_VALUE[iii + 0] = (ix - (dimension * 0.5)) / dimension
+          ARR_VALUE[iii + 1] = (iy - (dimension * 0.5)) / dimension
+          ARR_VALUE[iii + 2] = (iz - (dimension * 0.5)) / dimension
 
           // dot id
           ARR_VALUE[iii + 3] = id // point ID
@@ -85,7 +96,7 @@ export class MetaShieldMaterial {
     this.onLoop = onLoop
     var uniforms = {
       vertexTexture: { value: null },
-      colorTexture: { value: null },
+      fragmentTexture: { value: null },
       time: { value: 0 }
     }
 
@@ -106,9 +117,10 @@ export class MetaShieldMaterial {
   static vertexShader ({ gui }) {
     return glsl`
       uniform float time;
-      attribute vec4 meta;
+
       varying highp vec3 vPos;
       varying highp vec2 vUv;
+      attribute vec4 meta;
 
       uniform sampler2D vertexTexture;
 
@@ -117,93 +129,11 @@ export class MetaShieldMaterial {
       */
       #include <common>
 
-      mat3 rotateX (float rad) {
-        float c = cos(rad);
-        float s = sin(rad);
-        return mat3(
-          1.0, 0.0, 0.0,
-          0.0, c, s,
-          0.0, -s, c
-        );
-      }
-
-      mat3 rotateY (float rad) {
-        float c = cos(rad);
-        float s = sin(rad);
-        return mat3(
-          c, 0.0, -s,
-          0.0, 1.0, 0.0,
-          s, 0.0, c
-        );
-      }
-
-      mat3 rotateZ (float rad) {
-        float c = cos(rad);
-        float s = sin(rad);
-        return mat3(
-          c, s, 0.0,
-          -s, c, 0.0,
-          0.0, 0.0, 1.0
-        );
-      }
-
-      mat3 rotateQ (vec3 axis, float rad) {
-        float hr = rad / 2.0;
-        float s = sin( hr );
-        vec4 q = vec4(axis * s, cos( hr ));
-        vec3 q2 = q.xyz + q.xyz;
-        vec3 qq2 = q.xyz * q2;
-        vec2 qx = q.xx * q2.yz;
-        float qy = q.y * q2.z;
-        vec3 qw = q.w * q2.xyz;
-
-        return mat3(
-          1.0 - (qq2.y + qq2.z),  qx.x - qw.z,            qx.y + qw.y,
-          qx.x + qw.z,            1.0 - (qq2.x + qq2.z),  qy - qw.x,
-          qx.y - qw.y,            qy + qw.x,              1.0 - (qq2.x + qq2.y)
-        );
-      }
-
-      #define M_PI 3.1415926535897932384626433832795
-
-      float atan2(in float y, in float x) {
-        bool xgty = (abs(x) > abs(y));
-        return mix(M_PI/2.0 - atan(x,y), atan(y,x), float(xgty));
-      }
-
-      vec3 fromBall(float r, float az, float el) {
-        return vec3(
-          r * cos(el) * cos(az),
-          r * cos(el) * sin(az),
-          r * sin(el)
-        );
-      }
-
-      void toBall(vec3 pos, out float az, out float el) {
-        az = atan2(pos.y, pos.x);
-        el = atan2(pos.z, sqrt(pos.x * pos.x + pos.y * pos.y));
-      }
-
-      // float az = 0.0;
-      // float el = 0.0;
-      // vec3 noiser = vec3(lastVel);
-      // toBall(noiser, az, el);
-      // lastVel.xyz = fromBall(1.0, az, el);
-
-      vec3 ballify (vec3 pos, float r) {
-        float az = atan2(pos.y, pos.x);
-        float el = atan2(pos.z, sqrt(pos.x * pos.x + pos.y * pos.y));
-        return vec3(
-          r * cos(el) * cos(az),
-          r * cos(el) * sin(az),
-          r * sin(el)
-        );
-      }
-
       ${gui.compute}
 
       void main (void) {
         vUv = uv;
+        gl_PointSize = 1.0;
 
         vec4 data = compute();
         gl_Position = projectionMatrix * modelViewMatrix * data;
@@ -216,12 +146,13 @@ export class MetaShieldMaterial {
     return glsl`
 varying highp vec3 vPos;
 varying highp vec2 vUv;
-uniform sampler2D colorTexture;
-void main (void) {
-  vec4 texColor = texture2D(colorTexture, vUv);
+uniform sampler2D fragmentTexture;
 
-  if (length(texColor.rgb) > 0.0 || texColor.a > 0.0) {
-    gl_FragColor = texColor;
+void main (void) {
+  vec4 texFragment = texture2D(fragmentTexture, vUv);
+
+  if (length(texFragment.rgb) > 0.0 || texFragment.a > 0.0) {
+    gl_FragColor = texFragment;
   } else {
     vec3 v_tt = normalize(vPos);
     gl_FragColor = vec4(
@@ -232,6 +163,7 @@ void main (void) {
     );
   }
 }
+
     `
   }
 }
@@ -247,7 +179,7 @@ export class ComputeGeo {
     this.shieldGeo = new MetaGeometry({ box, gui, width: gui.sizeX, THREE: this.THREE })
     this.shieldMat = new MetaShieldMaterial({ box, gui, onLoop: box.onLoop, THREE: this.THREE })
 
-    this.shield = new this.THREE.Mesh(this.shieldGeo, this.shieldMat)
+    this.shield = new this.THREE.Points(this.shieldGeo, this.shieldMat)
 
     let signatureSize = ''
     let signSize = () => {
@@ -286,7 +218,7 @@ export class ComputeGeo {
     box.camera.position.z = 100
 
     this.setFragmentTexture = ({ texture }) => {
-      this.shield.material.uniforms.colorTexture.value = texture
+      this.shield.material.uniforms.fragmentTexture.value = texture
     }
 
     this.setVertexTexture = ({ texture }) => {

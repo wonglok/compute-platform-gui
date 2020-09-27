@@ -146,6 +146,7 @@ export class WorkCore extends EventDispatcher {
             // console.log(this.work._id, isInFrustum, this.work.position.x)
             return isInFrustum
           }
+
           box.onLoop(() => {
             let canRun = scanCanRun()
             let renderTargetWorkbox = box.workboxRenderTargets.get(this.work._id)
@@ -192,6 +193,8 @@ export class WorkCore extends EventDispatcher {
           }
 
           this.last = ''
+
+
           setInterval(() => {
             if (this.last === '') {
               this.last = getSignature()
@@ -224,13 +227,23 @@ export class WorkCore extends EventDispatcher {
       template: html`
         <div>
           <div v-for="work in works" :key="work._id">
-            <WorkRunner :size="200" :work="work" :box="box"></WorkRunner>
+            <WorkRunner :size="size(work)" :key="work._id + size(work)" :work="work" :box="box"></WorkRunner>
           </div>
         </div>
       `,
+      computed: {
+
+      },
       methods: {
         isReady () {
           return true
+        },
+        size (work) {
+          if (work && work.guiData) {
+            return work.guiData.sizeX || 200
+          } else {
+            return 200
+          }
         }
       },
       data () {
