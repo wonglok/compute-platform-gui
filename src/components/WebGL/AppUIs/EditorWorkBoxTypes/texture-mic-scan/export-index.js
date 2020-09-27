@@ -30,6 +30,7 @@ const guiData = {
   influenceType: 'vertex',
 
   compute: glsl`
+
 const mat2 m = mat2(0.80,  0.60, -0.60,  0.80);
 
 float noise(in vec2 p) {
@@ -61,7 +62,6 @@ float pattern (vec2 p, float time) {
   return abs(vout);
 }
 
-
 vec4 compute () {
   vec2 sec = 1.0 / resolution.xy;
   vec2 uv = gl_FragCoord.xy * sec;
@@ -73,8 +73,8 @@ vec4 compute () {
   );
 
   vec2 c2 = vec2(
-    mod(time * speed + uv.x + sec.x * 3.0, 1.0),
-    mod(time * speed + uv.y + sec.y * 3.0, 1.0)
+    mod(time * speed + uv.x + sec.x * 5.0, 1.0),
+    mod(time * speed + uv.y + sec.y * 5.0, 1.0)
   );
 
   vec4 lastFrame = texture2D( passThruTexture, vec2(uv.x, uv.y) );
@@ -92,13 +92,17 @@ vec4 compute () {
 
   if (!((uv.y <= cc.y && uv.y >= c2.y))) {
     realtimeMicColor.xyz *= 0.0;
+  } else {
   }
-  // nextColor = lastFrame * realtimeMicColor + color + recordedMicColor + addonColor;
 
-  nextColor = realtimeMicColor * color * 2.0 + lastFrame * 0.99;
+  // nextColor = lastFrame * realtimeMicColor + color + recordedMicColor + addonColor;
+  // nextColor *= 0.995;
+
+  nextColor = realtimeMicColor * color + lastFrame * 0.99;
 
   return nextColor;
 }
+
   `,
   sizeX: 128,
   sizeY: 128,

@@ -33,18 +33,18 @@ vec4 compute () {
   vec4 result = vec4(1.0);
   vec4 texColor = texture2D(vertexTexture, uv);
 
-  result = vec4(
-    80.0 * meta.x,
-    80.0 * meta.y,
-    80.0 * meta.z,
-    1.0
-  );
-
   if (length(texColor.rgb) > 0.0 || texColor.a > 0.0) {
     result.rgb = (texColor.rgb) * 100.0 * vec3(
       (-0.5 + rand(0.1 + meta.xy)),
       (-0.5 + rand(0.2 + meta.xy)),
       (-0.5 + rand(0.3 + meta.xy))
+    );
+  } else {
+    result = vec4(
+      80.0 * meta.x,
+      80.0 * meta.y,
+      80.0 * meta.z,
+      1.0
     );
   }
 
