@@ -27,15 +27,8 @@ const io = {
   outputs: []
 }
 
-
-/*
-
-
-*/
-
 const guiData = {
   compute: glsl`
-
 #ifdef IS_VERTEX
 vec4 computeVertex () {
 
@@ -86,8 +79,6 @@ vec4 computeFragment () {
   return outputColor;
 }
 #endif
-
-
   `,
   sizeX: 256,
   sizeY: 256
