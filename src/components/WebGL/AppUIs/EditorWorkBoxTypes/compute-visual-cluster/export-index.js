@@ -136,7 +136,6 @@ vec4 compute () {
     _id: getID(),
     name: 'cluster',
     code: glsl`
-
 vec4 compute () {
   //  ------- setup code -------
   float vertexIDX = meta.x;
@@ -252,17 +251,27 @@ vec4 compute () {
   }
 ]
 
+/*
+
+
+*/
+
 const guiData = {
-  compute: examples[1].code,
+  compute: glsl`
+
+vec4 compute () {
+  vec4 pos = texture2D(vertexTexture, uv);
+  return pos;
+}
+  `,
   sizeX: 256,
   sizeY: 256
 }
 
 const compatability = {
   boxIn: [
-    'texture-media',
-    'texture-fragment',
-    'texture-vertex'
+    'texture-geometry',
+    'texture-fragment'
   ],
   boxOut: [
   ]

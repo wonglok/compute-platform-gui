@@ -22,8 +22,13 @@
             Slider
           </th>
         </tr>
-
-        <!--
+        <!-- <tr>
+          <td class="p-3">baseColor</td>
+          <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" min="1" max="1000" step="1" v-model="gui.baseColor" @input="onRefresh"  /></td>
+          <td class="p-3">
+            <Chrome :value="{ hex: gui.baseColor }" @input="(evt) => { gui.baseColor = evt.hex }"></Chrome>
+          </td>
+        </tr>
         <tr>
           <td class="p-3">offsetModifier</td>
           <td class="p-3"><input class=" bg-transparent border-b border-black" type="text" min="1" max="100" step="1" v-model="gui.offsetModifier" @input="onRefresh"  /></td>
@@ -44,18 +49,16 @@
           </td>
           <td class="p-3"></td>
         </tr>
-
-        <!-- <tr>
-          <td class="p-3">Code Example</td>
+        <tr>
+          <td class="p-3">Influence Type</td>
           <td class="p-3">
-            <select class=" bg-transparent border-b border-black" type="text" :value="gui.compute" @change="onChangeEg">
-              <option v-for="eg in work.examples" :key="eg._id" :value="eg.code">{{ eg.name }}</option>
+            <select class=" bg-transparent border-b border-black" type="text" v-model="gui.influenceType" @input="onRefresh()" @change="onRefresh(); gui.refresher += 1">
+              <option :value="'vertex'">Motion / Shape / Vertex</option>
+              <option :value="'fragment'">Color / Fragment</option>
             </select>
           </td>
-          <td class="p-3">
-            (Warning, replace exisiting code)
-          </td>
-        </tr> -->
+          <td class="p-3"></td>
+        </tr>
 
         <!-- <tr>
           <td class="p-3">twisterX</td>
@@ -98,7 +101,6 @@
 
       <div>
         <ACE
-          v-if="ace"
           @wheel.prevent=""
           @wheel.stop=""
           @save="() => {
@@ -134,7 +136,7 @@ export default {
   },
   data () {
     return {
-      ace: true,
+
     }
   },
   computed: {
@@ -143,18 +145,6 @@ export default {
     }
   },
   methods: {
-    onChangeEg (evt) {
-      if (window.confirm('Replace existing code with new item?')) {
-        this.gui.compute = evt.target.value
-        this.ace = false
-        this.$nextTick(() => {
-          this.ace = true
-          setTimeout(() => {
-            this.onRefresh()
-          }, 100)
-        })
-      }
-    },
     onRefresh () {
       this.$root.$emit('refresh-ui', { work: this.work })
     }

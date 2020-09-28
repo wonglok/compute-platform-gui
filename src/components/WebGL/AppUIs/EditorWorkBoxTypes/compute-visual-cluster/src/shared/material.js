@@ -16,41 +16,55 @@ let glsl = (strings, ...args) => {
 class MetaGeometry {
   constructor ({ width, THREE }) {
     this.width = width
-    // let geo = new THREE.BufferGeometry()
 
-    // geo.setAttribute('position', new THREE.BufferAttribute(this.makePos(), 3))
-    // geo.setAttribute('uv', new THREE.BufferAttribute(this.makeMetaUV(), 2))
-    // geo.setAttribute('meta', new THREE.BufferAttribute(this.makeMeta(), 4))
     let { BufferGeometry, BufferAttribute } = THREE
     let geo = new BufferGeometry()
     geo.setAttribute('position', new BufferAttribute(this.makePos(), 3))
-    geo.setAttribute('meta', new BufferAttribute(this.makeMeta(), 4))
-    // geo.setAttribute('uv', new BufferAttribute(this.makeMetaUV(), 2))
+    // geo.setAttribute('meta', new BufferAttribute(this.makeMeta(), 4))
+    geo.setAttribute('uv', new BufferAttribute(this.makeMetaUV(), 2))
 
     return geo
   }
 
-  makeMeta () {
+  // makeMeta () {
+  //   let ARR_VALUE = []
+  //   let WIDTH = this.width
+  //   let dimension = Math.floor(Math.pow(WIDTH * WIDTH, 1 / 3))
+  //   let total = dimension * dimension * dimension
+  //   let iii = 0
+  //   for (var ix = 0; ix < dimension; ix++) {
+  //     for (var iy = 0; iy < dimension; iy++) {
+  //       for (var iz = 0; iz < dimension; iz++) {
+  //         // console.log(iii)
+  //         let id = iii / 4
+
+  //         ARR_VALUE[iii + 0] = id % 6 // square vertex ID
+  //         ARR_VALUE[iii + 1] = Math.floor(id / 6) // square ID
+  //         ARR_VALUE[iii + 2] = total / 6.0 // percentage
+
+  //         // dot id
+  //         ARR_VALUE[iii + 3] = id // point ID
+
+  //         iii += 4
+  //       }
+  //     }
+  //   }
+  //   return new Float32Array(ARR_VALUE)
+  // }
+
+  makeMetaUV () {
     let ARR_VALUE = []
-    let WIDTH = this.width
-    let dimension = Math.floor(Math.pow(WIDTH * WIDTH, 1 / 3))
-    let total = dimension * dimension * dimension
+    let dimension = this.width
     let iii = 0
-    for (var ix = 0; ix < dimension; ix++) {
-      for (var iy = 0; iy < dimension; iy++) {
-        for (var iz = 0; iz < dimension; iz++) {
-          // console.log(iii)
-          let id = iii / 4
+    for (var iy = 0; iy < dimension; iy++) {
+      for (var ix = 0; ix < dimension; ix++) {
+        // console.log(iii)
+        let id = iii / 2
 
-          ARR_VALUE[iii + 0] = id % 6 // square vertex ID
-          ARR_VALUE[iii + 1] = Math.floor(id / 6) // square ID
-          ARR_VALUE[iii + 2] = total / 6.0 // percentage
+        ARR_VALUE[iii + 0] = ix / dimension
+        ARR_VALUE[iii + 1] = iy / dimension
 
-          // dot id
-          ARR_VALUE[iii + 3] = id // point ID
-
-          iii += 4
-        }
+        iii += 2
       }
     }
     return new Float32Array(ARR_VALUE)
@@ -60,17 +74,75 @@ class MetaGeometry {
     let ARR_VALUE = []
     let WIDTH = this.width
     let dimension = Math.floor(Math.pow(WIDTH * WIDTH, 1 / 3))
-    // let total = WIDTH * WIDTH
+    let total = WIDTH * WIDTH
     let iii = 0
+    let pos = { x: 0, y: 0, z: 0 }
+    let plane = { x: 1, y: 1, z: 1 }
+    let floor = Math.floor
+    let pow = Math.pow
+    let mod = (v, a) => v % a
     for (var ix = 0; ix < dimension; ix++) {
       for (var iy = 0; iy < dimension; iy++) {
         for (var iz = 0; iz < dimension; iz++) {
           // console.log(iii)
-          // let id = iii / 4
+          let id = iii / 3
 
-          ARR_VALUE[iii + 0] = 0
-          ARR_VALUE[iii + 1] = 0
-          ARR_VALUE[iii + 2] = 0
+          let squareVertexID = id % 6;
+          let squareIDX = Math.floor(id / 6);
+          let totalSquares = total / 6.0
+
+          // let cx3 = (ix - dimension * 0.5) / dimension;
+          // let cy3 = (iy - dimension * 0.5) / dimension;
+          // let cz3 = (iz - dimension * 0.5) / dimension;
+
+          if (squareVertexID == 0.0) {
+            pos.x = 1.0 * plane.x;
+            pos.y = 1.0 * plane.y;
+            pos.z = 1.0 * plane.z;
+          } else if (squareVertexID == 1.0) {
+            pos.x = -1.0 * plane.x;
+            pos.y = 1.0 * plane.y;
+            pos.z = 1.0 * plane.z;
+          } else if (squareVertexID == 2.0) {
+            pos.x = -1.0 * plane.x;
+            pos.y = -1.0 * plane.y;
+            pos.z = 1.0 * plane.z;
+          } else if (squareVertexID == 3.0) {
+            pos.x = 1.0 * plane.x;
+            pos.y = 1.0 * plane.y;
+            pos.z = 1.0 * plane.z;
+          } else if (squareVertexID == 4.0) {
+            pos.x = -1.0 * plane.x;
+            pos.y = -1.0 * plane.y;
+            pos.z = 1.0 * plane.z;
+          } else if (squareVertexID == 5.0) {
+            pos.x = 1.0 * plane.x;
+            pos.y = -1.0 * plane.y;
+            pos.z = 1.0 * plane.z;
+          }
+
+          let dimension3D = floor(pow(totalSquares, 1.0 / 3.0));
+          let dX3D = mod(floor(squareIDX / pow(dimension3D, 0.0)), dimension3D) - dimension3D * 0.5;
+          let dY3D = mod(floor(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
+          let dZ3D = mod(floor(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
+
+          let gapper = 1.2;
+
+          pos.x *= 0.3;
+          pos.y *= 0.3;
+          pos.z *= 0.0;
+
+          pos.x += dX3D * gapper;
+          pos.y += dY3D * gapper;
+          pos.z += dZ3D * gapper;
+
+          pos.x *= 3.45;
+          pos.y *= 3.45;
+          pos.z *= 3.45;
+
+          ARR_VALUE[iii + 0] = pos.x
+          ARR_VALUE[iii + 1] = pos.y
+          ARR_VALUE[iii + 2] = pos.z
 
           iii += 3
         }
@@ -117,97 +189,23 @@ export class MetaShieldMaterial {
       */
       #include <common>
 
-      mat3 rotateX (float rad) {
-        float c = cos(rad);
-        float s = sin(rad);
-        return mat3(
-          1.0, 0.0, 0.0,
-          0.0, c, s,
-          0.0, -s, c
-        );
-      }
-
-      mat3 rotateY (float rad) {
-        float c = cos(rad);
-        float s = sin(rad);
-        return mat3(
-          c, 0.0, -s,
-          0.0, 1.0, 0.0,
-          s, 0.0, c
-        );
-      }
-
-      mat3 rotateZ (float rad) {
-        float c = cos(rad);
-        float s = sin(rad);
-        return mat3(
-          c, s, 0.0,
-          -s, c, 0.0,
-          0.0, 0.0, 1.0
-        );
-      }
-
-      mat3 rotateQ (vec3 axis, float rad) {
-        float hr = rad / 2.0;
-        float s = sin( hr );
-        vec4 q = vec4(axis * s, cos( hr ));
-        vec3 q2 = q.xyz + q.xyz;
-        vec3 qq2 = q.xyz * q2;
-        vec2 qx = q.xx * q2.yz;
-        float qy = q.y * q2.z;
-        vec3 qw = q.w * q2.xyz;
-
-        return mat3(
-          1.0 - (qq2.y + qq2.z),  qx.x - qw.z,            qx.y + qw.y,
-          qx.x + qw.z,            1.0 - (qq2.x + qq2.z),  qy - qw.x,
-          qx.y - qw.y,            qy + qw.x,              1.0 - (qq2.x + qq2.y)
-        );
-      }
-
-      #define M_PI 3.1415926535897932384626433832795
-
-      float atan2(in float y, in float x) {
-        bool xgty = (abs(x) > abs(y));
-        return mix(M_PI/2.0 - atan(x,y), atan(y,x), float(xgty));
-      }
-
-      vec3 fromBall(float r, float az, float el) {
-        return vec3(
-          r * cos(el) * cos(az),
-          r * cos(el) * sin(az),
-          r * sin(el)
-        );
-      }
-
-      void toBall(vec3 pos, out float az, out float el) {
-        az = atan2(pos.y, pos.x);
-        el = atan2(pos.z, sqrt(pos.x * pos.x + pos.y * pos.y));
-      }
-
-      // float az = 0.0;
-      // float el = 0.0;
-      // vec3 noiser = vec3(lastVel);
-      // toBall(noiser, az, el);
-      // lastVel.xyz = fromBall(1.0, az, el);
-
-      vec3 ballify (vec3 pos, float r) {
-        float az = atan2(pos.y, pos.x);
-        float el = atan2(pos.z, sqrt(pos.x * pos.x + pos.y * pos.y));
-        return vec3(
-          r * cos(el) * cos(az),
-          r * cos(el) * sin(az),
-          r * sin(el)
-        );
-      }
-
       ${gui.compute}
 
       void main (void) {
         vUv = uv;
-
         vec4 data = compute();
-        gl_Position = projectionMatrix * modelViewMatrix * data;
-        vPos = data.xyz;
+
+        if ((length(data.rgb) > 0.0 || data.a > 0.0)) {
+          gl_Position = projectionMatrix * modelViewMatrix * data;
+          vPos = data.xyz;
+        } else {
+          vec4 pos = vec4(
+            position.xyz,
+            1.0
+          );
+          gl_Position = projectionMatrix * modelViewMatrix * pos;
+          vPos = pos.xyz;
+        }
       }
     `
   }

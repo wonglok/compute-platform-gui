@@ -31,63 +31,101 @@ const guiData = {
 
   compute: glsl`
 
-const mat2 m = mat2(0.80,  0.60, -0.60,  0.80);
+vec4 toPlanes (vec4 meta) {
+  //  ------- setup code -------
+  float vertexIDX = meta.x;
+  float squareIDX = meta.y;
+  float totalSquares = meta.z;
+  float pointIDX = meta.w;
 
-float noise(in vec2 p) {
-  return sin(p.x)*sin(p.y);
+  vec4 pos = vec4(0.0, 0.0, 0.0, 1.0);
+  vec3 plane = vec3(1.0, 1.0, 1.0);
+
+  if (vertexIDX == 0.0) {
+    pos.x = 1.0 * plane.x;
+    pos.y = 1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 1.0) {
+    pos.x = -1.0 * plane.x;
+    pos.y = 1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 2.0) {
+    pos.x = -1.0 * plane.x;
+    pos.y = -1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 3.0) {
+    pos.x = 1.0 * plane.x;
+    pos.y = 1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 4.0) {
+    pos.x = -1.0 * plane.x;
+    pos.y = -1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 5.0) {
+    pos.x = 1.0 * plane.x;
+    pos.y = -1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  }
+
+  return pos;
 }
 
-float fbm4( vec2 p ) {
-    float f = 0.0;
-    f += 0.5000 * noise( p ); p = m * p * 2.02;
-    f += 0.2500 * noise( p ); p = m * p * 2.03;
-    f += 0.1250 * noise( p ); p = m * p * 2.01;
-    f += 0.0625 * noise( p );
-    return f / 0.9375;
-}
+vec4 toCubeCluster (vec4 meta, vec4 pos) {
+  float vertexIDX = meta.x;
+  float squareIDX = meta.y;
+  float totalSquares = meta.z;
+  float pointIDX = meta.w;
 
-float fbm6( vec2 p ) {
-    float f = 0.0;
-    f += 0.500000*(0.5+0.5*noise( p )); p = m*p*2.02;
-    f += 0.250000*(0.5+0.5*noise( p )); p = m*p*2.03;
-    f += 0.125000*(0.5+0.5*noise( p )); p = m*p*2.01;
-    f += 0.062500*(0.5+0.5*noise( p )); p = m*p*2.04;
-    f += 0.031250*(0.5+0.5*noise( p )); p = m*p*2.01;
-    f += 0.015625*(0.5+0.5*noise( p ));
-    return f/0.96875;
-}
+  // Cube
+  float dimension3D = floor(pow(totalSquares, 1.0 / 3.0));
+  float dX3D = mod(floor(squareIDX / pow(dimension3D, 0.0)), dimension3D) - dimension3D * 0.5;
+  float dY3D = mod(floor(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
+  float dZ3D = mod(floor(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
 
-float pattern (vec2 p, float time) {
-  float vout = fbm4(p + time + fbm6( p + fbm4( p + time )));
-  return abs(vout);
+  float gapper = 0.5;
+
+  pos.x *= 0.13;
+  pos.y *= 0.13;
+  pos.z *= 0.0;
+
+  pos.x += dX3D * gapper;
+  pos.y += dY3D * gapper;
+  pos.z += dZ3D * gapper;
+
+
+  pos.xyz *= 8.0;
+
+  return pos;
 }
 
 vec4 compute () {
   vec2 sec = 1.0 / resolution.xy;
   vec2 uv = gl_FragCoord.xy * sec;
-  float speed = 0.2;
 
+  vec4 meta = texture2D(indexTexture, vec2(uv.x, uv.y));
   vec4 lastFrame = texture2D( passThruTexture, vec2(uv.x, uv.y) );
   vec4 addonColor = texture2D( addonTexture, vec2(uv.x, uv.y) );
   vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(uv.x * 0.5, uv.y) );
   vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x * 0.5, uv.y) );
   vec4 nextColor = lastFrame;
 
-  vec4 color = vec4(
-    1.0 - pattern(vec2(vUv * (2.0 + 5.0 * realtimeMicColor.r + recordedMicColor.r) + time * 0.15) + -0.4 * cos(time * 0.15), time),
-    1.0 - pattern(vec2(vUv * (2.0 + 5.0 * realtimeMicColor.g + recordedMicColor.g) + time * 0.15) + 0.0 * cos(time * 0.15), time),
-    1.0 - pattern(vec2(vUv * (2.0 + 5.0 * realtimeMicColor.b + recordedMicColor.b) + time * 0.15) + 0.4 * cos(time * 0.15), time),
-    1.0
-  );
+  vec4 pos = toPlanes(meta);
+  vec4 cubes = toCubeCluster(meta, pos);
 
-  nextColor = color * color + addonColor;
+  vec4 influence = (addonColor -  0.5) * 10.0;
+  if (length(addonColor.rgb) == 0.0) {
+    influence *= 0.0;
+  }
+
+  nextColor = realtimeMicColor * 0.0 + cubes + influence;
+
+  nextColor.a = 1.0;
 
   return nextColor;
 }
-
   `,
-  sizeX: 128,
-  sizeY: 128,
+  sizeX: 256,
+  sizeY: 256,
   refresher: 0
 }
 
@@ -101,11 +139,10 @@ const compatability = {
   ]
 }
 
-const displayName = 'Rainbow'
+const displayName = 'Texture Geometry'
 
 const tags = [
-  'texture-fragment',
-  'texture-media'
+  'texture-geometry'
 ]
 
 const gui = {
