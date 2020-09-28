@@ -31,6 +31,8 @@ const guiData = {
 
   compute: glsl`
 
+
+
 vec4 toPlanes (vec4 meta) {
   //  ------- setup code -------
   float vertexIDX = meta.x;
@@ -82,10 +84,10 @@ vec4 toCubeCluster (vec4 meta, vec4 pos) {
   float dY3D = mod(floor(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
   float dZ3D = mod(floor(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
 
-  float gapper = 0.5;
+  float gapper = 1.0;
 
-  pos.x *= 0.05;
-  pos.y *= 0.05;
+  pos.x *= 0.01;
+  pos.y *= 0.01;
   pos.z *= 0.0;
 
   pos.x += dX3D * gapper;
@@ -129,27 +131,37 @@ vec4 compute () {
   vec4 meta = texture2D(indexTexture, vec2(uv.x, uv.y));
   vec4 lastFrame = texture2D( passThruTexture, vec2(uv.x, uv.y) );
   vec4 addonColor = texture2D( addonTexture, vec2(uv.x, uv.y) );
-  vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(uv.x * 0.5, uv.y) );
-  vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x * 0.5, uv.y) );
+  vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(uv.x, uv.y) );
+  vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x, uv.y) );
   vec4 nextColor = lastFrame;
 
   vec4 pos = toPlanes(meta);
   vec4 cluster = toCubeCluster(meta, pos);
   // cluster = toSurfaceCluster(meta, pos);
 
-  vec4 influence = realtimeMicColor * 5.0 + (addonColor -0.5) * 10.0;
-  if (length(addonColor.rgb) == 0.0) {
-    influence *= 0.0;
-  }
+  cluster += (addonColor.rgba - 0.5) * 40.0;
 
-  nextColor = cluster + influence;
+  cluster.rgb = ballify(cluster.rgb, 50.0);
 
-  nextColor.rgb = ballify(nextColor.rgb, 50.0);
+  float pX = pos.x;
+  float pY = pos.y;
+  float pZ = pos.z;
+  float piz = 0.005 * 2.0 * 3.14159265;
+
+  cluster.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateZ(time + pY * piz) * cluster.xyz;
+  cluster.xyz = rotateQ(normalize(vec3(1.0, pX * piz, 1.0)), time + pX * piz) * rotateX(time + pY * piz) * cluster.xyz;
+
+  nextColor.rgb = cluster.rgb;
 
   nextColor.a = 1.0;
 
   return nextColor;
 }
+
+
+
+
+
 
   `,
   sizeX: 256,
