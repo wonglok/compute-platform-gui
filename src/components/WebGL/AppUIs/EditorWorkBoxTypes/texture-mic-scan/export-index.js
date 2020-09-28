@@ -66,15 +66,15 @@ vec4 compute () {
   vec2 sec = 1.0 / resolution.xy;
   vec2 uv = gl_FragCoord.xy * sec;
   float speed = 0.2;
-
+  float slit = 2.5;
   vec2 cc = vec2(
-    mod(time * speed + uv.x, 1.0),
-    mod(time * speed + uv.y, 1.0)
+    mod(time * speed + uv.x - sec.x * slit, 1.0),
+    mod(time * speed + uv.y - sec.x * slit, 1.0)
   );
 
   vec2 c2 = vec2(
-    mod(time * speed + uv.x + sec.x * 5.0, 1.0),
-    mod(time * speed + uv.y + sec.y * 5.0, 1.0)
+    mod(time * speed + uv.x + sec.x * slit, 1.0),
+    mod(time * speed + uv.y + sec.y * slit, 1.0)
   );
 
   vec4 lastFrame = texture2D( passThruTexture, vec2(uv.x, uv.y) );
@@ -102,6 +102,7 @@ vec4 compute () {
 
   return nextColor;
 }
+
 
   `,
   sizeX: 128,
