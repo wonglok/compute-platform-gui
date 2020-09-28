@@ -27,7 +27,7 @@ const io = {
 }
 
 const guiData = {
-  influenceType: 'vertex',
+  influenceType: 'fragment',
 
   compute: glsl`
 

@@ -92,6 +92,31 @@ vec4 toCubeCluster (vec4 meta, vec4 pos) {
   pos.y += dY3D * gapper;
   pos.z += dZ3D * gapper;
 
+  pos.xyz *= 8.0;
+
+  return pos;
+}
+
+
+vec4 toSurfaceCluster (vec4 meta, vec4 pos) {
+  float vertexIDX = meta.x;
+  float squareIDX = meta.y;
+  float totalSquares = meta.z;
+  float pointIDX = meta.w;
+
+  // planes
+  float dimension2D = floor(pow(totalSquares, 0.5));
+  float dX2D = (squareIDX / dimension2D) * 2.0 - dimension2D;
+  float dY2D = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
+
+  float gapper = 0.15;
+
+  pos.x *= 0.15;
+  pos.y *= 0.15;
+  pos.z *= 0.0;
+
+  pos.x += dX2D * gapper;
+  pos.y += dY2D * gapper;
 
   pos.xyz *= 8.0;
 
@@ -110,19 +135,22 @@ vec4 compute () {
   vec4 nextColor = lastFrame;
 
   vec4 pos = toPlanes(meta);
-  vec4 cubes = toCubeCluster(meta, pos);
+  vec4 cluster = toCubeCluster(meta, pos);
+  cluster = toSurfaceCluster(meta, pos);
 
-  vec4 influence = (addonColor -  0.5) * 10.0;
+  vec4 influence = realtimeMicColor * 5.0 + (addonColor -0.5) * 10.0;
   if (length(addonColor.rgb) == 0.0) {
     influence *= 0.0;
   }
 
-  nextColor = realtimeMicColor * 0.0 + cubes + influence;
+  nextColor = cluster + influence;
 
   nextColor.a = 1.0;
 
   return nextColor;
 }
+
+
   `,
   sizeX: 256,
   sizeY: 256,

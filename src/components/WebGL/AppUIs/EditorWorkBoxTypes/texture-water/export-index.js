@@ -157,7 +157,7 @@ const compatability = {
 const displayName = 'Water'
 
 const tags = [
-  'texture-mic',
+  'texture-fragment',
   'texture-media'
 ]
 

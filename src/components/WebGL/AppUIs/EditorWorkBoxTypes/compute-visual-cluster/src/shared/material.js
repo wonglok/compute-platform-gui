@@ -12,6 +12,45 @@ let glsl = (strings, ...args) => {
   return res
 }
 
+export class IndexTexture {
+  constructor ({ THREE, sizeX, sizeY }) {
+    let { DataTexture, RGBAFormat, FloatType } = THREE
+    let size = sizeX * sizeY
+    let type = FloatType
+    let ARR_VALUE = new Float32Array(4 * size)
+
+    let iii = 0
+
+    let dimension = sizeX
+    let total = sizeX * sizeY
+    let ARR = ARR_VALUE
+    for (var ix = 0; ix < dimension; ix++) {
+      for (var iy = 0; iy < dimension; iy++) {
+        // console.log(iii)
+        let id = iii / 4
+
+        ARR[iii + 0] = id % 6 // square vertex ID
+        ARR[iii + 1] = Math.floor(id / 6) // square ID
+        ARR[iii + 2] = total / 6.0 // percentage
+
+        // dot id
+        ARR[iii + 3] = id // point ID
+
+        iii += 4
+      }
+    }
+
+    var texture = new DataTexture(
+      ARR_VALUE,
+      sizeX,
+      sizeY,
+      RGBAFormat,
+      type
+    );
+    texture.needsUpdate = true
+    return texture
+  }
+}
 
 class MetaGeometry {
   constructor ({ width, THREE }) {
@@ -26,31 +65,31 @@ class MetaGeometry {
     return geo
   }
 
-  // makeMeta () {
-  //   let ARR_VALUE = []
-  //   let WIDTH = this.width
-  //   let dimension = Math.floor(Math.pow(WIDTH * WIDTH, 1 / 3))
-  //   let total = dimension * dimension * dimension
-  //   let iii = 0
-  //   for (var ix = 0; ix < dimension; ix++) {
-  //     for (var iy = 0; iy < dimension; iy++) {
-  //       for (var iz = 0; iz < dimension; iz++) {
-  //         // console.log(iii)
-  //         let id = iii / 4
+  makeMeta () {
+    let ARR_VALUE = []
+    let WIDTH = this.width
+    let dimension = Math.floor(Math.pow(WIDTH * WIDTH, 1 / 3))
+    let total = dimension * dimension * dimension
+    let iii = 0
+    for (var ix = 0; ix < dimension; ix++) {
+      for (var iy = 0; iy < dimension; iy++) {
+        for (var iz = 0; iz < dimension; iz++) {
+          // console.log(iii)
+          let id = iii / 4
 
-  //         ARR_VALUE[iii + 0] = id % 6 // square vertex ID
-  //         ARR_VALUE[iii + 1] = Math.floor(id / 6) // square ID
-  //         ARR_VALUE[iii + 2] = total / 6.0 // percentage
+          ARR_VALUE[iii + 0] = id % 6 // square vertex ID
+          ARR_VALUE[iii + 1] = Math.floor(id / 6) // square ID
+          ARR_VALUE[iii + 2] = total / 6.0 // percentage
 
-  //         // dot id
-  //         ARR_VALUE[iii + 3] = id // point ID
+          // dot id
+          ARR_VALUE[iii + 3] = id // point ID
 
-  //         iii += 4
-  //       }
-  //     }
-  //   }
-  //   return new Float32Array(ARR_VALUE)
-  // }
+          iii += 4
+        }
+      }
+    }
+    return new Float32Array(ARR_VALUE)
+  }
 
   makeMetaUV () {
     let ARR_VALUE = []
@@ -155,7 +194,11 @@ class MetaGeometry {
 export class MetaShieldMaterial {
   constructor ({ onLoop, THREE, gui }) {
     this.onLoop = onLoop
+    let indexTexture = new IndexTexture({
+      THREE, sizeX: gui.sizeX, sizeY: gui.sizeY
+    })
     var uniforms = {
+      indexTexture: { value: indexTexture },
       vertexTexture: { value: null },
       colorTexture: { value: null },
       time: { value: 0 }
@@ -183,6 +226,9 @@ export class MetaShieldMaterial {
       varying highp vec2 vUv;
 
       uniform sampler2D vertexTexture;
+      uniform sampler2D indexTexture;
+
+      #define IS_VERTEX true
 
       /*
         LIBRARY
@@ -192,8 +238,9 @@ export class MetaShieldMaterial {
       ${gui.compute}
 
       void main (void) {
-        vUv = uv;
-        vec4 data = compute();
+
+
+        vec4 data = computeVertex();
 
         if ((length(data.rgb) > 0.0 || data.a > 0.0)) {
           gl_Position = projectionMatrix * modelViewMatrix * data;
@@ -212,23 +259,21 @@ export class MetaShieldMaterial {
 
   static fragmentShader ({ gui }) {
     return glsl`
+
+#define IS_FRAGMENT true
+
 varying highp vec3 vPos;
 varying highp vec2 vUv;
 uniform sampler2D colorTexture;
-void main (void) {
-  vec4 texColor = texture2D(colorTexture, vUv);
+uniform sampler2D indexTexture;
 
-  if (length(texColor.rgb) > 0.0 || texColor.a > 0.0) {
-    gl_FragColor = texColor;
-  } else {
-    vec3 v_tt = normalize(vPos);
-    gl_FragColor = vec4(
-      1.0 - 0.25 + abs(v_tt.x),
-      1.0 - 0.75 + abs(v_tt.y),
-      1.0 - 0.25 + abs(v_tt.z),
-      1.0
-    );
-  }
+${gui.compute}
+
+
+void main (void) {
+
+  gl_FragColor = computeFragment();
+
 }
     `
   }
