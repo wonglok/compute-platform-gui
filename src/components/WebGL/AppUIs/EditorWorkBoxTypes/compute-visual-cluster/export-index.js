@@ -2,6 +2,7 @@
 // export default as { Files } from
 import fileTree from './loadFiles.js'
 import coverImage from './img/thumb.svg'
+import { getID } from '../../EditorSpace/ageUI.js'
 // import { getID } from '../../../Core/O3DNode.js'
 
 let glsl = (strings, ...args) => {
@@ -26,9 +27,11 @@ const io = {
   outputs: []
 }
 
-const guiData = {
-  compute: glsl`
-
+const examples = [
+  {
+    _id: getID(),
+    name: 'plane',
+    code: glsl`
 vec4 compute () {
   //  ------- setup code -------
   float vertexIDX = meta.x;
@@ -96,6 +99,111 @@ vec4 compute () {
 
   // ---------- Graphics Code ----------
 
+  float extraRadius = 1.0;
+  if (hasVertexData) {
+    extraRadius = 0.1 + (vertexData.r);
+  }
+
+  float gapper = 0.6;
+
+  pos.x *= 0.5 * extraRadius;
+  pos.y *= 0.5 * extraRadius;
+  pos.z *= 0.0;
+
+  pos.x += dX2D * gapper;
+  pos.y += dY2D * gapper;
+
+  float pX = pos.x;
+  float pY = pos.y;
+  float pZ = pos.z;
+  float piz = 0.005 * 2.0 * 3.14159265;
+
+  pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateZ(time + pY * piz) * pos.xyz;
+  pos.xyz = rotateQ(normalize(vec3(1.0, pX * piz, 1.0)), time + pX * piz) * rotateX(time + pY * piz) * pos.xyz;
+
+  pos.w = 1.0;
+
+  if (isInvalid) {
+    pos = vec4(0.0);
+  }
+
+  return pos;
+}
+
+      `,
+  },
+  {
+    _id: getID(),
+    name: 'cluster',
+    code: glsl`
+
+vec4 compute () {
+  //  ------- setup code -------
+  float vertexIDX = meta.x;
+  float squareIDX = meta.y;
+  float totalSquares = meta.z;
+  float pointIDX = meta.w;
+  vec4 pos = vec4(0.0, 0.0, 0.0, 1.0);
+
+  vec3 plane = vec3(1.0, 1.0, 1.0);
+  bool isInvalid = false;
+
+  if (vertexIDX == 0.0) {
+    pos.x = 1.0 * plane.x;
+    pos.y = 1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 1.0) {
+    pos.x = -1.0 * plane.x;
+    pos.y = 1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 2.0) {
+    pos.x = -1.0 * plane.x;
+    pos.y = -1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 3.0) {
+    pos.x = 1.0 * plane.x;
+    pos.y = 1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 4.0) {
+    pos.x = -1.0 * plane.x;
+    pos.y = -1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else if (vertexIDX == 5.0) {
+    pos.x = 1.0 * plane.x;
+    pos.y = -1.0 * plane.y;
+    pos.z = 1.0 * plane.z;
+  } else {
+    isInvalid = true;
+  }
+
+  // Cube
+  float dimension3D = floor(pow(totalSquares, 1.0 / 3.0));
+  float dX3D = mod(abs(squareIDX / pow(dimension3D, 0.0)), dimension3D) - dimension3D * 0.5;
+  float dY3D = mod(abs(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
+  float dZ3D = mod(abs(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
+
+  // Planes
+  float dimension2D = floor(pow(totalSquares, 0.5));
+  float dX2D = (squareIDX / dimension2D) * 2.0 - dimension2D;
+  float dY2D = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
+
+  // UV for Planes & Cube
+  vec2 textureUV = vec2(
+    (squareIDX / dimension2D) / dimension2D,
+    (mod(squareIDX, dimension2D)) / dimension2D
+  );
+
+  vUv = textureUV.xy;
+
+  vec4 vertexData = texture2D(vertexTexture, vec2(
+    textureUV.x,
+    textureUV.y
+  ));
+
+  bool hasVertexData = (length(vertexData.xyz) > 0.0 || vertexData.a > 0.0);
+
+  // ---------- Graphics Code ----------
+
   float extraRadius = 0.0;
   if (hasVertexData) {
     extraRadius += 20.0 * vertexData.r;
@@ -140,7 +248,12 @@ vec4 compute () {
   return pos;
 }
 
-  `,
+    `
+  }
+]
+
+const guiData = {
+  compute: examples[1].code,
   sizeX: 256,
   sizeY: 256
 }
@@ -192,6 +305,8 @@ const buttons = {
 }
 
 export {
+  examples,
+
   displayName,
   tags,
   fileTree,
