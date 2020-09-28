@@ -74,13 +74,13 @@ vec4 compute () {
   vec4 nextColor = lastFrame;
 
   vec4 color = vec4(
-    pattern(vec2(vUv * (2.0 + 5.0 * recordedMicColor.r) + time * 0.15) + -0.4 * cos(time * 0.15), time),
-    pattern(vec2(vUv * (2.0 + 5.0 * recordedMicColor.g) + time * 0.15) + 0.0 * cos(time * 0.15), time),
-    pattern(vec2(vUv * (2.0 + 5.0 * recordedMicColor.b) + time * 0.15) + 0.4 * cos(time * 0.15), time),
+    1.0 - pattern(vec2(vUv * (2.0 + 5.0 * realtimeMicColor.r + recordedMicColor.r) + time * 0.15) + -0.4 * cos(time * 0.15), time),
+    1.0 - pattern(vec2(vUv * (2.0 + 5.0 * realtimeMicColor.g + recordedMicColor.g) + time * 0.15) + 0.0 * cos(time * 0.15), time),
+    1.0 - pattern(vec2(vUv * (2.0 + 5.0 * realtimeMicColor.b + recordedMicColor.b) + time * 0.15) + 0.4 * cos(time * 0.15), time),
     1.0
   );
 
-  nextColor = lastFrame * realtimeMicColor + color + addonColor;
+  nextColor = color * color + addonColor;
 
   return nextColor;
 }
