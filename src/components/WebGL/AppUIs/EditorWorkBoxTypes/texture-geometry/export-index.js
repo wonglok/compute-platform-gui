@@ -31,7 +31,6 @@ const guiData = {
 
   compute: glsl`
 
-
 vec4 toPlanes (vec4 meta) {
   //  ------- setup code -------
   float vertexIDX = meta.x;
@@ -79,9 +78,9 @@ vec4 toCubeCluster (vec4 meta, vec4 pos) {
 
   // Cube
   float dimension3D = floor(pow(totalSquares, 1.0 / 3.0));
-  float dX3D = mod(floor(squareIDX / pow(dimension3D, 0.0)), dimension3D) - dimension3D * 0.5;
-  float dY3D = mod(floor(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
-  float dZ3D = mod(floor(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
+  float dX3D = mod(abs(squareIDX / pow(dimension3D, 0.0)), dimension3D) - dimension3D * 0.5;
+  float dY3D = mod(abs(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
+  float dZ3D = mod(abs(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
 
   float gapper = 1.0;
 
@@ -129,18 +128,27 @@ vec4 compute () {
 
   vec4 meta = texture2D(indexTexture, vec2(uv.x, uv.y));
   vec4 lastFrame = texture2D( passThruTexture, vec2(uv.x, uv.y) );
-  vec4 addonColor = texture2D( addonTexture, vec2(uv.x, uv.y) );
-  vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(uv.x, uv.y) );
-  vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x, uv.y) );
+
+
+  float vertexIDX = meta.x;
+  float squareIDX = meta.y;
+  float totalSquares = meta.z;
+  float dimension2D = floor(pow(totalSquares, 0.5));
+  // UV for planes & cube
+  vec2 tv = vec2(
+    (squareIDX / dimension2D) / dimension2D,
+    (mod(squareIDX, dimension2D)) / dimension2D
+  );
+  vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(tv.x, tv.y) );
+  vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(tv.x, tv.y) );
+  vec4 addonColor = texture2D( addonTexture, vec2(tv.x, tv.y) );
+
   vec4 nextColor = lastFrame;
 
   vec4 pos = toPlanes(meta);
   vec4 cluster = toCubeCluster(meta, pos);
-  // cluster = toSurfaceCluster(meta, pos);
 
-  cluster += (addonColor.rgba - 0.5) * 40.0;
-
-  cluster.rgb = ballify(cluster.rgb, 50.0 + 20.0 * realtimeMicColor.r);
+  cluster.rgb = ballify(cluster.rgb, 50.0 + 50.0 * realtimeMicColor.r + 50.0 * recordedMicColor.r);
 
   float pX = pos.x;
   float pY = pos.y;
@@ -156,14 +164,6 @@ vec4 compute () {
 
   return nextColor;
 }
-
-
-
-
-
-
-
-
 
 
   `,
