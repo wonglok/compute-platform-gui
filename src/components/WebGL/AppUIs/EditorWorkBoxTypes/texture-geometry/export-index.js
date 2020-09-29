@@ -82,10 +82,10 @@ vec4 toCubeCluster (vec4 meta, vec4 pos) {
   float dY3D = mod(abs(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
   float dZ3D = mod(abs(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
 
-  float gapper = 1.0;
+  float gapper = 5.0;
 
-  pos.x *= 0.01;
-  pos.y *= 0.01;
+  pos.x *= 0.1;
+  pos.y *= 0.1;
   pos.z *= 0.0;
 
   pos.x += dX3D * gapper;
@@ -148,22 +148,24 @@ vec4 compute () {
   vec4 pos = toPlanes(meta);
   vec4 cluster = toCubeCluster(meta, pos);
 
-  cluster.rgb = ballify(cluster.rgb, 50.0 + 50.0 * realtimeMicColor.r + 50.0 * recordedMicColor.r);
+  cluster.rgb = ballify(cluster.rgb, 150.0 + 100.0 * realtimeMicColor.r + 100.0 * recordedMicColor.r);
 
   float pX = pos.x;
   float pY = pos.y;
   float pZ = pos.z;
   float piz = 0.005 * 2.0 * 3.14159265;
 
-  cluster.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateZ(time + pY * piz) * cluster.xyz;
-  cluster.xyz = rotateQ(normalize(vec3(1.0, pX * piz, 1.0)), time + pX * piz) * rotateX(time + pY * piz) * cluster.xyz;
+  cluster.xyz = rotateQ(normalize(vec3(1.0, pX * piz, 1.0)), time + pX * piz) * rotateZ(time + pY * piz) * cluster.xyz;
+  cluster.xyz = rotateQ(normalize(vec3(1.0, pX * piz, 1.0)), time + pX * piz) * rotateX(time + pZ * piz) * cluster.xyz;
 
   nextColor.rgb = cluster.rgb;
+  nextColor *= 0.35;
 
   nextColor.a = 1.0;
 
   return nextColor;
 }
+
 
 
   `,
