@@ -32,7 +32,6 @@ const guiData = {
   compute: glsl`
 
 
-
 vec4 toPlanes (vec4 meta) {
   //  ------- setup code -------
   float vertexIDX = meta.x;
@@ -141,7 +140,7 @@ vec4 compute () {
 
   cluster += (addonColor.rgba - 0.5) * 40.0;
 
-  cluster.rgb = ballify(cluster.rgb, 50.0);
+  cluster.rgb = ballify(cluster.rgb, 50.0 + 20.0 * realtimeMicColor.r);
 
   float pX = pos.x;
   float pY = pos.y;
@@ -157,6 +156,10 @@ vec4 compute () {
 
   return nextColor;
 }
+
+
+
+
 
 
 
