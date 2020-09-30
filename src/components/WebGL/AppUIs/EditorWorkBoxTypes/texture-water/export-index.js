@@ -130,19 +130,19 @@ vec4 compute () {
   vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x, uv.y) );
   vec4 nextColor = lastFrame;
 
-  vec4 color = waterwaves(vUv * 1024.0, vec2(1024.0), time);
+  vec4 color = waterwaves(vUv * 1024.0 + addonColor.rg * 1024.0, vec2(1024.0), time);
 
   nextColor = color;
-  if (length(addonColor.rgb) != 0.0 || addonColor.a != 0.0){
-    nextColor *= addonColor;
-  }
+  // if (length(addonColor.rgb) != 0.0 || addonColor.a != 0.0){
+  //   nextColor *= addonColor;
+  // }
 
   return nextColor;
 }
 
   `,
-  sizeX: 128,
-  sizeY: 128,
+  sizeX: 512,
+  sizeY: 512,
   refresher: 0
 }
 

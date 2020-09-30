@@ -86,8 +86,8 @@ vec4 compute () {
   return nextColor;
 }
   `,
-  sizeX: 128,
-  sizeY: 128,
+  sizeX: 512,
+  sizeY: 512,
   refresher: 0
 }
 

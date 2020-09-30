@@ -32,6 +32,13 @@
       </div> -->
 
       <div class="mx-5 my-5">
+        <div class="text-center mb-12">平面 <br/> Plane</div>
+        <div class=" text-center">
+          <img src="./img/faces.svg" class=" inline-block cursor-pointer" @click="$emit('choose', 'static-plane')" alt="">
+        </div>
+      </div>
+
+      <div class="mx-5 my-5">
         <div class="text-center mb-12">平面矩陣 <br/> Plane Cluster</div>
         <div class=" text-center">
           <img src="./img/cube-cluster.svg" class=" inline-block cursor-pointer" @click="$emit('choose', 'compute-visual-cluster')" alt="">
