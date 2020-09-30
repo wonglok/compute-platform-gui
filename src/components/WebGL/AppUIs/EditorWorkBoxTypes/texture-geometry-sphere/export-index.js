@@ -168,9 +168,7 @@ vec4 compute () {
 
 const compatability = {
   boxIn: [
-    'texture-geometry-media',
-    'texture-fragment',
-    'texture-vertex'
+    'texture-geometry-media'
   ],
   boxOut: [
   ]

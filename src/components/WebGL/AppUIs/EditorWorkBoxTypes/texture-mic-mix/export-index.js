@@ -74,17 +74,15 @@ vec4 compute () {
   vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(uv.x * 0.5, uv.y) );
   vec4 nextColor = lastFrame;
 
-  vec4 color = vec4(
-    1.0 - pattern(vec2(vUv * (2.0 + 5.0 * addonColor.r) + time * 0.15) + -0.4 * cos(time * 0.15), time),
-    1.0 - pattern(vec2(vUv * (2.0 + 5.0 * addonColor.g) + time * 0.15) + 0.0 * cos(time * 0.15), time),
-    1.0 - pattern(vec2(vUv * (2.0 + 5.0 * addonColor.b) + time * 0.15) + 0.4 * cos(time * 0.15), time),
-    1.0
-  );
+  vec4 color = realtimeMicColor + recordedMicColor;
 
   nextColor = color;
 
   return nextColor;
 }
+
+
+
   `,
   sizeX: 128,
   sizeY: 128,
@@ -101,7 +99,7 @@ const compatability = {
   ]
 }
 
-const displayName = 'Rainbow'
+const displayName = 'Mic Mix'
 
 const tags = [
   'texture-fragment',

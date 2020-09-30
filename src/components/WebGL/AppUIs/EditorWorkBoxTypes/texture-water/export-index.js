@@ -116,7 +116,6 @@ float pattern (vec2 p, float time) {
   return abs(vout);
 }
 
-
 vec4 compute () {
   vec2 uv = gl_FragCoord.xy / resolution.xy;
 
@@ -133,7 +132,10 @@ vec4 compute () {
 
   vec4 color = waterwaves(vUv * 1024.0, vec2(1024.0), time);
 
-  nextColor = lastFrame * realtimeMicColor + color + recordedMicColor + addonColor;
+  nextColor = color;
+  if (length(addonColor.rgb) != 0.0 || addonColor.a != 0.0){
+    nextColor *= addonColor;
+  }
 
   return nextColor;
 }

@@ -88,7 +88,7 @@ export class CoreShell {
     // config.mixins = config.mixins || [
     // ]
     // config.mixins.push(O3DVue)
-    let ACE = require('../../Packages/Editor/ACE.vue').default
+    let ACE = require('../../Packages/Editor/ACEFixedPosShell.vue').default
     let newObj = {
       ...config,
       components: {
