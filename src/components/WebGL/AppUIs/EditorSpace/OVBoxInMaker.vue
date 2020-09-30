@@ -35,6 +35,16 @@
         </div>
       </div>
 
+
+      <div v-if="canChoose.includes('texture-geometry-media')">
+        <div class="font-sans text-xl mb-3">
+          Media Texture 媒體 紋理
+        </div>
+        <div @click="$emit('choose', wbType.type); onClickMic()" class=" inline-block m-3 p-3 border rounded-lg hover:bg-gray-100 cursor-pointer" :key="wbType._id" v-for="wbType in wbTypes.filter(getType('texture-geometry-media'))">
+          <div>{{ wbType.displayName }}</div>
+        </div>
+      </div>
+
       <div v-if="canChoose.includes('texture-fragment')">
         <div class="font-sans text-xl mb-3">
           Color Texture 媒體 紋理

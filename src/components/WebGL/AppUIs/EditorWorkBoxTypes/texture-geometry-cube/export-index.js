@@ -82,17 +82,16 @@ vec4 toCubeCluster (vec4 meta, vec4 pos) {
   float dY3D = mod(abs(squareIDX / pow(dimension3D, 1.0)), dimension3D) - dimension3D * 0.5;
   float dZ3D = mod(abs(squareIDX / pow(dimension3D, 2.0)), dimension3D) - dimension3D * 0.5;
 
-  float gapper = 5.0;
+  float gapper = 76.90 / 74.71;
 
-  pos.x *= 0.1;
-  pos.y *= 0.1;
-  pos.z *= 0.0;
+  pos.x *= 0.15;
+  pos.y *= 0.15;
+  pos.z *= 0.15;
 
   pos.x += dX3D * gapper;
   pos.y += dY3D * gapper;
   pos.z += dZ3D * gapper;
 
-  pos.xyz *= 8.0;
 
   return pos;
 }
@@ -108,16 +107,16 @@ vec4 toSurfaceCluster (vec4 meta, vec4 pos) {
   float dX2D = (squareIDX / dimension2D) * 2.0 - dimension2D;
   float dY2D = (mod(squareIDX, dimension2D)) * 2.0 - dimension2D;
 
-  float gapper = 0.15;
+  float gapper = 0.75;
 
-  pos.x *= 0.15;
-  pos.y *= 0.15;
+  pos.x *= 0.75;
+  pos.y *= 0.75;
   pos.z *= 0.0;
 
   pos.x += dX2D * gapper;
   pos.y += dY2D * gapper;
 
-  pos.xyz *= 8.0;
+  pos.xyz *= 1.0;
 
   return pos;
 }
@@ -127,8 +126,6 @@ vec4 compute () {
   vec2 uv = gl_FragCoord.xy * sec;
 
   vec4 meta = texture2D(indexTexture, vec2(uv.x, uv.y));
-  vec4 lastFrame = texture2D( passThruTexture, vec2(uv.x, uv.y) );
-
 
   float vertexIDX = meta.x;
   float squareIDX = meta.y;
@@ -139,34 +136,37 @@ vec4 compute () {
     (squareIDX / dimension2D) / dimension2D,
     (mod(squareIDX, dimension2D)) / dimension2D
   );
-  vec4 realtimeMicColor = texture2D( realtimeMicTexture, vec2(tv.x, tv.y) );
-  vec4 recordedMicColor = texture2D( recordedMicTexture, vec2(tv.x, tv.y) );
-  vec4 addonColor = texture2D( addonTexture, vec2(tv.x, tv.y) );
+  vec4 now = texture2D( realtimeMicTexture, vec2(tv.y, tv.x) );
+  vec4 past = texture2D( recordedMicTexture, vec2(tv.x, tv.y) );
 
-  vec4 nextColor = lastFrame;
+  vec4 addon = texture2D( addonTexture, vec2(uv.x, uv.y) );
+
+  vec4 lastFrame = texture2D( passThruTexture, vec2(uv.y, uv.x) );
+
+  vec4 nextColor = vec4(0.0);
 
   vec4 pos = toPlanes(meta);
-  vec4 cluster = toCubeCluster(meta, pos);
+  pos = toCubeCluster(meta, pos);
 
-  cluster.rgb = ballify(cluster.rgb, 150.0 + 100.0 * realtimeMicColor.r + 100.0 * recordedMicColor.r);
+  pos.xyz *= 3.0 + addon.x * 1.5;
+
+  // pos.xyz *= rotateX(time + pos.x * 3.54 / 100.0);
+  // pos.xyz *= rotateY(time * 0.25 + pos.x * 3.54 / 100.0);
 
   float pX = pos.x;
   float pY = pos.y;
   float pZ = pos.z;
   float piz = 0.005 * 2.0 * 3.14159265;
 
-  cluster.xyz = rotateQ(normalize(vec3(1.0, pX * piz, 1.0)), time + pX * piz) * rotateZ(time + pY * piz) * cluster.xyz;
-  cluster.xyz = rotateQ(normalize(vec3(1.0, pX * piz, 1.0)), time + pX * piz) * rotateX(time + pZ * piz) * cluster.xyz;
+  pos.xyz = rotateQ(normalize(vec3(1.0, pZ * piz, 1.0)), time + pX * piz) * rotateZ(time + pY * piz) * pos.xyz;
+  pos.xyz = rotateQ(normalize(vec3(1.0, pX * piz, 1.0)), time + pX * piz) * rotateX(time + pY * piz) * pos.xyz;
 
-  nextColor.rgb = cluster.rgb;
-  nextColor *= 0.35;
 
+  nextColor.rgb = pos.rgb;
   nextColor.a = 1.0;
 
   return nextColor;
 }
-
-
 
   `,
   sizeX: 256,
@@ -176,7 +176,7 @@ vec4 compute () {
 
 const compatability = {
   boxIn: [
-    'texture-media',
+    'texture-geometry-media',
     'texture-fragment',
     'texture-vertex'
   ],
@@ -184,7 +184,7 @@ const compatability = {
   ]
 }
 
-const displayName = 'Texture Geometry'
+const displayName = 'Cube Texture Geometry'
 
 const tags = [
   'texture-geometry'
